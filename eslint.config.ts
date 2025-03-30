@@ -7,6 +7,7 @@ export default [
   js.configs.recommended,
   {
     files: ['**/*.ts', '**/*.tsx'],
+    ignores: ['dist/**', 'node_modules/**'],
     languageOptions: {
       parser: tsparser,
       parserOptions: {

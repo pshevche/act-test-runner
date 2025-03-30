@@ -16,10 +16,11 @@
     "typescript": "^5"
   },
   "scripts": {
-    "lint": "eslint . --ext .ts,.tsx",
+    "lint": "eslint .",
     "format": "prettier --write .",
-    "lint:check": "eslint . --ext .ts,.tsx --max-warnings 0",
+    "lint:check": "eslint . --max-warnings 0",
     "prettier:check": "prettier --check .",
-    "check": "bun run lint:check && bun run prettier:check && bun test"
+    "build": "bun build src/index.ts --outdir dist && bunx tsc --emitDeclarationOnly",
+    "check": "bun run lint:check && bun run prettier:check && bun run build && bun test"
   }
 }
