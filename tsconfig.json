@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    // Environment setup & latest features
     "lib": ["ESNext"],
     "target": "ESNext",
     "module": "ESNext",
@@ -20,9 +19,6 @@
     // Some stricter flags (disabled by default)
     "noUnusedLocals": false,
     "noUnusedParameters": false,
-    "noPropertyAccessFromIndexSignature": false,
-
-    "declaration": true,
-    "declarationDir": "dist"
+    "noPropertyAccessFromIndexSignature": false
   }
 }

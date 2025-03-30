@@ -1,7 +1,12 @@
 {
   "name": "act-test-runner",
-  "module": "index.ts",
+  "version": "1.0.0",
+  "description": "Convention wrapper around https://github.com/nektos/act for e2e testing GitHub actions",
+  "module": "src/index.ts",
   "type": "module",
+  "files": [
+    "dist"
+  ],
   "devDependencies": {
     "@types/bun": "latest",
     "@typescript-eslint/eslint-plugin": "^8.28.0",
@@ -16,11 +21,12 @@
     "typescript": "^5"
   },
   "scripts": {
+    "clean": "rm -r dist",
     "lint": "eslint .",
     "format": "prettier --write .",
     "lint:check": "eslint . --max-warnings 0",
     "prettier:check": "prettier --check .",
-    "build": "bun build src/index.ts --outdir dist && bunx tsc --emitDeclarationOnly",
+    "build": "bun build src/index.ts --outdir dist && bunx tsc --project tsconfig.types.json",
     "check": "bun run lint:check && bun run prettier:check && bun run build && bun test"
   }
 }
