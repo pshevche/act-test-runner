@@ -15,6 +15,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Setup act
+        run: |
+          curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/nektos/act/master/install.sh | sudo bash -s -- -b "/usr/bin"
+          # Use the micro image to speed up tests: https://nektosact.com/usage/runners.html
+          echo "-P ubuntu-latest=node:16-buster-slim" > $HOME/.actrc
+
       - name: Set up bun
         uses: oven-sh/setup-bun@v2
 
