@@ -19,6 +19,6 @@
     "format": "prettier --write .",
     "lint:check": "eslint . --ext .ts,.tsx --max-warnings 0",
     "prettier:check": "prettier --check .",
-    "check": "bun run lint:check && bun run prettier:check"
+    "check": "bun run lint:check && bun run prettier:check && bun test"
   }
 }
