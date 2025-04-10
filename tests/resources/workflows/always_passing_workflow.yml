@@ -1,0 +1,9 @@
+name: Simple passing workflow
+on: [push]
+
+jobs:
+  successful_job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Successful step
+        run: echo "Hello, World!"
