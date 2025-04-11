@@ -18,6 +18,8 @@ export class ActRunner {
   private workflowBody: string | undefined;
   private envFile: string | undefined;
   private envValues: Map<String, String> = new Map<String, String>();
+  private inputFile: string | undefined;
+  private inputValues: Map<String, String> = new Map<String, String>();
   private shouldForwardOutput: boolean = false;
 
   /**
@@ -46,6 +48,16 @@ export class ActRunner {
 
   withEnvValues(...envValues: [string, string][]): ActRunner {
     envValues.forEach((entry) => this.envValues.set(entry[0], entry[1]));
+    return this;
+  }
+
+  withInputFile(inputFile: string): ActRunner {
+    this.inputFile = inputFile;
+    return this;
+  }
+
+  withInputValues(...inputValues: [string, string][]): ActRunner {
+    inputValues.forEach((entry) => this.inputValues.set(entry[0], entry[1]));
     return this;
   }
 
@@ -112,7 +124,13 @@ export class ActRunner {
       ),
     );
 
-    return new ActRunnerParams(workflowFilePath, this.envFile, this.envValues);
+    return new ActRunnerParams(
+      workflowFilePath,
+      this.envFile,
+      this.envValues,
+      this.inputFile,
+      this.inputValues,
+    );
   }
 }
 
@@ -120,15 +138,21 @@ class ActRunnerParams {
   private readonly workflowsPath: string;
   private readonly envFile: string | undefined;
   private readonly envValues: Map<String, String>;
+  private readonly inputFile: string | undefined;
+  private readonly inputValues: Map<String, String>;
 
   constructor(
     workflowsPath: string,
     envFile: string | undefined,
     envValues: Map<String, String>,
+    inputFile: string | undefined,
+    inputValues: Map<String, String>,
   ) {
     this.workflowsPath = workflowsPath;
     this.envFile = envFile;
     this.envValues = envValues;
+    this.inputFile = inputFile;
+    this.inputValues = inputValues;
   }
 
   asCliArgs(): string[] {
@@ -141,6 +165,15 @@ class ActRunnerParams {
       'env values file',
       '--env',
       this.envValues,
+    );
+
+    this.addInputs(
+      args,
+      '--input-file',
+      this.inputFile,
+      'input values file',
+      '--input',
+      this.inputValues,
     );
 
     return args;

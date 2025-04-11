@@ -1,0 +1,17 @@
+name: Simple workflow printing a couple of workflow inputs
+on:
+  workflow_dispatch:
+    inputs:
+      greeting:
+        type: string
+        required: true
+      name:
+        type: string
+        required: true
+
+jobs:
+  print_greeting:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print greeting from workflow inputs
+        run: echo "${{ github.event.inputs.greeting }}, ${{ github.event.inputs.name }}!"

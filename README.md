@@ -16,10 +16,8 @@ This project was created using `bun init` in bun v1.2.7. [Bun](https://bun.sh) i
 
 ## ToDo
 
-- [ ] event type
 - [ ] inputs:
     - [ ] events
-    - [ ] inputs
     - [ ] secrets
     - [ ] variables
 - [ ] matrix
