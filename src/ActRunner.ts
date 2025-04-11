@@ -16,6 +16,8 @@ export class ActRunner {
   private workflowFile: string | undefined;
   private workingDir: string | undefined;
   private workflowBody: string | undefined;
+  private eventType: string | undefined;
+  private eventPayloadFile: string | undefined;
   private envFile: string | undefined;
   private envValues: Map<String, String> = new Map<String, String>();
   private inputFile: string | undefined;
@@ -38,6 +40,15 @@ export class ActRunner {
 
   withWorkflowBody(workflowBody: string): ActRunner {
     this.workflowBody = workflowBody;
+    return this;
+  }
+
+  withEvent(
+    type: string,
+    payloadFile: string | undefined = undefined,
+  ): ActRunner {
+    this.eventType = type;
+    this.eventPayloadFile = payloadFile;
     return this;
   }
 
@@ -126,6 +137,8 @@ export class ActRunner {
 
     return new ActRunnerParams(
       workflowFilePath,
+      this.eventType,
+      this.eventPayloadFile,
       this.envFile,
       this.envValues,
       this.inputFile,
@@ -136,6 +149,8 @@ export class ActRunner {
 
 class ActRunnerParams {
   private readonly workflowsPath: string;
+  private readonly eventType: string;
+  private readonly eventPayloadFile: string | undefined;
   private readonly envFile: string | undefined;
   private readonly envValues: Map<String, String>;
   private readonly inputFile: string | undefined;
@@ -143,12 +158,19 @@ class ActRunnerParams {
 
   constructor(
     workflowsPath: string,
+    eventType: string | undefined,
+    eventPayloadFile: string | undefined,
     envFile: string | undefined,
     envValues: Map<String, String>,
     inputFile: string | undefined,
     inputValues: Map<String, String>,
   ) {
     this.workflowsPath = workflowsPath;
+    this.eventType = firstDefined(
+      () => eventType,
+      () => '--detect-event',
+    );
+    this.eventPayloadFile = eventPayloadFile;
     this.envFile = envFile;
     this.envValues = envValues;
     this.inputFile = inputFile;
@@ -157,6 +179,8 @@ class ActRunnerParams {
 
   asCliArgs(): string[] {
     const args = ['--workflows', this.workflowsPath];
+
+    this.addEvent(args, this.eventType, this.eventPayloadFile);
 
     this.addInputs(
       args,
@@ -177,6 +201,18 @@ class ActRunnerParams {
     );
 
     return args;
+  }
+
+  private addEvent(
+    args: string[],
+    eventType: string,
+    eventPayloadFile: string | undefined,
+  ) {
+    args.push(eventType);
+    if (eventPayloadFile !== undefined) {
+      checkExists('event payload file', eventPayloadFile);
+      args.push('--eventpath', eventPayloadFile);
+    }
   }
 
   private addInputs(

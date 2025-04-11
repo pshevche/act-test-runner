@@ -29,8 +29,10 @@ export class JobTrackingActExecListener implements ActExecListener {
 
       jobBuilder.output(line);
 
-      if (line.endsWith('Job succeeded')) {
-        jobBuilder.succeeded();
+      if (line.includes('Success - Main')) {
+        jobBuilder.stepCompleted();
+      } else if (line.endsWith('Job succeeded')) {
+        jobBuilder.completed();
       } else if (line.endsWith('Job failed')) {
         jobBuilder.failed();
       }

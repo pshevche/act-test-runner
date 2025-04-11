@@ -1,0 +1,22 @@
+name: Workflow printing the issue or PR title
+on:
+  pull_request:
+    types: [ opened ]
+  issues:
+    types: [ opened ]
+
+jobs:
+  print_issue_title:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print issue title
+        if: github.event_name == 'issues'
+        run: |
+          echo "Issue Title: ${{ github.event.issue.title }}"
+  print_pr_title:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print PR title
+        if: github.event_name == 'pull_request'
+        run: |
+          echo "PR Title: ${{ github.event.pull_request.title }}"

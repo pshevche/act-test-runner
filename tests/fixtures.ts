@@ -19,3 +19,10 @@ export function workflowPath(workflowName: string): string {
 export function inputPath(inputFileName: string): string {
   return path.resolve(import.meta.dirname, `resources/inputs/${inputFileName}`);
 }
+
+export function eventPayloadPath(eventPayloadName: string): string {
+  return path.resolve(
+    import.meta.dirname,
+    `resources/events/${eventPayloadName}.json`,
+  );
+}

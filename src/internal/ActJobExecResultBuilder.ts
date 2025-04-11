@@ -3,6 +3,7 @@ import { ActExecStatus } from '../ActExecStatus';
 
 export class ActJobExecResultBuilder {
   private readonly name: string;
+  private hasExecutedSteps: boolean = false;
   private status: ActExecStatus | undefined;
   private readonly outputLines: string[] = [];
 
@@ -15,8 +16,15 @@ export class ActJobExecResultBuilder {
     return this;
   }
 
-  succeeded(): ActJobExecResultBuilder {
-    this.status = ActExecStatus.SUCCESS;
+  stepCompleted(): ActJobExecResultBuilder {
+    this.hasExecutedSteps = true;
+    return this;
+  }
+
+  completed(): ActJobExecResultBuilder {
+    this.status = this.hasExecutedSteps
+      ? ActExecStatus.SUCCESS
+      : ActExecStatus.SKIPPED;
     return this;
   }
 

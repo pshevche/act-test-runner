@@ -34,3 +34,23 @@ test('fails if provided env file does not exist', async () => {
         .run(),
   ).toThrow("The specified env values file 'non-existing' does not exist");
 });
+
+test('fails if provided input values file does not exist', async () => {
+  expect(
+    async () =>
+      await runner()
+        .withWorkflowFile(workflowPath('always_passing_workflow'))
+        .withInputFile('non-existing')
+        .run(),
+  ).toThrow("The specified input values file 'non-existing' does not exist");
+});
+
+test('fails if provided event payload file does not exist', async () => {
+  expect(
+    async () =>
+      await runner()
+        .withWorkflowFile(workflowPath('always_passing_workflow'))
+        .withEvent('push', 'non-existing')
+        .run(),
+  ).toThrow("The specified event payload file 'non-existing' does not exist");
+});
