@@ -54,3 +54,13 @@ test('fails if provided event payload file does not exist', async () => {
         .run(),
   ).toThrow("The specified event payload file 'non-existing' does not exist");
 });
+
+test('fails if provided secrets values file does not exist', async () => {
+  expect(
+    async () =>
+      await runner()
+        .withWorkflowFile(workflowPath('always_passing_workflow'))
+        .withSecretsFile('non-existing')
+        .run(),
+  ).toThrow("The specified secrets values file 'non-existing' does not exist");
+});

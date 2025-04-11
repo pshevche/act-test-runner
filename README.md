@@ -17,13 +17,11 @@ This project was created using `bun init` in bun v1.2.7. [Bun](https://bun.sh) i
 ## ToDo
 
 - [ ] inputs:
-    - [ ] secrets
     - [ ] variables
 - [ ] matrix
 - [ ] resources:
     - [ ] cache
     - [ ] artifact server
-- [ ] additional act args
 - [ ] renovate
 - [ ] license header
 - [ ] readme + jsdoc

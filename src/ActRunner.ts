@@ -22,6 +22,9 @@ export class ActRunner {
   private envValues: Map<String, String> = new Map<String, String>();
   private inputFile: string | undefined;
   private inputValues: Map<String, String> = new Map<String, String>();
+  private secretsFile: string | undefined;
+  private secretsValues: Map<String, String> = new Map<String, String>();
+  private additionalArgs: string[] = [];
   private shouldForwardOutput: boolean = false;
 
   /**
@@ -69,6 +72,23 @@ export class ActRunner {
 
   withInputValues(...inputValues: [string, string][]): ActRunner {
     inputValues.forEach((entry) => this.inputValues.set(entry[0], entry[1]));
+    return this;
+  }
+
+  withSecretsFile(secretsFile: string): ActRunner {
+    this.secretsFile = secretsFile;
+    return this;
+  }
+
+  withSecretsValues(...secretsValues: [string, string][]): ActRunner {
+    secretsValues.forEach((entry) =>
+      this.secretsValues.set(entry[0], entry[1]),
+    );
+    return this;
+  }
+
+  withAdditionalArgs(...args: string[]): ActRunner {
+    args.forEach((arg) => this.additionalArgs.push(arg));
     return this;
   }
 
@@ -143,18 +163,24 @@ export class ActRunner {
       this.envValues,
       this.inputFile,
       this.inputValues,
+      this.secretsFile,
+      this.secretsValues,
+      this.additionalArgs,
     );
   }
 }
 
 class ActRunnerParams {
   private readonly workflowsPath: string;
-  private readonly eventType: string;
+  private readonly eventType: string | undefined;
   private readonly eventPayloadFile: string | undefined;
   private readonly envFile: string | undefined;
   private readonly envValues: Map<String, String>;
   private readonly inputFile: string | undefined;
   private readonly inputValues: Map<String, String>;
+  private readonly secretsFile: string | undefined;
+  private readonly secretsValues: Map<String, String>;
+  private readonly additionalArgs: string[];
 
   constructor(
     workflowsPath: string,
@@ -164,17 +190,20 @@ class ActRunnerParams {
     envValues: Map<String, String>,
     inputFile: string | undefined,
     inputValues: Map<String, String>,
+    secretsFile: string | undefined,
+    secretsValues: Map<String, String>,
+    additionalArgs: string[],
   ) {
     this.workflowsPath = workflowsPath;
-    this.eventType = firstDefined(
-      () => eventType,
-      () => '--detect-event',
-    );
+    this.eventType = eventType;
     this.eventPayloadFile = eventPayloadFile;
     this.envFile = envFile;
     this.envValues = envValues;
     this.inputFile = inputFile;
     this.inputValues = inputValues;
+    this.secretsFile = secretsFile;
+    this.secretsValues = secretsValues;
+    this.additionalArgs = additionalArgs;
   }
 
   asCliArgs(): string[] {
@@ -200,15 +229,31 @@ class ActRunnerParams {
       this.inputValues,
     );
 
+    this.addInputs(
+      args,
+      '--secret-file',
+      this.secretsFile,
+      'secrets values file',
+      '--secret',
+      this.secretsValues,
+    );
+
+    this.additionalArgs.forEach((arg) => args.push(arg));
+
     return args;
   }
 
   private addEvent(
     args: string[],
-    eventType: string,
+    eventType: string | undefined,
     eventPayloadFile: string | undefined,
   ) {
-    args.push(eventType);
+    args.push(
+      firstDefined(
+        () => eventType,
+        () => '--detect-event',
+      ),
+    );
     if (eventPayloadFile !== undefined) {
       checkExists('event payload file', eventPayloadFile);
       args.push('--eventpath', eventPayloadFile);
