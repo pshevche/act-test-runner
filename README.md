@@ -16,12 +16,12 @@ This project was created using `bun init` in bun v1.2.7. [Bun](https://bun.sh) i
 
 ## ToDo
 
-- [ ] inputs:
-    - [ ] variables
 - [ ] matrix
 - [ ] resources:
     - [ ] cache
     - [ ] artifact server
+- [ ] validate on runner creation + consistent naming for different input types
+- [ ] test parallelization
 - [ ] renovate
 - [ ] license header
 - [ ] readme + jsdoc

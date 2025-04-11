@@ -24,6 +24,8 @@ export class ActRunner {
   private inputValues: Map<String, String> = new Map<String, String>();
   private secretsFile: string | undefined;
   private secretsValues: Map<String, String> = new Map<String, String>();
+  private variablesFile: string | undefined;
+  private variablesValues: Map<String, String> = new Map<String, String>();
   private additionalArgs: string[] = [];
   private shouldForwardOutput: boolean = false;
 
@@ -83,6 +85,18 @@ export class ActRunner {
   withSecretsValues(...secretsValues: [string, string][]): ActRunner {
     secretsValues.forEach((entry) =>
       this.secretsValues.set(entry[0], entry[1]),
+    );
+    return this;
+  }
+
+  withVariablesFile(variablesFile: string): ActRunner {
+    this.variablesFile = variablesFile;
+    return this;
+  }
+
+  withVariablesValues(...variablesValues: [string, string][]): ActRunner {
+    variablesValues.forEach((entry) =>
+      this.variablesValues.set(entry[0], entry[1]),
     );
     return this;
   }
@@ -165,6 +179,8 @@ export class ActRunner {
       this.inputValues,
       this.secretsFile,
       this.secretsValues,
+      this.variablesFile,
+      this.variablesValues,
       this.additionalArgs,
     );
   }
@@ -180,6 +196,8 @@ class ActRunnerParams {
   private readonly inputValues: Map<String, String>;
   private readonly secretsFile: string | undefined;
   private readonly secretsValues: Map<String, String>;
+  private readonly variablesFile: string | undefined;
+  private readonly variablesValues: Map<String, String>;
   private readonly additionalArgs: string[];
 
   constructor(
@@ -192,6 +210,8 @@ class ActRunnerParams {
     inputValues: Map<String, String>,
     secretsFile: string | undefined,
     secretsValues: Map<String, String>,
+    variablesFile: string | undefined,
+    variablesValues: Map<String, String>,
     additionalArgs: string[],
   ) {
     this.workflowsPath = workflowsPath;
@@ -203,6 +223,8 @@ class ActRunnerParams {
     this.inputValues = inputValues;
     this.secretsFile = secretsFile;
     this.secretsValues = secretsValues;
+    this.variablesFile = variablesFile;
+    this.variablesValues = variablesValues;
     this.additionalArgs = additionalArgs;
   }
 
@@ -236,6 +258,15 @@ class ActRunnerParams {
       'secrets values file',
       '--secret',
       this.secretsValues,
+    );
+
+    this.addInputs(
+      args,
+      '--var-file',
+      this.variablesFile,
+      'variables values file',
+      '--var',
+      this.variablesValues,
     );
 
     this.additionalArgs.forEach((arg) => args.push(arg));
