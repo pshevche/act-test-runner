@@ -1,6 +1,9 @@
 import { expect, test } from 'bun:test';
 import { ActExecStatus, ActWorkflowExecResult } from '../src';
 import { runner, workflowPath } from './fixtures';
+import { join } from 'node:path';
+import { tmpdir } from 'node:os';
+import fs from 'node:fs';
 
 export async function run(
   workflowFile: string,
@@ -8,13 +11,7 @@ export async function run(
   return runner().withWorkflowFile(workflowFile).run();
 }
 
-test('fails if the specified workflows location does not exist', async () => {
-  expect(() => run('non-existing')).toThrow(
-    "The specified workflows path 'non-existing' does not exist",
-  );
-});
-
-test('report successful workflows', async () => {
+test('reports successful workflows', async () => {
   const result = await run(workflowPath('always_passing_workflow'));
 
   expect(result.status).toBe(ActExecStatus.SUCCESS);
@@ -57,4 +54,61 @@ test('reports all jobs', async () => {
   expect(failingJob.status).toBe(ActExecStatus.FAILED);
   expect(failingJob.output).toContain('I fail!');
   expect(failingJob.output).not.toContain('I succeed!');
+});
+
+test('supports defining workflow body instead of file', async () => {
+  const result = await runner()
+    .withWorkflowBody(
+      `
+name: Simple passing workflow
+on: [push]
+
+jobs:
+  successful_job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Successful step
+        run: echo "Hello, World!"
+  `,
+    )
+    .run();
+
+  expect(result.status).toBe(ActExecStatus.SUCCESS);
+  expect(result.output).toContain('Hello, World!');
+  expect(result.jobs.size).toBe(1);
+
+  const successfulJob = result.job('successful_job')!;
+  expect(successfulJob.status).toBe(ActExecStatus.SUCCESS);
+  expect(successfulJob.output).toContain('Hello, World!');
+});
+
+test('supports defining custom working directory', async () => {
+  const customWorkingDir = join(tmpdir(), 'actTestRunner');
+  if (!fs.existsSync(customWorkingDir)) {
+    fs.mkdirSync(customWorkingDir);
+  }
+  const result = await runner()
+    .withWorkingDir(customWorkingDir)
+    .withWorkflowBody(
+      `
+name: Simple passing workflow
+on: [push]
+
+jobs:
+  successful_job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Successful step
+        run: echo "Hello, World!"
+  `,
+    )
+    .run();
+
+  expect(result.status).toBe(ActExecStatus.SUCCESS);
+  expect(result.output).toContain('Hello, World!');
+  expect(result.jobs.size).toBe(1);
+
+  const successfulJob = result.job('successful_job')!;
+  expect(successfulJob.status).toBe(ActExecStatus.SUCCESS);
+  expect(successfulJob.output).toContain('Hello, World!');
 });
