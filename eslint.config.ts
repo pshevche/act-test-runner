@@ -1,10 +1,9 @@
-import js from '@eslint/js';
 import tseslint from '@typescript-eslint/eslint-plugin';
 import tsparser from '@typescript-eslint/parser';
 import prettier from 'eslint-plugin-prettier';
+import globals from 'globals';
 
 export default [
-  js.configs.recommended,
   {
     files: ['**/*.ts', '**/*.tsx'],
     ignores: ['dist/**', 'node_modules/**'],
@@ -14,6 +13,9 @@ export default [
         project: './tsconfig.json',
         ecmaVersion: 'latest',
         sourceType: 'module',
+      },
+      globals: {
+        ...globals.node,
       },
     },
     plugins: {

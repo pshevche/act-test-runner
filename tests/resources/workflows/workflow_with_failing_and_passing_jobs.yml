@@ -1,0 +1,16 @@
+name: Workflow with failing and passing jobs
+on: [push]
+
+jobs:
+  successful_job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Successful step
+        run: echo "I succeed!"
+  failing_job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Failing step
+        run: |
+          echo "I fail!"
+          exit 1

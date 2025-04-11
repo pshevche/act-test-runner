@@ -1,0 +1,11 @@
+name: Simple failing workflow
+on: [push]
+
+jobs:
+  failing_job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Failing step
+        run: |
+          echo "Hello, World!"
+          exit 1
