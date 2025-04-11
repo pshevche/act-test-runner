@@ -3,8 +3,8 @@ import { ActJobExecResultBuilder } from './ActJobExecResultBuilder';
 import type { ActExecListener } from './ActExecListener.ts';
 
 export class JobTrackingActExecListener implements ActExecListener {
-  execOutput: string[] = [];
-  jobsByName: Map<String, ActJobExecResultBuilder> = new Map<
+  private readonly execOutput: string[] = [];
+  private readonly jobsByName: Map<String, ActJobExecResultBuilder> = new Map<
     String,
     ActJobExecResultBuilder
   >();

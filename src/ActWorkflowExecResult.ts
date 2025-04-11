@@ -2,9 +2,9 @@ import { ActExecStatus } from './ActExecStatus.ts';
 import { ActJobExecResult } from './ActJobExecResult.ts';
 
 export class ActWorkflowExecResult {
-  status: ActExecStatus;
-  output: string;
-  jobs: Map<String, ActJobExecResult>;
+  readonly status: ActExecStatus;
+  readonly output: string;
+  readonly jobs: Map<String, ActJobExecResult>;
 
   constructor(
     status: ActExecStatus,

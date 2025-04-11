@@ -1,9 +1,9 @@
 import { ActExecStatus } from './ActExecStatus.ts';
 
 export class ActJobExecResult {
-  name: string;
-  status: ActExecStatus;
-  output: string;
+  readonly name: string;
+  readonly status: ActExecStatus;
+  readonly output: string;
 
   constructor(name: string, status: ActExecStatus, output: string) {
     this.name = name;

@@ -2,7 +2,7 @@ import type { ActExecListener } from './ActExecListener.ts';
 import type { ActJobExecResult } from '../ActJobExecResult.ts';
 
 export class OutputForwardingActExecListener implements ActExecListener {
-  private delegate: ActExecListener;
+  private readonly delegate: ActExecListener;
 
   constructor(delegate: ActExecListener) {
     this.delegate = delegate;

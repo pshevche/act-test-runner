@@ -2,9 +2,9 @@ import { ActJobExecResult } from '../ActJobExecResult';
 import { ActExecStatus } from '../ActExecStatus';
 
 export class ActJobExecResultBuilder {
-  name: string;
-  status: ActExecStatus | undefined;
-  outputLines: string[] = [];
+  private readonly name: string;
+  private status: ActExecStatus | undefined;
+  private readonly outputLines: string[] = [];
 
   constructor(name: string) {
     this.name = name;
