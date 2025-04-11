@@ -16,16 +16,16 @@ This project was created using `bun init` in bun v1.2.7. [Bun](https://bun.sh) i
 
 ## ToDo
 
+- [ ] event type
 - [ ] inputs:
-  - [ ] env
-  - [ ] events
-  - [ ] inputs
-  - [ ] secrets
-  - [ ] variables
+    - [ ] events
+    - [ ] inputs
+    - [ ] secrets
+    - [ ] variables
 - [ ] matrix
 - [ ] resources:
-  - [ ] cache
-  - [ ] artifact server
+    - [ ] cache
+    - [ ] artifact server
 - [ ] additional act args
 - [ ] renovate
 - [ ] license header

@@ -1,5 +1,5 @@
 import { expect, test } from 'bun:test';
-import { runner } from './fixtures';
+import { runner, workflowPath } from './fixtures';
 
 test('fails if the specified workflows location does not exist', async () => {
   expect(
@@ -23,4 +23,14 @@ test('either workflow file or body is required', async () => {
   expect(async () => await runner().run()).toThrow(
     "Expected one value out of 'undefined' and 'undefined' to be defined",
   );
+});
+
+test('fails if provided env file does not exist', async () => {
+  expect(
+    async () =>
+      await runner()
+        .withWorkflowFile(workflowPath('always_passing_workflow'))
+        .withEnvFile('non-existing')
+        .run(),
+  ).toThrow("The specified env values file 'non-existing' does not exist");
 });

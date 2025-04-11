@@ -6,8 +6,8 @@ import { JobTrackingActExecListener } from './internal/JobTrackingActExecListene
 import { OutputForwardingActExecListener } from './internal/OutputForwardingActExecListener.ts';
 import {
   cleanupDir,
-  createTempWorkflowFile,
   createTempDir,
+  createTempWorkflowFile,
 } from './utils/fsutils.ts';
 import { firstDefined } from './utils/objects.ts';
 import { checkExists, checkOneDefined } from './utils/checks.ts';
@@ -16,6 +16,8 @@ export class ActRunner {
   private workflowFile: string | undefined;
   private workingDir: string | undefined;
   private workflowBody: string | undefined;
+  private envFile: string | undefined;
+  private envValues: Map<String, String> = new Map<String, String>();
   private shouldForwardOutput: boolean = false;
 
   /**
@@ -34,6 +36,16 @@ export class ActRunner {
 
   withWorkflowBody(workflowBody: string): ActRunner {
     this.workflowBody = workflowBody;
+    return this;
+  }
+
+  withEnvFile(envFile: string): ActRunner {
+    this.envFile = envFile;
+    return this;
+  }
+
+  withEnvValues(...envValues: [string, string][]): ActRunner {
+    envValues.forEach((entry) => this.envValues.set(entry[0], entry[1]));
     return this;
   }
 
@@ -100,18 +112,57 @@ export class ActRunner {
       ),
     );
 
-    return new ActRunnerParams(workflowFilePath);
+    return new ActRunnerParams(workflowFilePath, this.envFile, this.envValues);
   }
 }
 
 class ActRunnerParams {
-  workflowsPath: string;
+  private readonly workflowsPath: string;
+  private readonly envFile: string | undefined;
+  private readonly envValues: Map<String, String>;
 
-  constructor(workflowsPath: string) {
+  constructor(
+    workflowsPath: string,
+    envFile: string | undefined,
+    envValues: Map<String, String>,
+  ) {
     this.workflowsPath = workflowsPath;
+    this.envFile = envFile;
+    this.envValues = envValues;
   }
 
   asCliArgs(): string[] {
-    return ['--workflows', this.workflowsPath];
+    const args = ['--workflows', this.workflowsPath];
+
+    this.addInputs(
+      args,
+      '--env-file',
+      this.envFile,
+      'env values file',
+      '--env',
+      this.envValues,
+    );
+
+    return args;
+  }
+
+  private addInputs(
+    args: string[],
+    fileArg: string,
+    file: string | undefined,
+    fileLabel: string,
+    valuesArg: string,
+    values: Map<String, String>,
+  ) {
+    if (file !== undefined) {
+      checkExists(fileLabel, file);
+      args.push(fileArg, file);
+    }
+
+    if (values.size > 0) {
+      values.forEach((value, key) => {
+        args.push(valuesArg, `${key}=${value}`);
+      });
+    }
   }
 }

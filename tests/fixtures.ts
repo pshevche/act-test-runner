@@ -15,3 +15,7 @@ export function workflowPath(workflowName: string): string {
     `resources/workflows/${workflowName}.yml`,
   );
 }
+
+export function inputPath(inputFileName: string): string {
+  return path.resolve(import.meta.dirname, `resources/inputs/${inputFileName}`);
+}

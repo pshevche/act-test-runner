@@ -1,0 +1,9 @@
+name: Simple workflow printing a couple of environment variables
+on: [push]
+
+jobs:
+  print_greeting:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print greeting from env variables
+        run: echo "$GREETING, $NAME!"
