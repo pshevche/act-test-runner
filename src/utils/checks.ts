@@ -20,7 +20,7 @@
  */
 
 import { ActRunnerError } from '../ActRunnerError';
-import fs from 'node:fs';
+import * as fs from 'node:fs';
 
 export function checkOneDefined(first: any, second: any) {
   if (

@@ -21,7 +21,7 @@
 
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import fs from 'node:fs';
+import * as fs from 'node:fs';
 
 export function createTempWorkflowFile(
   workingDir: string,

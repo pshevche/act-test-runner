@@ -12,7 +12,8 @@
   "publishConfig": {
     "access": "public"
   },
-  "module": "src/index.ts",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
   "type": "module",
   "files": [
     "dist"
