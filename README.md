@@ -8,6 +8,99 @@ The library defines an opinionated runner interface for executing GitHub workflo
 
 Consumers can assert on the outcome of the workflow execution, such as the jobs run, workflow's output, or artifacts persisted in the artifact server or action cache.
 
+## Usage
+
+### Assert on the workflow file execution
+
+```JavaScript
+test('custom workflow', async () => {
+  const result = await new ActRunner()
+    .withWorkflowBody(
+      `
+name: Simple passing workflow
+on: [push]
+
+jobs:
+  successful_job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Successful step
+        run: echo "Hello, World!"
+  `,
+    )
+    .run();
+
+  expect(result.status).toBe(ActExecStatus.SUCCESS);
+  expect(result.output).toContain('Hello, World!');
+  expect(result.jobs.size).toBe(1);
+
+  const successfulJob = result.job('successful_job')!;
+  expect(successfulJob.status).toBe(ActExecStatus.SUCCESS);
+  expect(successfulJob.output).toContain('Hello, World!');
+});
+```
+
+### Define event to trigger the workflow
+
+```JavaScript
+test('custom workflow with event', async () => {
+  const result = await new ActRunner()
+    .withWorkflowBody(
+      `
+name: Workflow printing the event_type
+on:
+  pull_request:
+    types: [opened]
+  issues:
+    types: [opened]
+
+jobs:
+  print_event_type:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print event type
+        run: |
+          echo "Event type: \${{ github.event_name }}"
+  `,
+    )
+    .withEvent('pull_request')
+    .run();
+
+  expect(result.status).toBe(ActExecStatus.SUCCESS);
+  const job = result.job('print_event_type')!;
+  expect(job.status).toBe(ActExecStatus.SUCCESS);
+  expect(job.output).toContain('Event type: pull_request');
+});
+```
+
+### Set additional workflow inputs
+
+```JavaScript
+test('custom workflow with inputs', async () => {
+  const result = await new ActRunner()
+    .withWorkflowBody(
+      `
+name: Simple workflow printing a couple of environment variables
+on: [push]
+
+jobs:
+  print_greeting:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print greeting from env variables
+        run: echo "$GREETING, $NAME!"
+  `,
+    )
+    .withEnvValues(['GREETING', 'Hello'], ['NAME', 'Bruce'])
+    .run();
+
+  expect(result.status).toBe(ActExecStatus.SUCCESS);
+  const job = result.job('print_greeting')!;
+  expect(job.status).toBe(ActExecStatus.SUCCESS);
+  expect(job.output).toContain('Hello, Bruce!');
+});
+```
+
 ## Development
 
 This project was created using `bun init` in bun v1.2.7. [Bun](https://bun.sh) is a fast all-in-one JavaScript runtime.
