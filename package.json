@@ -7,7 +7,7 @@
     "testing"
   ],
   "license": "MIT",
-  "version": "0.1",
+  "version": "0.1.1",
   "description": "Convention wrapper around https://github.com/nektos/act for e2e testing GitHub actions",
   "publishConfig": {
     "access": "public"
