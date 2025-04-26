@@ -40,7 +40,7 @@ test('fails if provided input values file does not exist', async () => {
     async () =>
       await runner()
         .withWorkflowFile(workflowPath('always_passing_workflow'))
-        .withInputFile('non-existing')
+        .withInputsFile('non-existing')
         .run(),
   ).toThrow("The specified input values file 'non-existing' does not exist");
 });

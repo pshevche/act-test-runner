@@ -20,8 +20,8 @@ export class ActRunner {
   private eventPayloadFile: string | undefined;
   private envFile: string | undefined;
   private envValues: Map<String, String> = new Map<String, String>();
-  private inputFile: string | undefined;
-  private inputValues: Map<String, String> = new Map<String, String>();
+  private inputsFile: string | undefined;
+  private inputsValues: Map<String, String> = new Map<String, String>();
   private secretsFile: string | undefined;
   private secretsValues: Map<String, String> = new Map<String, String>();
   private variablesFile: string | undefined;
@@ -67,13 +67,13 @@ export class ActRunner {
     return this;
   }
 
-  withInputFile(inputFile: string): ActRunner {
-    this.inputFile = inputFile;
+  withInputsFile(inputsFile: string): ActRunner {
+    this.inputsFile = inputsFile;
     return this;
   }
 
-  withInputValues(...inputValues: [string, string][]): ActRunner {
-    inputValues.forEach((entry) => this.inputValues.set(entry[0], entry[1]));
+  withInputsValues(...inputsValues: [string, string][]): ActRunner {
+    inputsValues.forEach((entry) => this.inputsValues.set(entry[0], entry[1]));
     return this;
   }
 
@@ -175,8 +175,8 @@ export class ActRunner {
       this.eventPayloadFile,
       this.envFile,
       this.envValues,
-      this.inputFile,
-      this.inputValues,
+      this.inputsFile,
+      this.inputsValues,
       this.secretsFile,
       this.secretsValues,
       this.variablesFile,

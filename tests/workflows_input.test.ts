@@ -8,7 +8,7 @@ function inputWorkflowRunner(): ActRunner {
 
 test('supports setting input values directly', async () => {
   const result = await inputWorkflowRunner()
-    .withInputValues(['greeting', 'Hello'], ['name', 'Bruce'])
+    .withInputsValues(['greeting', 'Hello'], ['name', 'Bruce'])
     .run();
 
   expect(result.status).toBe(ActExecStatus.SUCCESS);
@@ -19,7 +19,7 @@ test('supports setting input values directly', async () => {
 
 test('supports setting input values from file', async () => {
   const result = await inputWorkflowRunner()
-    .withInputFile(inputPath('greeting.input'))
+    .withInputsFile(inputPath('greeting.input'))
     .run();
 
   expect(result.status).toBe(ActExecStatus.SUCCESS);
