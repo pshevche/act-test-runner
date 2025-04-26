@@ -47,7 +47,6 @@ Despite having this option, feel free to submit a feature request for a new opti
 
 ## ToDo
 
-- [ ] release
 - [ ] e2e example
 - [ ] renovate
 - [ ] update integrations doc
