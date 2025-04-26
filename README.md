@@ -1,6 +1,6 @@
 # act-test-runner
 
-[![Build](https://github.com/pshevche/act-test-runner/actions/workflows/verify.yaml/badge.svg)](https://github.com/pshevche/gradle-act-plugin/actions/workflows/verify.yaml)
+[![Build](https://github.com/pshevche/act-test-runner/actions/workflows/verify.yaml/badge.svg)](https://github.com/pshevche/act-test-runner/actions/workflows/verify.yaml)
 
 **Convenient wrapper around [act](https://github.com/nektos/act) for implementing e2e tests for GitHub actions**
 
