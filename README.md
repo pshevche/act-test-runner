@@ -16,10 +16,7 @@ This project was created using `bun init` in bun v1.2.7. [Bun](https://bun.sh) i
 
 ## ToDo
 
-- [ ] validate on runner creation
-- [ ] test parallelization
 - [ ] renovate
-- [ ] license header
 - [ ] readme + jsdoc
 - [ ] e2e example
-- [ ] branch protection + release
+- [ ] release

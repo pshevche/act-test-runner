@@ -22,11 +22,13 @@
   },
   "scripts": {
     "clean": "rm -r dist",
-    "lint": "eslint .",
-    "format": "prettier --write .",
+    "lint:fix": "eslint .",
+    "prettier:fix": "prettier --write .",
+    "license:fix": "addlicense -c \"original authors\" -l mit -v src/",
     "lint:check": "eslint . --max-warnings 0",
     "prettier:check": "prettier --check .",
+    "license:check": "addlicense -check src/",
     "build": "bun build src/index.ts --outdir dist && bunx tsc --project tsconfig.types.json",
-    "check": "bun run lint:check && bun run prettier:check && bun run build && bun test --timeout 30000"
+    "check": "bun run lint:check && bun run prettier:check && bun run license:check && bun run build && bun test --timeout 30000"
   }
 }
