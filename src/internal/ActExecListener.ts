@@ -1,4 +1,4 @@
-import { ActJobExecResult } from '../ActJobExecResult.ts';
+import { ActJobExecResult } from '../ActJobExecResult';
 
 export interface ActExecListener {
   onStdOutput(output: string): void;

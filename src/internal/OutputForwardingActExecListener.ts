@@ -1,5 +1,5 @@
-import type { ActExecListener } from './ActExecListener.ts';
-import type { ActJobExecResult } from '../ActJobExecResult.ts';
+import type { ActExecListener } from './ActExecListener';
+import type { ActJobExecResult } from '../ActJobExecResult';
 
 export class OutputForwardingActExecListener implements ActExecListener {
   private readonly delegate: ActExecListener;

@@ -1,6 +1,6 @@
 import { ActJobExecResult } from '../ActJobExecResult';
 import { ActJobExecResultBuilder } from './ActJobExecResultBuilder';
-import type { ActExecListener } from './ActExecListener.ts';
+import type { ActExecListener } from './ActExecListener';
 
 export class JobTrackingActExecListener implements ActExecListener {
   private readonly execOutput: string[] = [];

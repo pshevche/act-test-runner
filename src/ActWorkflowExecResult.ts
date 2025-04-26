@@ -1,5 +1,5 @@
-import { ActExecStatus } from './ActExecStatus.ts';
-import { ActJobExecResult } from './ActJobExecResult.ts';
+import { ActExecStatus } from './ActExecStatus';
+import { ActJobExecResult } from './ActJobExecResult';
 
 export class ActWorkflowExecResult {
   readonly status: ActExecStatus;

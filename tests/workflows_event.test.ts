@@ -1,5 +1,5 @@
 import { expect, test } from 'bun:test';
-import { eventPayloadPath, runner, workflowPath } from './fixtures.ts';
+import { eventPayloadPath, runner, workflowPath } from './fixtures';
 import { ActExecStatus, ActRunner } from '../src';
 
 function eventWorkflowRunner(): ActRunner {

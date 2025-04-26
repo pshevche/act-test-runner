@@ -1,4 +1,4 @@
-import { ActRunnerError } from '../ActRunnerError.ts';
+import { ActRunnerError } from '../ActRunnerError';
 import fs from 'node:fs';
 
 export function checkOneDefined(first: any, second: any) {

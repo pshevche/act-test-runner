@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test';
-import { checkExists, checkOneDefined } from '../../src/utils/checks.ts';
+import { checkExists, checkOneDefined } from '../../src/utils/checks';
 
 describe('checkOneDefined', () => {
   test('does not fail if first value is defined', () => {

@@ -1,4 +1,4 @@
-import { ActExecStatus } from './ActExecStatus.ts';
+import { ActExecStatus } from './ActExecStatus';
 
 export class ActJobExecResult {
   readonly name: string;

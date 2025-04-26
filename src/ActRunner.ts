@@ -1,16 +1,16 @@
 import { spawn } from 'node:child_process';
-import { ActWorkflowExecResult } from './ActWorkflowExecResult.ts';
-import { ActExecStatus } from './ActExecStatus.ts';
-import { ActRunnerError } from './ActRunnerError.ts';
-import { JobTrackingActExecListener } from './internal/JobTrackingActExecListener.ts';
-import { OutputForwardingActExecListener } from './internal/OutputForwardingActExecListener.ts';
+import { ActWorkflowExecResult } from './ActWorkflowExecResult';
+import { ActExecStatus } from './ActExecStatus';
+import { ActRunnerError } from './ActRunnerError';
+import { JobTrackingActExecListener } from './internal/JobTrackingActExecListener';
+import { OutputForwardingActExecListener } from './internal/OutputForwardingActExecListener';
 import {
   cleanupDir,
   createTempDir,
   createTempWorkflowFile,
-} from './utils/fsutils.ts';
-import { firstDefined } from './utils/objects.ts';
-import { checkExists, checkOneDefined } from './utils/checks.ts';
+} from './utils/fsutils';
+import { firstDefined } from './utils/objects';
+import { checkExists, checkOneDefined } from './utils/checks';
 
 export class ActRunner {
   private workflowFile: string | undefined;
