@@ -44,10 +44,3 @@ Despite having this option, feel free to submit a feature request for a new opti
 
 - https://github.com/nektos/act[nektos/act]: GitHub actions runner used by the plugin.
 - https://nektosact.com/[act User Guide]: describes various configuration options that the runner provides, as well as the format for input files.
-
-## ToDo
-
-- [ ] e2e example
-- [ ] renovate
-- [ ] update integrations doc
-- [ ] deprecate Gradle plugin
