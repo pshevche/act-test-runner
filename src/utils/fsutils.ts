@@ -13,8 +13,9 @@ export function createTempWorkflowFile(
 }
 
 export function cleanupDir(workingDir: string) {
-  const files = fs.readdirSync(workingDir);
-  files.forEach((file) => fs.rmSync(join(workingDir, file)));
+  if (fs.existsSync(workingDir)) {
+    fs.rmdirSync(workingDir, { recursive: true });
+  }
 }
 
 export function createTempDir(): string {

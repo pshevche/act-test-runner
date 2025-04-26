@@ -20,7 +20,6 @@ This project was created using `bun init` in bun v1.2.7. [Bun](https://bun.sh) i
   - [ ] cache
   - [ ] artifact server
 - [ ] validate on runner creation
-- [ ] clean up temp directories
 - [ ] test parallelization
 - [ ] renovate
 - [ ] license header

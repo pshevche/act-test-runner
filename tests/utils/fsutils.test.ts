@@ -1,22 +1,21 @@
-import { beforeEach, describe, expect, test } from 'bun:test';
+import { describe, expect, test } from 'bun:test';
 import {
   cleanupDir,
   createTempDir,
   createTempWorkflowFile,
-} from '../../src/utils/fsutils.ts';
+} from '../../src/utils/fsutils';
 import fs from 'node:fs';
 import { join } from 'node:path';
 
 describe('fsutils', () => {
-  let dir: string;
+  test('removes directory with all temp files', () => {
+    const dir = createTempDir();
 
-  beforeEach(() => (dir = createTempDir()));
-
-  test('removes all files from provided dir', () => {
     createTempWorkflowFile(dir, 'foo');
     fs.writeFileSync(join(dir, 'bar'), 'bar');
+
     cleanupDir(dir);
 
-    expect(fs.readdirSync(dir)).toBeEmpty();
+    expect(fs.existsSync(dir)).toBeFalse();
   });
 });
