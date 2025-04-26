@@ -119,6 +119,15 @@ export class ActRunner {
     return this;
   }
 
+  withArtifactServer(
+    path: string,
+    host: string | undefined = undefined,
+    port: number | undefined = undefined,
+  ): ActRunner {
+    this.artifactServer = new ActResourceSpec(path, host, port);
+    return this;
+  }
+
   withAdditionalArgs(...args: string[]): ActRunner {
     args.forEach((arg) => this.additionalArgs.push(arg));
     return this;
@@ -201,6 +210,7 @@ export class ActRunner {
       this.variablesValues,
       this.matrix,
       this.cacheServer,
+      this.artifactServer,
       this.additionalArgs,
     );
   }
@@ -220,6 +230,7 @@ class ActRunnerParams {
   private readonly variablesValues: Map<String, String>;
   private readonly matrix: Map<String, any>;
   private readonly cacheServer: ActResourceSpec | undefined;
+  private readonly artifactServer: ActResourceSpec | undefined;
   private readonly additionalArgs: string[];
 
   constructor(
@@ -236,6 +247,7 @@ class ActRunnerParams {
     variablesValues: Map<String, String>,
     matrix: Map<String, any>,
     cacheServer: ActResourceSpec | undefined,
+    artifactServer: ActResourceSpec | undefined,
     additionalArgs: string[],
   ) {
     this.workflowsPath = workflowsPath;
@@ -251,6 +263,7 @@ class ActRunnerParams {
     this.variablesValues = variablesValues;
     this.matrix = matrix;
     this.cacheServer = cacheServer;
+    this.artifactServer = artifactServer;
     this.additionalArgs = additionalArgs;
   }
 
@@ -306,6 +319,14 @@ class ActRunnerParams {
       '--cache-server-path',
       '--cache-server-addr',
       '--cache-server-port',
+    );
+
+    this.addResource(
+      args,
+      this.artifactServer,
+      '--artifact-server-path',
+      '--artifact-server-addr',
+      '--artifact-server-port',
     );
 
     this.additionalArgs.forEach((arg) => args.push(arg));

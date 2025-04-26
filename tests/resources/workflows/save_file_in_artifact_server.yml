@@ -1,0 +1,14 @@
+name: Simple workflow storing a text file in artifact server
+on: [push]
+
+jobs:
+  store_file_in_artifact_server:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create greeting file
+        run: echo "Hello, World!" > greeting.txt
+      - name: Store greeting file
+        uses: actions/upload-artifact@v4
+        with:
+          name: greeting
+          path: greeting.txt
