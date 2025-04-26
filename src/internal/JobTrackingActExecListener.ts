@@ -18,8 +18,11 @@ export class JobTrackingActExecListener implements ActExecListener {
   }
 
   private onStdOutputOrError(output: string) {
-    this.execOutput.push(output.toString());
-    this.maybeProcessJobOutput(output.toString());
+    const lines = output.toString().split('\n');
+    lines.forEach((line) => {
+      this.execOutput.push(line);
+      this.maybeProcessJobOutput(line);
+    });
   }
 
   private maybeProcessJobOutput(line: string) {

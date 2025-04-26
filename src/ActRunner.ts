@@ -26,6 +26,7 @@ export class ActRunner {
   private secretsValues: Map<String, String> = new Map<String, String>();
   private variablesFile: string | undefined;
   private variablesValues: Map<String, String> = new Map<String, String>();
+  private matrix: Map<String, any> = new Map<String, any>();
   private additionalArgs: string[] = [];
   private shouldForwardOutput: boolean = false;
 
@@ -98,6 +99,11 @@ export class ActRunner {
     variablesValues.forEach((entry) =>
       this.variablesValues.set(entry[0], entry[1]),
     );
+    return this;
+  }
+
+  withMatrix(...matrixValues: [string, any][]): ActRunner {
+    matrixValues.forEach((entry) => this.matrix.set(entry[0], entry[1]));
     return this;
   }
 
@@ -181,6 +187,7 @@ export class ActRunner {
       this.secretsValues,
       this.variablesFile,
       this.variablesValues,
+      this.matrix,
       this.additionalArgs,
     );
   }
@@ -198,6 +205,7 @@ class ActRunnerParams {
   private readonly secretsValues: Map<String, String>;
   private readonly variablesFile: string | undefined;
   private readonly variablesValues: Map<String, String>;
+  private readonly matrix: Map<String, any>;
   private readonly additionalArgs: string[];
 
   constructor(
@@ -212,6 +220,7 @@ class ActRunnerParams {
     secretsValues: Map<String, String>,
     variablesFile: string | undefined,
     variablesValues: Map<String, String>,
+    matrix: Map<String, any>,
     additionalArgs: string[],
   ) {
     this.workflowsPath = workflowsPath;
@@ -225,6 +234,7 @@ class ActRunnerParams {
     this.secretsValues = secretsValues;
     this.variablesFile = variablesFile;
     this.variablesValues = variablesValues;
+    this.matrix = matrix;
     this.additionalArgs = additionalArgs;
   }
 
@@ -269,6 +279,10 @@ class ActRunnerParams {
       this.variablesValues,
     );
 
+    this.matrix.forEach((value, key) => {
+      args.push('--matrix');
+      args.push(`${key}:${value}`);
+    });
     this.additionalArgs.forEach((arg) => args.push(arg));
 
     return args;
