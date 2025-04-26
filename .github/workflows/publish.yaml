@@ -34,4 +34,4 @@ jobs:
         env:
           NPM_CONFIG_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
-          bun publish --access public
+          bun publish
