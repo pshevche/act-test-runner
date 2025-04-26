@@ -19,6 +19,9 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+/**
+ * Outcome of the workflow or job execution.
+ */
 export enum ActExecStatus {
   SUCCESS,
   FAILED,

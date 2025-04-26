@@ -32,8 +32,17 @@ import {
 } from './utils/fsutils';
 import { firstDefined } from './utils/objects';
 import { checkExists, checkOneDefined } from './utils/checks';
-import { ActResourceSpec } from './ActResourceSpec';
+import { ActResourceSpec } from './internal/ActResourceSpec';
 
+/**
+ * Invokes `act`, allowing end-to-end testing of custom GitHub actions and workflows.
+ *
+ * Typically, the test code will provide a workflow file or workflow body to run, as well as required workflow inputs, such as environment variables or secrets.
+ *
+ * Assertions can then be made on the outcome of the `run()` method invocation, such as the jobs run, workflow output, or artifacts persisted in the artifact server or action cache.
+ *
+ * The runner cannot be used concurrently due to limitations on the `act` side.
+ */
 export class ActRunner {
   private workflowFile: string | undefined;
   private workingDir: string | undefined;
@@ -56,23 +65,39 @@ export class ActRunner {
 
   /**
    * Sets the directory to use for the runner's storage needs (default: directory in user's temp folder).
-   * @param workingDir - the runner's working directory
+   * @param {string} workingDir - the runner's working directory
    */
   withWorkingDir(workingDir: string): ActRunner {
     this.workingDir = workingDir;
     return this;
   }
 
+  /**
+   * Specifies the GitHub workflow file to run.
+   * Only one of `workflowPath` and `workflowBody` can be set.
+   * @param {string} workflowsPath - path to the workflow file to run
+   */
   withWorkflowFile(workflowsPath: string): ActRunner {
     this.workflowFile = workflowsPath;
     return this;
   }
 
+  /**
+   * Specifies the content of the GitHub workflow to run.
+   * Only one of `workflowPath` and `workflowBody` can be set.
+   * @param {string} workflowBody - body of the workflow to run
+   */
   withWorkflowBody(workflowBody: string): ActRunner {
     this.workflowBody = workflowBody;
     return this;
   }
 
+  /**
+   * Configures the event that triggers the workflow run (e.g., `push`).
+   * If unspecified, the first event type specified in the workflow definition will be used.
+   * @param type - type of the event to trigger the workflow
+   * @param payloadFile - path to the JSON file containing the event payload
+   */
   withEvent(
     type: string,
     payloadFile: string | undefined = undefined,
@@ -82,31 +107,55 @@ export class ActRunner {
     return this;
   }
 
+  /**
+   * Specifies the file containing environment variables to use when invoking the given workflow.
+   * @param {string} envFile - file containing environment variables values to use as env in the containers
+   */
   withEnvFile(envFile: string): ActRunner {
     this.envFile = envFile;
     return this;
   }
 
+  /**
+   * Sets environment variables to use when invoking the given workflow.
+   * @param {[string, string][]} envValues - environment variable values to use as env in the containers
+   */
   withEnvValues(...envValues: [string, string][]): ActRunner {
     envValues.forEach((entry) => this.envValues.set(entry[0], entry[1]));
     return this;
   }
 
+  /**
+   * Specifies the file containing inputs values to use when invoking the given workflow.
+   * @param {string} inputsFile - input file to read and use as action input
+   */
   withInputsFile(inputsFile: string): ActRunner {
     this.inputsFile = inputsFile;
     return this;
   }
 
+  /**
+   * Sets inputs values to use when invoking the given workflow.
+   * @param {[string, string][]} inputsValues - action input to make available to actions
+   */
   withInputsValues(...inputsValues: [string, string][]): ActRunner {
     inputsValues.forEach((entry) => this.inputsValues.set(entry[0], entry[1]));
     return this;
   }
 
+  /**
+   * Specifies the file containing secrets values to use when invoking the given workflow.
+   * @param {string} secretsFile - secrets file to read and use as action input
+   */
   withSecretsFile(secretsFile: string): ActRunner {
     this.secretsFile = secretsFile;
     return this;
   }
 
+  /**
+   * Sets secrets values to use when invoking the given workflow.
+   * @param {[string, string][]} secretsValues - secrets to make available to actions
+   */
   withSecretsValues(...secretsValues: [string, string][]): ActRunner {
     secretsValues.forEach((entry) =>
       this.secretsValues.set(entry[0], entry[1]),
@@ -114,11 +163,19 @@ export class ActRunner {
     return this;
   }
 
+  /**
+   * Specifies the file containing workflow variables values to use when invoking the given workflow.
+   * @param {string} variablesFile - variables file to read and use as action input
+   */
   withVariablesFile(variablesFile: string): ActRunner {
     this.variablesFile = variablesFile;
     return this;
   }
 
+  /**
+   * Sets variables values to use when invoking the given workflow.
+   * @param {[string, string][]} variablesValues - secrets to make available to actions
+   */
   withVariablesValues(...variablesValues: [string, string][]): ActRunner {
     variablesValues.forEach((entry) =>
       this.variablesValues.set(entry[0], entry[1]),
@@ -126,11 +183,23 @@ export class ActRunner {
     return this;
   }
 
+  /**
+   * Set matrix values to run the workflow with.
+   * If undefined, all combinations specified in the workflow definition will be invoked.
+   * @param {[string, anu][]} matrixValues - matrix values to run the workflow with
+   * @returns
+   */
   withMatrix(...matrixValues: [string, any][]): ActRunner {
     matrixValues.forEach((entry) => this.matrix.set(entry[0], entry[1]));
     return this;
   }
 
+  /**
+   * Configures the cache server to be used by the given workflow.
+   * @param {string} path - the path where the cache artifacts will be stored
+   * @param {string | undefined } host - the address to which the cache server binds
+   * @param {number | undefined } port - the port where the cache server listens
+   */
   withCacheServer(
     path: string,
     host: string | undefined = undefined,
@@ -140,6 +209,12 @@ export class ActRunner {
     return this;
   }
 
+  /**
+   * Configures the artifact server to be used by the given workflow.
+   * @param {string} path - the path where the artifacts uploaded will be stored
+   * @param {string | undefined } host - the address to which the artifact server binds
+   * @param {number | undefined } port - the port where the artifact server listens
+   */
   withArtifactServer(
     path: string,
     host: string | undefined = undefined,
@@ -149,16 +224,27 @@ export class ActRunner {
     return this;
   }
 
+  /**
+   * Arbitrary additional arguments to pass to the `act` execution.
+   * @param {string[]} args - additional arguments to invoke `act` with
+   */
   withAdditionalArgs(...args: string[]): ActRunner {
     args.forEach((arg) => this.additionalArgs.push(arg));
     return this;
   }
 
+  /**
+   * Forwards the `act` output to `console`.
+   */
   forwardOutput(): ActRunner {
     this.shouldForwardOutput = true;
     return this;
   }
 
+  /**
+   * Invokes `act` with specified options.
+   * @returns workflow execution result for inspection
+   */
   run(): Promise<ActWorkflowExecResult> {
     return new Promise<ActWorkflowExecResult>((resolve, reject) => {
       try {

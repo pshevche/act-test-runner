@@ -19,4 +19,7 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+/**
+ * Error thrown if the `ActRunner` is mis-configured or if the runner encounters an unexpected error.
+ */
 export class ActRunnerError extends Error {}

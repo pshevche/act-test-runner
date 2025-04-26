@@ -22,9 +22,21 @@
 import { ActExecStatus } from './ActExecStatus';
 import { ActJobExecResult } from './ActJobExecResult';
 
+/**
+ * Result of the workflow execution.
+ */
 export class ActWorkflowExecResult {
+  /**
+   * Outcome of the workflow run.
+   */
   readonly status: ActExecStatus;
+  /**
+   * Workflow's console output.
+   */
   readonly output: string;
+  /**
+   * Jobs executed by the workflow.
+   */
   readonly jobs: Map<String, ActJobExecResult>;
 
   constructor(
@@ -37,6 +49,10 @@ export class ActWorkflowExecResult {
     this.jobs = jobs;
   }
 
+  /**
+   * @param name - name of the job executed by the given workflow.
+   * @returns job - result of executing the given job in the context of the current workflow.
+   */
   job(name: string): ActJobExecResult | undefined {
     return this.jobs.get(name);
   }

@@ -21,9 +21,21 @@
 
 import { ActExecStatus } from './ActExecStatus';
 
+/**
+ * Job execution result for inspection.
+ */
 export class ActJobExecResult {
+  /**
+   * Name of the job run.
+   */
   readonly name: string;
+  /**
+   * Result of the job execution.
+   */
   readonly status: ActExecStatus;
+  /**
+   * Job's console output.
+   */
   readonly output: string;
 
   constructor(name: string, status: ActExecStatus, output: string) {
