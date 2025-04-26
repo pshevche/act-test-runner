@@ -16,14 +16,14 @@ This project was created using `bun init` in bun v1.2.7. [Bun](https://bun.sh) i
 
 ## ToDo
 
-- [ ] matrix
 - [ ] resources:
   - [ ] cache
   - [ ] artifact server
 - [ ] validate on runner creation
+- [ ] clean up temp directories
 - [ ] test parallelization
 - [ ] renovate
 - [ ] license header
 - [ ] readme + jsdoc
-- [ ] publication
 - [ ] e2e example
+- [ ] branch protection + release

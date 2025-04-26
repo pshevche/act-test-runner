@@ -1,4 +1,4 @@
-import { expect, test } from 'bun:test';
+import { afterEach, beforeEach, expect, test } from 'bun:test';
 import { ActExecStatus, ActWorkflowExecResult } from '../src';
 import { runner, workflowPath } from './fixtures';
 import { join } from 'node:path';
@@ -10,6 +10,19 @@ export async function run(
 ): Promise<ActWorkflowExecResult> {
   return runner().withWorkflowFile(workflowFile).run();
 }
+
+const customWorkingDir = join(tmpdir(), 'actTestRunner', 'workflows_core');
+beforeEach(() => {
+  if (!fs.existsSync(customWorkingDir)) {
+    fs.mkdirSync(customWorkingDir, { recursive: true });
+  }
+});
+
+afterEach(() => {
+  if (fs.existsSync(customWorkingDir)) {
+    fs.rmdirSync(customWorkingDir, { recursive: true });
+  }
+});
 
 test('reports successful workflows', async () => {
   const result = await run(workflowPath('always_passing_workflow'));
@@ -83,10 +96,6 @@ jobs:
 });
 
 test('supports defining custom working directory', async () => {
-  const customWorkingDir = join(tmpdir(), 'actTestRunner');
-  if (!fs.existsSync(customWorkingDir)) {
-    fs.mkdirSync(customWorkingDir);
-  }
   const result = await runner()
     .withWorkingDir(customWorkingDir)
     .withWorkflowBody(

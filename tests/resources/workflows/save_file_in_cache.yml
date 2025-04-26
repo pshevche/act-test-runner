@@ -1,0 +1,14 @@
+name: Simple workflow storing a text file in cache and loading from it
+on: [push]
+
+jobs:
+  store_file_in_cache:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Configure the storage of greeting file in cache
+        uses: actions/cache@v4
+        with:
+          path: greeting.txt
+          key: greeting-cache
+      - name: Create greeting file
+        run: echo "Hello, World!" > greeting.txt

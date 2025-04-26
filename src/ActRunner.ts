@@ -11,6 +11,7 @@ import {
 } from './utils/fsutils';
 import { firstDefined } from './utils/objects';
 import { checkExists, checkOneDefined } from './utils/checks';
+import { ActResourceSpec } from './ActResourceSpec';
 
 export class ActRunner {
   private workflowFile: string | undefined;
@@ -27,6 +28,8 @@ export class ActRunner {
   private variablesFile: string | undefined;
   private variablesValues: Map<String, String> = new Map<String, String>();
   private matrix: Map<String, any> = new Map<String, any>();
+  private cacheServer: ActResourceSpec | undefined;
+  private artifactServer: ActResourceSpec | undefined;
   private additionalArgs: string[] = [];
   private shouldForwardOutput: boolean = false;
 
@@ -104,6 +107,15 @@ export class ActRunner {
 
   withMatrix(...matrixValues: [string, any][]): ActRunner {
     matrixValues.forEach((entry) => this.matrix.set(entry[0], entry[1]));
+    return this;
+  }
+
+  withCacheServer(
+    path: string,
+    host: string | undefined = undefined,
+    port: number | undefined = undefined,
+  ): ActRunner {
+    this.cacheServer = new ActResourceSpec(path, host, port);
     return this;
   }
 
@@ -188,6 +200,7 @@ export class ActRunner {
       this.variablesFile,
       this.variablesValues,
       this.matrix,
+      this.cacheServer,
       this.additionalArgs,
     );
   }
@@ -206,6 +219,7 @@ class ActRunnerParams {
   private readonly variablesFile: string | undefined;
   private readonly variablesValues: Map<String, String>;
   private readonly matrix: Map<String, any>;
+  private readonly cacheServer: ActResourceSpec | undefined;
   private readonly additionalArgs: string[];
 
   constructor(
@@ -221,6 +235,7 @@ class ActRunnerParams {
     variablesFile: string | undefined,
     variablesValues: Map<String, String>,
     matrix: Map<String, any>,
+    cacheServer: ActResourceSpec | undefined,
     additionalArgs: string[],
   ) {
     this.workflowsPath = workflowsPath;
@@ -235,6 +250,7 @@ class ActRunnerParams {
     this.variablesFile = variablesFile;
     this.variablesValues = variablesValues;
     this.matrix = matrix;
+    this.cacheServer = cacheServer;
     this.additionalArgs = additionalArgs;
   }
 
@@ -283,6 +299,15 @@ class ActRunnerParams {
       args.push('--matrix');
       args.push(`${key}:${value}`);
     });
+
+    this.addResource(
+      args,
+      this.cacheServer,
+      '--cache-server-path',
+      '--cache-server-addr',
+      '--cache-server-port',
+    );
+
     this.additionalArgs.forEach((arg) => args.push(arg));
 
     return args;
@@ -322,6 +347,29 @@ class ActRunnerParams {
       values.forEach((value, key) => {
         args.push(valuesArg, `${key}=${value}`);
       });
+    }
+  }
+
+  private addResource(
+    args: string[],
+    resource: ActResourceSpec | undefined,
+    storageParam: string,
+    addressParam: string,
+    portParam: string,
+  ) {
+    if (resource !== undefined) {
+      args.push(storageParam);
+      args.push(resource.path);
+
+      if (resource.host !== undefined) {
+        args.push(addressParam);
+        args.push(resource.host);
+      }
+
+      if (resource.port !== undefined) {
+        args.push(portParam);
+        args.push(resource.port.toString());
+      }
     }
   }
 }
