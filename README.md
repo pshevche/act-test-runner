@@ -18,8 +18,8 @@ This project was created using `bun init` in bun v1.2.7. [Bun](https://bun.sh) i
 
 - [ ] matrix
 - [ ] resources:
-    - [ ] cache
-    - [ ] artifact server
+  - [ ] cache
+  - [ ] artifact server
 - [ ] validate on runner creation + consistent naming for different input types
 - [ ] test parallelization
 - [ ] renovate

@@ -1,9 +1,9 @@
 name: Workflow printing the issue or PR title
 on:
   pull_request:
-    types: [ opened ]
+    types: [opened]
   issues:
-    types: [ opened ]
+    types: [opened]
 
 jobs:
   print_issue_title:
