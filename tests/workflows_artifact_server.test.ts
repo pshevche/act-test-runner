@@ -1,6 +1,5 @@
-import { afterEach, beforeEach, expect, test } from 'bun:test';
-import { runner, workflowPath } from './fixtures.ts';
-import { ActExecStatus, ActRunner } from '../src/index.ts';
+import { runner, workflowPath } from './fixtures.js';
+import { ActExecStatus, ActRunner } from '../src/index.js';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { existsSync, mkdirSync, rmSync } from 'node:fs';
@@ -46,13 +45,12 @@ test('persists workflow artifacts in configured directory', async () => {
     'greeting',
     'greeting.zip',
   );
-  expect(existsSync(storedArtifact)).toBeTrue();
+  expect(existsSync(storedArtifact)).toBe(true);
 });
 
 // does not work on CI due to conflicting address
-test.skipIf(process.env.CI !== undefined)(
-  'supports advanced artifact server configuration',
-  async () => {
+if (process.env.CI === undefined) {
+  test('supports advanced artifact server configuration', async () => {
     const result = await artifactServerWorkflowRunner()
       .withArtifactServer(artifactServerDir, '192.168.178.35', 34567)
       // required to execute upload-artifact action
@@ -70,6 +68,6 @@ test.skipIf(process.env.CI !== undefined)(
       'greeting',
       'greeting.zip',
     );
-    expect(existsSync(storedArtifact)).toBeTrue();
-  },
-);
+    expect(existsSync(storedArtifact)).toBe(true);
+  });
+}

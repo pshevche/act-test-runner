@@ -19,9 +19,9 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import { ActJobExecResult } from '../ActJobExecResult.ts';
-import { ActJobExecResultBuilder } from './ActJobExecResultBuilder.ts';
-import type { ActExecListener } from './ActExecListener.ts';
+import { ActJobExecResult } from '../ActJobExecResult.js';
+import { ActJobExecResultBuilder } from './ActJobExecResultBuilder.js';
+import type { ActExecListener } from './ActExecListener.js';
 
 export class JobTrackingActExecListener implements ActExecListener {
   private readonly execOutput: string[] = [];

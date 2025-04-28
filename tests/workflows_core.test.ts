@@ -1,6 +1,5 @@
-import { afterEach, beforeEach, expect, test } from 'bun:test';
-import { ActExecStatus, ActWorkflowExecResult } from '../src/index.ts';
-import { runner, workflowPath } from './fixtures.ts';
+import { ActExecStatus, ActWorkflowExecResult } from '../src/index.js';
+import { runner, workflowPath } from './fixtures.js';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { existsSync, mkdirSync, rmSync } from 'node:fs';

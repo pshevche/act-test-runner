@@ -1,5 +1,5 @@
-import { describe, expect, test } from 'bun:test';
-import { checkExists, checkOneDefined } from '../../src/utils/checks';
+import { checkExists, checkOneDefined } from '../../src/utils/checks.js';
+import { currentDir } from '../fixtures.js';
 
 describe('checkOneDefined', () => {
   test('does not fail if first value is defined', () => {
@@ -31,6 +31,7 @@ describe('checkExists', () => {
   });
 
   test('returns provided path if it exists', () => {
-    expect(checkExists('current dir', import.meta.dir)).toBe(import.meta.dir);
+    const dir = currentDir();
+    expect(checkExists('current dir', dir)).toBe(dir);
   });
 });

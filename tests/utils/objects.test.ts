@@ -1,5 +1,4 @@
-import { describe, expect, test } from 'bun:test';
-import { firstDefined } from '../../src/utils/objects';
+import { firstDefined } from '../../src/utils/objects.js';
 
 describe('firstDefined', () => {
   test('returns first value if provided supplier returns a value', () => {

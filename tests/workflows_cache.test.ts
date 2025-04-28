@@ -1,6 +1,5 @@
-import { afterEach, beforeEach, expect, test } from 'bun:test';
-import { runner, workflowPath } from './fixtures.ts';
-import { ActExecStatus, ActRunner } from '../src/index.ts';
+import { runner, workflowPath } from './fixtures.js';
+import { ActExecStatus, ActRunner } from '../src/index.js';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { existsSync, mkdirSync, rmSync } from 'node:fs';
@@ -31,13 +30,12 @@ test('persists cache entries in configured directory', async () => {
   expect(result.job('store_file_in_cache')!.status).toBe(ActExecStatus.SUCCESS);
 
   const cacheArtifact = join(customCacheDir, 'cache', '01', '1');
-  expect(existsSync(cacheArtifact)).toBeTrue();
+  expect(existsSync(cacheArtifact)).toBe(true);
 });
 
 // does not work on CI due to conflicting address
-test.skipIf(process.env.CI !== undefined)(
-  'supports advanced cache configuration',
-  async () => {
+if (process.env.CI === undefined) {
+  test('supports advanced cache configuration', async () => {
     const result = await cacheWorkflowRunner()
       .withCacheServer(customCacheDir, '192.168.178.35', 0)
       .run();
@@ -48,6 +46,6 @@ test.skipIf(process.env.CI !== undefined)(
     );
 
     const cacheArtifact = join(customCacheDir, 'cache', '01', '1');
-    expect(existsSync(cacheArtifact)).toBeTrue();
-  },
-);
+    expect(existsSync(cacheArtifact)).toBe(true);
+  });
+}

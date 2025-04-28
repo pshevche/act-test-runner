@@ -25,14 +25,19 @@
     }
   },
   "devDependencies": {
-    "@types/bun": "latest",
+    "@jest/globals": "^29.7.0",
+    "@types/jest": "^29.5.14",
     "@typescript-eslint/eslint-plugin": "^8.28.0",
     "@typescript-eslint/parser": "^8.28.0",
     "eslint": "^9.23.0",
     "eslint-config-prettier": "^10.1.1",
     "eslint-plugin-prettier": "^5.2.5",
+    "jest": "^29.7.0",
     "jiti": "^2.4.2",
-    "prettier": "^3.5.3"
+    "prettier": "^3.5.3",
+    "ts-jest": "^29.3.2",
+    "ts-jest-resolver": "^2.0.1",
+    "ts-node": "^10.9.2"
   },
   "peerDependencies": {
     "typescript": "^5"
@@ -45,7 +50,8 @@
     "lint:check": "eslint . --max-warnings 0",
     "prettier:check": "prettier --check .",
     "license:check": "addlicense -check src/",
-    "build": "bun build src/index.ts --outdir dist --external node:child_processes --external node:fs --external node:os --external node:path && bunx tsc --project tsconfig.types.json",
-    "check": "bun run lint:check && bun run prettier:check && bun run build && bun test --timeout 30000"
+    "build": "tsc",
+    "test": "NODE_OPTIONS=--experimental-vm-modules NODE_NO_WARNINGS=1 jest",
+    "check": "npm run lint:check && npm run prettier:check && npm run build && npm run test"
   }
 }

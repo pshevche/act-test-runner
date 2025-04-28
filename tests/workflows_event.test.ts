@@ -1,6 +1,5 @@
-import { expect, test } from 'bun:test';
-import { eventPayloadPath, runner, workflowPath } from './fixtures.ts';
-import { ActExecStatus, ActRunner } from '../src/index.ts';
+import { eventPayloadPath, runner, workflowPath } from './fixtures.js';
+import { ActExecStatus, ActRunner } from '../src/index.js';
 
 function eventWorkflowRunner(): ActRunner {
   return runner().withWorkflowFile(workflowPath('print_issue_or_pr_title'));

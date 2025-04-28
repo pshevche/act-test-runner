@@ -20,19 +20,19 @@
  */
 
 import { spawn } from 'node:child_process';
-import { ActWorkflowExecResult } from './ActWorkflowExecResult.ts';
-import { ActExecStatus } from './ActExecStatus.ts';
-import { ActRunnerError } from './ActRunnerError.ts';
-import { JobTrackingActExecListener } from './internal/JobTrackingActExecListener.ts';
-import { OutputForwardingActExecListener } from './internal/OutputForwardingActExecListener.ts';
+import { ActWorkflowExecResult } from './ActWorkflowExecResult.js';
+import { ActExecStatus } from './ActExecStatus.js';
+import { ActRunnerError } from './ActRunnerError.js';
+import { JobTrackingActExecListener } from './internal/JobTrackingActExecListener.js';
+import { OutputForwardingActExecListener } from './internal/OutputForwardingActExecListener.js';
 import {
   cleanupDir,
   createTempDir,
   createTempWorkflowFile,
-} from './utils/fsutils.ts';
-import { firstDefined } from './utils/objects.ts';
-import { checkExists, checkOneDefined } from './utils/checks.ts';
-import { ActResourceSpec } from './internal/ActResourceSpec.ts';
+} from './utils/fsutils.js';
+import { firstDefined } from './utils/objects.js';
+import { checkExists, checkOneDefined } from './utils/checks.js';
+import { ActResourceSpec } from './internal/ActResourceSpec.js';
 
 /**
  * Invokes `act`, allowing end-to-end testing of custom GitHub actions and workflows.

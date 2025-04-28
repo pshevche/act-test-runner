@@ -1,9 +1,8 @@
-import { describe, expect, test } from 'bun:test';
 import {
   cleanupDir,
   createTempDir,
   createTempWorkflowFile,
-} from '../../src/utils/fsutils.ts';
+} from '../../src/utils/fsutils.js';
 import { existsSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
@@ -16,6 +15,6 @@ describe('fsutils', () => {
 
     cleanupDir(dir);
 
-    expect(existsSync(dir)).toBeFalse();
+    expect(existsSync(dir)).toBe(false);
   });
 });

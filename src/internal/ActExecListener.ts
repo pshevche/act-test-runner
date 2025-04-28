@@ -19,7 +19,7 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import { ActJobExecResult } from '../ActJobExecResult.ts';
+import { ActJobExecResult } from '../ActJobExecResult.js';
 
 export interface ActExecListener {
   onStdOutput(output: string): void;
