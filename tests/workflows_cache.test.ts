@@ -1,9 +1,9 @@
-import { beforeEach, afterEach, expect, test } from 'bun:test';
-import { runner, workflowPath } from './fixtures';
-import { ActExecStatus, ActRunner } from '../src';
+import { afterEach, beforeEach, expect, test } from 'bun:test';
+import { runner, workflowPath } from './fixtures.ts';
+import { ActExecStatus, ActRunner } from '../src/index.ts';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
-import fs from 'node:fs';
+import { existsSync, mkdirSync, rmSync } from 'node:fs';
 
 function cacheWorkflowRunner(): ActRunner {
   return runner().withWorkflowFile(workflowPath('save_file_in_cache'));
@@ -11,14 +11,14 @@ function cacheWorkflowRunner(): ActRunner {
 
 const customCacheDir = join(tmpdir(), 'actTestRunner', 'workflows_cache');
 beforeEach(() => {
-  if (!fs.existsSync(customCacheDir)) {
-    fs.mkdirSync(customCacheDir, { recursive: true });
+  if (!existsSync(customCacheDir)) {
+    mkdirSync(customCacheDir, { recursive: true });
   }
 });
 
 afterEach(() => {
-  if (fs.existsSync(customCacheDir)) {
-    fs.rmdirSync(customCacheDir, { recursive: true });
+  if (existsSync(customCacheDir)) {
+    rmSync(customCacheDir, { recursive: true, force: true });
   }
 });
 
@@ -31,7 +31,7 @@ test('persists cache entries in configured directory', async () => {
   expect(result.job('store_file_in_cache')!.status).toBe(ActExecStatus.SUCCESS);
 
   const cacheArtifact = join(customCacheDir, 'cache', '01', '1');
-  expect(fs.existsSync(cacheArtifact)).toBeTrue();
+  expect(existsSync(cacheArtifact)).toBeTrue();
 });
 
 // does not work on CI due to conflicting address
@@ -48,6 +48,6 @@ test.skipIf(process.env.CI !== undefined)(
     );
 
     const cacheArtifact = join(customCacheDir, 'cache', '01', '1');
-    expect(fs.existsSync(cacheArtifact)).toBeTrue();
+    expect(existsSync(cacheArtifact)).toBeTrue();
   },
 );

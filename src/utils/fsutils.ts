@@ -21,7 +21,7 @@
 
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import fs from 'node:fs';
+import { existsSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 
 export function createTempWorkflowFile(
   workingDir: string,
@@ -29,17 +29,17 @@ export function createTempWorkflowFile(
 ): string {
   const fileName = join(workingDir, 'workflow.yml');
   console.log(`Writing workflow body to file ${fileName}`);
-  fs.writeFileSync(fileName, workflowBody);
+  writeFileSync(fileName, workflowBody);
   return fileName;
 }
 
 export function cleanupDir(workingDir: string) {
-  if (fs.existsSync(workingDir)) {
-    fs.rmdirSync(workingDir, { recursive: true });
+  if (existsSync(workingDir)) {
+    rmSync(workingDir, { recursive: true, force: true });
   }
 }
 
 export function createTempDir(): string {
   const prefix = join(tmpdir(), 'act-test-runner');
-  return fs.mkdtempSync(prefix);
+  return mkdtempSync(prefix);
 }

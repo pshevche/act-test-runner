@@ -19,8 +19,8 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import { ActRunnerError } from '../ActRunnerError';
-import fs from 'node:fs';
+import { ActRunnerError } from '../ActRunnerError.ts';
+import { existsSync } from 'node:fs';
 
 export function checkOneDefined(first: any, second: any) {
   if (
@@ -34,7 +34,7 @@ export function checkOneDefined(first: any, second: any) {
 }
 
 export function checkExists(label: string, path: string): string {
-  if (!fs.existsSync(path)) {
+  if (!existsSync(path)) {
     throw new ActRunnerError(`The specified ${label} '${path}' does not exist`);
   }
 

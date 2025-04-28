@@ -1,5 +1,5 @@
 import path from 'node:path';
-import { ActRunner } from '../src';
+import { ActRunner } from '../src/index.ts';
 
 export function runner(forwardOutput: boolean = false): ActRunner {
   const runner = new ActRunner();

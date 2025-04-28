@@ -1,5 +1,5 @@
 import { expect, test } from 'bun:test';
-import { runner, workflowPath } from './fixtures';
+import { runner, workflowPath } from './fixtures.ts';
 
 test('fails if the specified workflows location does not exist', async () => {
   expect(

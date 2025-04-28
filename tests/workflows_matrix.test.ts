@@ -1,6 +1,6 @@
 import { expect, test } from 'bun:test';
-import { runner, workflowPath } from './fixtures';
-import { ActExecStatus, ActRunner } from '../src';
+import { runner, workflowPath } from './fixtures.ts';
+import { ActExecStatus, ActRunner } from '../src/index.ts';
 
 function matrixWorkflowRunner(): ActRunner {
   return runner().withWorkflowFile(workflowPath('print_matrix_values'));

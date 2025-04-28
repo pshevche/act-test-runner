@@ -1,9 +1,9 @@
 import { afterEach, beforeEach, expect, test } from 'bun:test';
-import { ActExecStatus, ActWorkflowExecResult } from '../src';
-import { runner, workflowPath } from './fixtures';
+import { ActExecStatus, ActWorkflowExecResult } from '../src/index.ts';
+import { runner, workflowPath } from './fixtures.ts';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
-import fs from 'node:fs';
+import { existsSync, mkdirSync, rmSync } from 'node:fs';
 
 export async function run(
   workflowFile: string,
@@ -13,14 +13,14 @@ export async function run(
 
 const customWorkingDir = join(tmpdir(), 'actTestRunner', 'workflows_core');
 beforeEach(() => {
-  if (!fs.existsSync(customWorkingDir)) {
-    fs.mkdirSync(customWorkingDir, { recursive: true });
+  if (!existsSync(customWorkingDir)) {
+    mkdirSync(customWorkingDir, { recursive: true });
   }
 });
 
 afterEach(() => {
-  if (fs.existsSync(customWorkingDir)) {
-    fs.rmdirSync(customWorkingDir, { recursive: true });
+  if (existsSync(customWorkingDir)) {
+    rmSync(customWorkingDir, { recursive: true, force: true });
   }
 });
 

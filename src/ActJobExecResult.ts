@@ -19,7 +19,7 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import { ActExecStatus } from './ActExecStatus';
+import { ActExecStatus } from './ActExecStatus.ts';
 
 /**
  * Job execution result for inspection.

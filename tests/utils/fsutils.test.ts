@@ -3,8 +3,8 @@ import {
   cleanupDir,
   createTempDir,
   createTempWorkflowFile,
-} from '../../src/utils/fsutils';
-import fs from 'node:fs';
+} from '../../src/utils/fsutils.ts';
+import { existsSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 describe('fsutils', () => {
@@ -12,10 +12,10 @@ describe('fsutils', () => {
     const dir = createTempDir();
 
     createTempWorkflowFile(dir, 'foo');
-    fs.writeFileSync(join(dir, 'bar'), 'bar');
+    writeFileSync(join(dir, 'bar'), 'bar');
 
     cleanupDir(dir);
 
-    expect(fs.existsSync(dir)).toBeFalse();
+    expect(existsSync(dir)).toBeFalse();
   });
 });

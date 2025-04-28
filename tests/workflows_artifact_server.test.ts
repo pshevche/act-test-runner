@@ -1,9 +1,9 @@
-import { beforeEach, afterEach, expect, test } from 'bun:test';
-import { runner, workflowPath } from './fixtures';
-import { ActExecStatus, ActRunner } from '../src';
+import { afterEach, beforeEach, expect, test } from 'bun:test';
+import { runner, workflowPath } from './fixtures.ts';
+import { ActExecStatus, ActRunner } from '../src/index.ts';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
-import fs from 'node:fs';
+import { existsSync, mkdirSync, rmSync } from 'node:fs';
 
 function artifactServerWorkflowRunner(): ActRunner {
   return runner().withWorkflowFile(
@@ -17,14 +17,14 @@ const artifactServerDir = join(
   'workflows_artifact_server',
 );
 beforeEach(() => {
-  if (!fs.existsSync(artifactServerDir)) {
-    fs.mkdirSync(artifactServerDir, { recursive: true });
+  if (!existsSync(artifactServerDir)) {
+    mkdirSync(artifactServerDir, { recursive: true });
   }
 });
 
 afterEach(() => {
-  if (fs.existsSync(artifactServerDir)) {
-    fs.rmdirSync(artifactServerDir, { recursive: true });
+  if (existsSync(artifactServerDir)) {
+    rmSync(artifactServerDir, { recursive: true, force: true });
   }
 });
 
@@ -46,7 +46,7 @@ test('persists workflow artifacts in configured directory', async () => {
     'greeting',
     'greeting.zip',
   );
-  expect(fs.existsSync(storedArtifact)).toBeTrue();
+  expect(existsSync(storedArtifact)).toBeTrue();
 });
 
 // does not work on CI due to conflicting address
@@ -70,6 +70,6 @@ test.skipIf(process.env.CI !== undefined)(
       'greeting',
       'greeting.zip',
     );
-    expect(fs.existsSync(storedArtifact)).toBeTrue();
+    expect(existsSync(storedArtifact)).toBeTrue();
   },
 );

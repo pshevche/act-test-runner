@@ -19,8 +19,8 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import { ActJobExecResult } from '../ActJobExecResult';
-import { ActExecStatus } from '../ActExecStatus';
+import { ActJobExecResult } from '../ActJobExecResult.ts';
+import { ActExecStatus } from '../ActExecStatus.ts';
 
 export class ActJobExecResultBuilder {
   private readonly name: string;

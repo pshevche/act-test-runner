@@ -1,22 +1,29 @@
 {
   "name": "@pshevche/act-test-runner",
+  "version": "0.2.1",
+  "description": "Convention wrapper around https://github.com/nektos/act for e2e testing GitHub actions",
   "author": "Pavlo Shevchenko",
   "keywords": [
-    "GitHub actions",
+    "github",
+    "github actions",
     "act",
+    "nektos act",
     "testing"
   ],
   "license": "MIT",
-  "version": "0.1.1",
-  "description": "Convention wrapper around https://github.com/nektos/act for e2e testing GitHub actions",
   "publishConfig": {
     "access": "public"
   },
-  "module": "src/index.ts",
   "type": "module",
   "files": [
     "dist"
   ],
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
   "devDependencies": {
     "@types/bun": "latest",
     "@typescript-eslint/eslint-plugin": "^8.28.0",
@@ -38,7 +45,7 @@
     "lint:check": "eslint . --max-warnings 0",
     "prettier:check": "prettier --check .",
     "license:check": "addlicense -check src/",
-    "build": "bun build src/index.ts --outdir dist && bunx tsc --project tsconfig.types.json",
+    "build": "bun build src/index.ts --outdir dist --external node:child_processes --external node:fs --external node:os --external node:path && bunx tsc --project tsconfig.types.json",
     "check": "bun run lint:check && bun run prettier:check && bun run build && bun test --timeout 30000"
   }
 }

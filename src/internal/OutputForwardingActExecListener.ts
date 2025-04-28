@@ -19,8 +19,8 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import type { ActExecListener } from './ActExecListener';
-import type { ActJobExecResult } from '../ActJobExecResult';
+import type { ActExecListener } from './ActExecListener.ts';
+import type { ActJobExecResult } from '../ActJobExecResult.ts';
 
 export class OutputForwardingActExecListener implements ActExecListener {
   private readonly delegate: ActExecListener;
