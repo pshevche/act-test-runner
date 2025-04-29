@@ -50,8 +50,8 @@
     "lint:check": "eslint . --max-warnings 0",
     "prettier:check": "prettier --check .",
     "license:check": "addlicense -check src/",
-    "build": "tsc",
+    "package": "tsc --project tsconfig.package.json",
     "test": "NODE_OPTIONS=--experimental-vm-modules NODE_NO_WARNINGS=1 jest",
-    "check": "npm run lint:check && npm run prettier:check && npm run build && npm run test"
+    "check": "npm run lint:check && npm run prettier:check && npm run package && npm run test"
   }
 }
