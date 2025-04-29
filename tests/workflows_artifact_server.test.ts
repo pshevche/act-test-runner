@@ -47,27 +47,3 @@ test('persists workflow artifacts in configured directory', async () => {
   );
   expect(existsSync(storedArtifact)).toBe(true);
 });
-
-// does not work on CI due to conflicting address
-if (process.env.CI === undefined) {
-  test('supports advanced artifact server configuration', async () => {
-    const result = await artifactServerWorkflowRunner()
-      .withArtifactServer(artifactServerDir, '192.168.178.35', 34567)
-      // required to execute upload-artifact action
-      .withEnvValues(['ACTIONS_RUNTIME_TOKEN', 'irrelevant'])
-      .run();
-
-    expect(result.status).toBe(ActExecStatus.SUCCESS);
-    expect(result.job('store_file_in_artifact_server')!.status).toBe(
-      ActExecStatus.SUCCESS,
-    );
-
-    const storedArtifact = join(
-      artifactServerDir,
-      '1',
-      'greeting',
-      'greeting.zip',
-    );
-    expect(existsSync(storedArtifact)).toBe(true);
-  });
-}

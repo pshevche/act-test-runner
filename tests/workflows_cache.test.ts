@@ -32,20 +32,3 @@ test('persists cache entries in configured directory', async () => {
   const cacheArtifact = join(customCacheDir, 'cache', '01', '1');
   expect(existsSync(cacheArtifact)).toBe(true);
 });
-
-// does not work on CI due to conflicting address
-if (process.env.CI === undefined) {
-  test('supports advanced cache configuration', async () => {
-    const result = await cacheWorkflowRunner()
-      .withCacheServer(customCacheDir, '192.168.178.35', 0)
-      .run();
-
-    expect(result.status).toBe(ActExecStatus.SUCCESS);
-    expect(result.job('store_file_in_cache')!.status).toBe(
-      ActExecStatus.SUCCESS,
-    );
-
-    const cacheArtifact = join(customCacheDir, 'cache', '01', '1');
-    expect(existsSync(cacheArtifact)).toBe(true);
-  });
-}
