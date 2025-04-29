@@ -141,6 +141,6 @@ users will benfit from having a native support for this property.
 
 ## Useful links
 
-- https://github.com/nektos/act[nektos/act]: GitHub actions runner used by the plugin.
-- https://nektosact.com/[act User Guide]: describes various configuration options that the runner provides, as well as
+- [nektos/act](https://github.com/nektos/act): GitHub actions runner used by the plugin.
+- [act User Guide](https://nektosact.com): describes various configuration options that the runner provides, as well as
   the format for input files.
