@@ -23,11 +23,11 @@ jobs:
         run: |
           npm install
 
-      - name: Run check
+      - name: Package act-test-runner
         run: |
-          npm run check
+          npm run package
 
-      - name: Publish to npm
+      - name: Publish act-test-runner to npm
         env:
           NPM_CONFIG_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
