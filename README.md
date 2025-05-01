@@ -36,8 +36,7 @@ jobs:
   expect(result.output).toContain('Hello, World!');
   expect(result.jobs.size).toBe(1);
 
-  const successfulJob = result.job('successful_job')
-  !;
+  const successfulJob = result.job('successful_job')!;
   expect(successfulJob.status).toBe(ActExecStatus.SUCCESS);
   expect(successfulJob.output).toContain('Hello, World!');
 });
@@ -70,8 +69,7 @@ jobs:
     .run();
 
   expect(result.status).toBe(ActExecStatus.SUCCESS);
-  const job = result.job('print_event_type')
-  !;
+  const job = result.job('print_event_type')!;
   expect(job.status).toBe(ActExecStatus.SUCCESS);
   expect(job.output).toContain('Event type: pull_request');
 });
@@ -99,8 +97,7 @@ jobs:
     .run();
 
   expect(result.status).toBe(ActExecStatus.SUCCESS);
-  const job = result.job('print_greeting')
-  !;
+  const job = result.job('print_greeting')!;
   expect(job.status).toBe(ActExecStatus.SUCCESS);
   expect(job.output).toContain('Hello, Bruce!');
 });
