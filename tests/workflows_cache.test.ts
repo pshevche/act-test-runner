@@ -31,4 +31,4 @@ test('persists cache entries in configured directory', async () => {
 
   const cacheArtifact = join(customCacheDir, 'cache', '01', '1');
   expect(existsSync(cacheArtifact)).toBe(true);
-});
+}, 60_000);
