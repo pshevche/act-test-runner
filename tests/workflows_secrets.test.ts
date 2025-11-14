@@ -4,7 +4,7 @@ import { ActExecStatus, ActRunner } from '../src/index.js';
 function secretsWorkflowRunner(): ActRunner {
   return runner()
     .withWorkflowFile(workflowPath('print_secrets'))
-    .withAdditionalArgs('--insecure-secrets');
+    .withAdditionalArgs(['--insecure-secrets']);
 }
 
 test('supports setting secrets values directly', async () => {
