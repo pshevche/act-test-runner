@@ -228,7 +228,7 @@ export class ActRunner {
    * Arbitrary additional arguments to pass to the `act` execution.
    * @param {string[]} args - additional arguments to invoke `act` with
    */
-  withAdditionalArgs(...args: string[]): ActRunner {
+  withAdditionalArgs(args: string[]): ActRunner {
     args.forEach((arg) => this.additionalArgs.push(arg));
     return this;
   }

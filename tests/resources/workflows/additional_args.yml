@@ -1,0 +1,22 @@
+name: Additional Arguments Workflow
+on: [push]
+
+jobs:
+  failing_job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Init git repository
+        run: |
+          git init
+          git config user.name "Test User"
+          git config user.email "test@example.com"
+
+      - name: Create test file
+        run: |
+          echo "Test content" > test.txt
+          echo "File created successfully"
+
+      - name: Commit the test file
+        run: |
+          git add test.txt
+          git commit -m "Add test file"
