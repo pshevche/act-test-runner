@@ -32,4 +32,4 @@ jobs:
         run: |
           npm ci
           npm run check
-          npm publish
+          npm publish --provenance
