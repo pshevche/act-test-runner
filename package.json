@@ -1,6 +1,6 @@
 {
   "name": "@pshevche/act-test-runner",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Convention wrapper around https://github.com/nektos/act for e2e testing GitHub actions",
   "author": "Pavlo Shevchenko",
   "keywords": [
