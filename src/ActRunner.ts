@@ -118,7 +118,7 @@ export class ActRunner {
 
   /**
    * Sets environment variables to use when invoking the given workflow.
-   * @param {[string, string][]} envValues - environment variable values to use as env in the containers
+   * @param {...[string, string]} envValues - environment variable values to use as env in the containers
    */
   withEnvValues(...envValues: [string, string][]): ActRunner {
     envValues.forEach((entry) => this.envValues.set(entry[0], entry[1]));
@@ -136,7 +136,7 @@ export class ActRunner {
 
   /**
    * Sets inputs values to use when invoking the given workflow.
-   * @param {[string, string][]} inputsValues - action input to make available to actions
+   * @param {...[string, string]} inputsValues - action input to make available to actions
    */
   withInputsValues(...inputsValues: [string, string][]): ActRunner {
     inputsValues.forEach((entry) => this.inputsValues.set(entry[0], entry[1]));
@@ -154,7 +154,7 @@ export class ActRunner {
 
   /**
    * Sets secrets values to use when invoking the given workflow.
-   * @param {[string, string][]} secretsValues - secrets to make available to actions
+   * @param {...[string, string]} secretsValues - secrets to make available to actions
    */
   withSecretsValues(...secretsValues: [string, string][]): ActRunner {
     secretsValues.forEach((entry) =>
@@ -174,7 +174,7 @@ export class ActRunner {
 
   /**
    * Sets variables values to use when invoking the given workflow.
-   * @param {[string, string][]} variablesValues - secrets to make available to actions
+   * @param {...[string, string]} variablesValues - secrets to make available to actions
    */
   withVariablesValues(...variablesValues: [string, string][]): ActRunner {
     variablesValues.forEach((entry) =>
@@ -186,7 +186,7 @@ export class ActRunner {
   /**
    * Set matrix values to run the workflow with.
    * If undefined, all combinations specified in the workflow definition will be invoked.
-   * @param {[string, anu][]} matrixValues - matrix values to run the workflow with
+   * @param {...[string, any]} matrixValues - matrix values to run the workflow with
    * @returns
    */
   withMatrix(...matrixValues: [string, any][]): ActRunner {
@@ -226,7 +226,7 @@ export class ActRunner {
 
   /**
    * Arbitrary additional arguments to pass to the `act` execution.
-   * @param {string[]} args - additional arguments to invoke `act` with
+   * @param {...string} args - additional arguments to invoke `act` with
    */
   withAdditionalArgs(...args: string[]): ActRunner {
     args.forEach((arg) => this.additionalArgs.push(arg));
