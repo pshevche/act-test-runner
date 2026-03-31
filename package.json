@@ -44,7 +44,7 @@
     "ts-node": "^10.9.2"
   },
   "peerDependencies": {
-    "typescript": "^5"
+    "typescript": "^6.0.0"
   },
   "scripts": {
     "clean": "rm -r dist",
