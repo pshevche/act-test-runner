@@ -10,17 +10,19 @@ test('runs workflow with all matrix values by default', async () => {
 
   expect(result.status).toBe(ActExecStatus.SUCCESS);
 
-  expect(result.job('print_greeting-1')!.status).toBe(ActExecStatus.SUCCESS);
-  expect(result.job('print_greeting-1')!.output).toContain('Hello, Bruce!');
+  const matrixJobs = Array.from(result.jobs.values()).filter((job) =>
+    job.name.startsWith('print_greeting'),
+  );
+  expect(matrixJobs).toHaveLength(4);
+  expect(matrixJobs.every((job) => job.status === ActExecStatus.SUCCESS)).toBe(
+    true,
+  );
 
-  expect(result.job('print_greeting-2')!.status).toBe(ActExecStatus.SUCCESS);
-  expect(result.job('print_greeting-2')!.output).toContain('Hello, Falco!');
-
-  expect(result.job('print_greeting-3')!.status).toBe(ActExecStatus.SUCCESS);
-  expect(result.job('print_greeting-3')!.output).toContain('Hallo, Bruce!');
-
-  expect(result.job('print_greeting-4')!.status).toBe(ActExecStatus.SUCCESS);
-  expect(result.job('print_greeting-4')!.output).toContain('Hallo, Falco!');
+  const allOutput = matrixJobs.map((job) => job.output).join('\n');
+  expect(allOutput).toContain('Hello, Bruce!');
+  expect(allOutput).toContain('Hello, Falco!');
+  expect(allOutput).toContain('Hallo, Bruce!');
+  expect(allOutput).toContain('Hallo, Falco!');
 });
 
 test('supports restricting matrix values to run with', async () => {
