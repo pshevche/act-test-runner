@@ -14,7 +14,9 @@ test('runs workflow with all matrix values by default', async () => {
     job.name.startsWith('print_greeting'),
   );
   expect(matrixJobs).toHaveLength(4);
-  expect(matrixJobs.every((job) => job.status === ActExecStatus.SUCCESS)).toBe(true);
+  expect(matrixJobs.every((job) => job.status === ActExecStatus.SUCCESS)).toBe(
+    true,
+  );
 
   const allOutput = matrixJobs.map((job) => job.output).join('\n');
   expect(allOutput).toContain('Hello, Bruce!');
