@@ -117,6 +117,12 @@ To run verification tasks:
 npm run check
 ```
 
+### OpenCode setup
+
+This repository uses OpenCode project instructions from `AGENTS.md`.
+
+OpenCode project config is defined in `opencode.json` at the repository root and is loaded automatically.
+
 ## Known limitations
 
 ### Sequential runner invocations
