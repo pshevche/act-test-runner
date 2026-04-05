@@ -1,0 +1,11 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "permission": {
+    "bash": {
+      "*": "ask",
+      "npm info *": "allow",
+      "npm install *": "allow",
+      "npm run *": "allow"
+    }
+  }
+}
