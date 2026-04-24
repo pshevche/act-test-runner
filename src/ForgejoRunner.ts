@@ -47,7 +47,7 @@ export class ForgejoRunner extends RunnerBase {
 export class DockerForgejoRunner extends RunnerBase {
   private readonly runnerVersion: string;
 
-  constructor(runnerVersion: string = '12') {
+  constructor(runnerVersion: string) {
     super();
     this.runnerVersion = runnerVersion;
   }
