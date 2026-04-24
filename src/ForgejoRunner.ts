@@ -19,7 +19,6 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import { tmpdir } from 'node:os';
 import { RunnerBase } from './RunnerBase.js';
 
 /**
@@ -34,38 +33,5 @@ import { RunnerBase } from './RunnerBase.js';
 export class ForgejoRunner extends RunnerBase {
   protected command(): string[] {
     return ['forgejo-runner', 'exec'];
-  }
-}
-
-/**
- * Invokes `forgejo-runner exec` inside a Docker container, allowing end-to-end testing of custom Forgejo actions and workflows without installing the binary locally.
- *
- * The current working directory and system temp directory are mounted into the container so that workflow files and temporary working directories remain accessible.
- *
- * The runner cannot be used concurrently due to limitations on the `forgejo-runner` side.
- */
-export class DockerForgejoRunner extends RunnerBase {
-  private readonly runnerVersion: string;
-
-  constructor(runnerVersion: string) {
-    super();
-    this.runnerVersion = runnerVersion;
-  }
-
-  protected command(): string[] {
-    const cwd = process.cwd();
-    const tmpDir = tmpdir();
-    return [
-      'docker',
-      'run',
-      '--rm',
-      '-v',
-      `${cwd}:${cwd}`,
-      '-v',
-      `${tmpDir}:${tmpDir}`,
-      `data.forgejo.org/forgejo/runner:${this.runnerVersion}`,
-      'forgejo-runner',
-      'exec',
-    ];
   }
 }
