@@ -22,16 +22,16 @@
 import { RunnerBase } from './RunnerBase.js';
 
 /**
- * Invokes `act`, allowing end-to-end testing of custom GitHub actions and workflows.
+ * Invokes `forgejo-runner exec`, allowing end-to-end testing of custom Forgejo actions and workflows.
  *
  * Typically, the test code will provide a workflow file or workflow body to run, as well as required workflow inputs, such as environment variables or secrets.
  *
  * Assertions can then be made on the outcome of the `run()` method invocation, such as the jobs run, workflow output, or artifacts persisted in the artifact server or action cache.
  *
- * The runner cannot be used concurrently due to limitations on the `act` side.
+ * The runner cannot be used concurrently due to limitations on the `forgejo-runner` side.
  */
-export class ActRunner extends RunnerBase {
+export class ForgejoRunner extends RunnerBase {
   protected command(): string[] {
-    return ['act'];
+    return ['forgejo-runner', 'exec'];
   }
 }
