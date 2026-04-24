@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  verify:
+  verify-act:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -28,4 +28,25 @@ jobs:
 
       - name: Run check
         run: |
-          npm run check
+          npm run lint:check && npm run prettier:check && npm run package && npm run test:act
+
+  verify-forgejo:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Setup forgejo-runner
+        run: |
+          curl -L -o /usr/local/bin/forgejo-runner "https://code.forgejo.org/forgejo/runner/releases/download/v11.0.0/forgejo-runner-11.0.0-linux-amd64"
+          chmod +x /usr/local/bin/forgejo-runner
+          # Use the micro image to speed up tests
+          echo "-P ubuntu-latest=node:16-buster-slim" > $HOME/.actrc
+
+      - name: Install dependencies
+        run: |
+          npm install
+
+      - name: Run forgejo tests
+        run: |
+          npm run test:forgejo
