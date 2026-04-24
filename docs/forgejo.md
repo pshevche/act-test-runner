@@ -12,7 +12,13 @@ The binary can be downloaded from the [Forgejo Runner releases page](https://cod
 
 ### Docker runner
 
-`DockerForgejoRunner` runs `forgejo-runner exec` inside a Docker container (`data.forgejo.org/forgejo/runner:12`). The current working directory and temp directory are automatically mounted so workflow files remain accessible. No local binary installation is required.
+`DockerForgejoRunner` runs `forgejo-runner exec` inside a Docker container (`data.forgejo.org/forgejo/runner:<version>`). The current working directory and temp directory are automatically mounted so workflow files remain accessible. No local binary installation is required.
+
+The runner version defaults to `12` and can be overridden via the constructor:
+
+```typescript
+const runner = new DockerForgejoRunner('11');
+```
 
 ## Usage
 
@@ -100,3 +106,8 @@ const job = result.job('print_greeting')!;
 expect(job.status).toBe(ActExecStatus.SUCCESS);
 expect(job.output).toContain('Hello, Bruce!');
 ```
+
+## Useful links
+
+- [Forgejo Runner repository](https://code.forgejo.org/forgejo/runner): source code and releases for the Forgejo runner.
+- [Forgejo documentation](https://forgejo.org/docs): official Forgejo documentation, including runner installation and usage guides.

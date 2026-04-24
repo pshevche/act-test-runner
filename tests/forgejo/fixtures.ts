@@ -5,7 +5,7 @@ export function forgejoRunner(
 ): ForgejoRunner | DockerForgejoRunner {
   const runner = process.env.CI
     ? new ForgejoRunner()
-    : new DockerForgejoRunner();
+    : new DockerForgejoRunner('12');
   if (forwardOutput) {
     runner.forwardOutput();
   }

@@ -45,6 +45,13 @@ export class ForgejoRunner extends RunnerBase {
  * The runner cannot be used concurrently due to limitations on the `forgejo-runner` side.
  */
 export class DockerForgejoRunner extends RunnerBase {
+  private readonly runnerVersion: string;
+
+  constructor(runnerVersion: string = '12') {
+    super();
+    this.runnerVersion = runnerVersion;
+  }
+
   protected command(): string[] {
     const cwd = process.cwd();
     const tmpDir = tmpdir();
@@ -56,7 +63,7 @@ export class DockerForgejoRunner extends RunnerBase {
       `${cwd}:${cwd}`,
       '-v',
       `${tmpDir}:${tmpDir}`,
-      'data.forgejo.org/forgejo/runner:12',
+      `data.forgejo.org/forgejo/runner:${this.runnerVersion}`,
       'forgejo-runner',
       'exec',
     ];
