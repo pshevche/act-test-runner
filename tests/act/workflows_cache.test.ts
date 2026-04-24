@@ -1,11 +1,12 @@
-import { runner, workflowPath } from './fixtures.js';
-import { ActExecStatus, ActRunner } from '../src/index.js';
+import { workflowPath } from '../fixtures.js';
+import { actRunner } from './fixtures.js';
+import { ActExecStatus, ActRunner } from '../../src/index.js';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { existsSync, mkdirSync, rmSync } from 'node:fs';
 
 function cacheWorkflowRunner(): ActRunner {
-  return runner().withWorkflowFile(workflowPath('save_file_in_cache'));
+  return actRunner().withWorkflowFile(workflowPath('save_file_in_cache'));
 }
 
 const customCacheDir = join(tmpdir(), 'actTestRunner', 'workflows_cache');
