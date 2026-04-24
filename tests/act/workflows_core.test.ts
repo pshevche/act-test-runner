@@ -1,4 +1,4 @@
-import { runner, workflowPath } from '../fixtures.js';
+import { workflowPath } from '../fixtures.js';
 import { actRunner } from './fixtures.js';
 import { ActExecStatus, ActWorkflowExecResult } from '../../src/index.js';
 import { join } from 'node:path';

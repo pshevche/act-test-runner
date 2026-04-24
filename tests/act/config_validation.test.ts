@@ -2,13 +2,17 @@ import { workflowPath } from '../fixtures.js';
 import { actRunner } from './fixtures.js';
 
 test('fails if the specified workflows location does not exist', async () => {
-  await expect(actRunner().withWorkflowFile('non-existing').run()).rejects.toThrow(
+  await expect(
+    actRunner().withWorkflowFile('non-existing').run(),
+  ).rejects.toThrow(
     "The specified workflow path 'non-existing' does not exist",
   );
 });
 
 test('fails if the specified working directory does not exist', async () => {
-  await expect(actRunner().withWorkingDir('non-existing').run()).rejects.toThrow(
+  await expect(
+    actRunner().withWorkingDir('non-existing').run(),
+  ).rejects.toThrow(
     "The specified working directory 'non-existing' does not exist",
   );
 });

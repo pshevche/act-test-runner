@@ -2,13 +2,17 @@ import { workflowPath } from '../fixtures.js';
 import { forgejoRunner } from './fixtures.js';
 
 test('fails if the specified workflows location does not exist', async () => {
-  await expect(forgejoRunner().withWorkflowFile('non-existing').run()).rejects.toThrow(
+  await expect(
+    forgejoRunner().withWorkflowFile('non-existing').run(),
+  ).rejects.toThrow(
     "The specified workflow path 'non-existing' does not exist",
   );
 });
 
 test('fails if the specified working directory does not exist', async () => {
-  await expect(forgejoRunner().withWorkingDir('non-existing').run()).rejects.toThrow(
+  await expect(
+    forgejoRunner().withWorkingDir('non-existing').run(),
+  ).rejects.toThrow(
     "The specified working directory 'non-existing' does not exist",
   );
 });
