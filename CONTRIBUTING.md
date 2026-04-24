@@ -5,7 +5,7 @@
 This project supports two workflow runners for end-to-end testing:
 
 - **[nektos/act](https://github.com/nektos/act)** — used by the `ActRunner` class
-- **[Forgejo Runner](https://forgejo.org/docs/latest/admin/actions/runner-installation/)** — used by the `ForgejoRunner` class
+- **[Forgejo Runner](https://code.forgejo.org/forgejo/runner)** — used by the `ForgejoRunner` class
 
 You must install **both** runners to run the full test suite locally.
 
@@ -36,6 +36,8 @@ npm install
 
 ## Running tests
 
+The test suite is parameterized via the `RUNNER_TYPE` environment variable. The same test source runs against both runners.
+
 Run all tests (both act and forgejo suites):
 
 ```bash
@@ -61,6 +63,12 @@ To run all verification tasks (lint, format, build, and tests):
 ```bash
 npm run check
 ```
+
+> **Note:** `npm run check` runs the full test suite and therefore requires **both** `act` and `forgejo-runner` to be installed. If you only have one runner installed, run the checks individually:
+>
+> ```bash
+> npm run lint:check && npm run prettier:check && npm run package && npm run test:act
+> ```
 
 ## OpenCode setup
 

@@ -8,17 +8,96 @@ Install `act` locally. See the [act installation guide](https://nektosact.com/in
 
 ## Usage
 
+### Assert on the workflow file execution
+
 ```typescript
 import { ActRunner, ActExecStatus } from '@pshevche/act-test-runner';
 
 const result = await new ActRunner()
-  .withWorkflowFile('.github/workflows/ci.yml')
-  .withEnvValues(['NODE_ENV', 'test'])
+  .withWorkflowBody(
+    `
+name: Simple passing workflow
+on: [push]
+
+jobs:
+  successful_job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Successful step
+        run: echo "Hello, World!"
+  `,
+  )
   .run();
 
 expect(result.status).toBe(ActExecStatus.SUCCESS);
+expect(result.output).toContain('Hello, World!');
+expect(result.jobs.size).toBe(1);
+
+const successfulJob = result.job('successful_job')!;
+expect(successfulJob.status).toBe(ActExecStatus.SUCCESS);
+expect(successfulJob.output).toContain('Hello, World!');
 ```
+
+### Define event to trigger the workflow
+
+```typescript
+const result = await new ActRunner()
+  .withWorkflowBody(`
+name: Workflow printing the event_type
+on:
+  pull_request:
+    types: [opened]
+  issues:
+    types: [opened]
+
+jobs:
+  print_event_type:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print event type
+        run: |
+          echo "Event type: ${{ github.event_name }}"
+  `)
+  .withEvent('pull_request')
+  .run();
+
+expect(result.status).toBe(ActExecStatus.SUCCESS);
+const job = result.job('print_event_type')!;
+expect(job.status).toBe(ActExecStatus.SUCCESS);
+expect(job.output).toContain('Event type: pull_request');
+```
+
+### Set additional workflow inputs
+
+```typescript
+const result = await new ActRunner()
+  .withWorkflowBody(
+    `
+name: Simple workflow printing a couple of environment variables
+on: [push]
+
+jobs:
+  print_greeting:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print greeting from env variables
+        run: echo "$GREETING, $NAME!"
+  `,
+  )
+  .withEnvValues(['GREETING', 'Hello'], ['NAME', 'Bruce'])
+  .run();
+
+expect(result.status).toBe(ActExecStatus.SUCCESS);
+const job = result.job('print_greeting')!;
+expect(job.status).toBe(ActExecStatus.SUCCESS);
+expect(job.output).toContain('Hello, Bruce!');
+```
+
+## Useful links
+
+- [nektos/act](https://github.com/nektos/act): GitHub actions runner used by the plugin.
+- [act User Guide](https://nektosact.com): describes various configuration options that the runner provides, as well as the format for input files.
 
 ## API
 
-`ActRunner` extends `RunnerBase` and provides the same fluent builder API. See the [README](../README.md) for detailed usage examples.
+`ActRunner` extends `RunnerBase` and provides the same fluent builder API. See the [User Guide](./user-guide.md) for an overview and the [README](../README.md) for a quick introduction.

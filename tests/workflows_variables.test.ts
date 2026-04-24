@@ -1,9 +1,8 @@
-import { inputPath, workflowPath } from '../fixtures.js';
-import { actRunner } from './fixtures.js';
-import { ActExecStatus, ActRunner } from '../../src/index.js';
+import { inputPath, runner, workflowPath } from './fixtures.js';
+import { ActExecStatus } from '../src/index.js';
 
-function variablesWorkflowRunner(): ActRunner {
-  return actRunner().withWorkflowFile(workflowPath('print_variables'));
+function variablesWorkflowRunner() {
+  return runner().withWorkflowFile(workflowPath('print_variables'));
 }
 
 test('supports setting workflow variables directly', async () => {
