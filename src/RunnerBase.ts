@@ -102,10 +102,7 @@ export abstract class RunnerBase {
    * @param type - type of the event to trigger the workflow
    * @param payloadFile - path to the JSON file containing the event payload
    */
-  withEvent(
-    type: string,
-    payloadFile: string | undefined = undefined,
-  ): this {
+  withEvent(type: string, payloadFile: string | undefined = undefined): this {
     this.eventType = type;
     this.eventPayloadFile = payloadFile;
     return this;
