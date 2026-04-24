@@ -6,6 +6,8 @@
 
 Install `forgejo-runner` locally. The binary can be downloaded from the [Forgejo Runner releases page](https://code.forgejo.org/forgejo/runner/releases).
 
+> **Note:** A Docker-based runner (`DockerForgejoRunner`) is currently not supported.
+
 ## Usage
 
 ### Assert on the workflow file execution
