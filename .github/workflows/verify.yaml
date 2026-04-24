@@ -20,9 +20,9 @@ jobs:
         run: |
           npm install
 
-      - name: Run linter and packager
+      - name: Run linter, packager, and utils tests
         run: |
-          npm run lint:check && npm run prettier:check && npm run package
+          npm run lint:check && npm run prettier:check && npm run package && npm run test:utils
 
   verify-act:
     needs: verify

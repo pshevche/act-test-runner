@@ -4,7 +4,15 @@
 
 ## Prerequisites
 
-Install `forgejo-runner` locally. The binary can be downloaded from the [Forgejo Runner releases page](https://code.forgejo.org/forgejo/runner/releases).
+Install `forgejo-runner` locally, or use `DockerForgejoRunner` to run the runner inside a Docker container without installing the binary.
+
+### Binary installation
+
+The binary can be downloaded from the [Forgejo Runner releases page](https://code.forgejo.org/forgejo/runner/releases).
+
+### Docker runner
+
+`DockerForgejoRunner` runs `forgejo-runner exec` inside a Docker container (`data.forgejo.org/forgejo/runner:12`). The current working directory and temp directory are automatically mounted so workflow files remain accessible. No local binary installation is required.
 
 ## Usage
 
