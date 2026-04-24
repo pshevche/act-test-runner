@@ -103,25 +103,11 @@ jobs:
 });
 ```
 
-## Development
+## Useful links
 
-To install dependencies:
-
-```bash
-npm install
-```
-
-To run verification tasks:
-
-```bash
-npm run check
-```
-
-### OpenCode setup
-
-This repository uses OpenCode project instructions from `AGENTS.md`.
-
-OpenCode project config is defined in `opencode.json` at the repository root and is loaded automatically.
+- [nektos/act](https://github.com/nektos/act): GitHub actions runner used by the plugin.
+- [act User Guide](https://nektosact.com): describes various configuration options that the runner provides, as well as
+  the format for input files.
 
 ## Known limitations
 
@@ -135,15 +121,8 @@ workflow executions.
 
 `act` provides a large number of options to configure workflow execution.
 This library aims to abstract away the configuration effort and enforce best practices.
-Therefore, the initial release of the library has a built-in support for a small set of options deemed essential to
-design meaningful test scenarios for GitHub workflows.
+Therefore, the initial release of the library has a built-in support for a small set of options deemed essential to design meaningful test scenarios for GitHub workflows.
 
 Additional unsupported arguments can be passed using the `additionalArgs` property of a `ActRunner` object.
 Despite having this option, feel free to submit a feature request for a new option describing how the library and its
 users will benfit from having a native support for this property.
-
-## Useful links
-
-- [nektos/act](https://github.com/nektos/act): GitHub actions runner used by the plugin.
-- [act User Guide](https://nektosact.com): describes various configuration options that the runner provides, as well as
-  the format for input files.
