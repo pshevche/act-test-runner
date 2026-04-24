@@ -1,5 +1,6 @@
-import { runner, workflowPath } from './fixtures.js';
-import { ActExecStatus, ActWorkflowExecResult } from '../src/index.js';
+import { workflowPath } from '../fixtures.js';
+import { forgejoRunner } from './fixtures.js';
+import { ActExecStatus, ActWorkflowExecResult } from '../../src/index.js';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { existsSync, mkdirSync, rmSync } from 'node:fs';
@@ -7,7 +8,7 @@ import { existsSync, mkdirSync, rmSync } from 'node:fs';
 export async function run(
   workflowFile: string,
 ): Promise<ActWorkflowExecResult> {
-  return runner().withWorkflowFile(workflowFile).run();
+  return forgejoRunner().withWorkflowFile(workflowFile).run();
 }
 
 const customWorkingDir = join(tmpdir(), 'actTestRunner', 'workflows_core');
@@ -69,7 +70,7 @@ test('reports all jobs', async () => {
 });
 
 test('supports defining workflow body instead of file', async () => {
-  const result = await runner()
+  const result = await forgejoRunner()
     .withWorkflowBody(
       `
 name: Simple passing workflow
@@ -95,7 +96,7 @@ jobs:
 });
 
 test('supports defining custom working directory', async () => {
-  const result = await runner()
+  const result = await forgejoRunner()
     .withWorkingDir(customWorkingDir)
     .withWorkflowBody(
       `

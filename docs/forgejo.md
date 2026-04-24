@@ -56,7 +56,7 @@ jobs:
     steps:
       - name: Print event type
         run: |
-          echo "Event type: ${{ github.event_name }}"
+          echo "Event type: ${{ forgejo.event_name }}"
   `)
   .withEvent('pull_request')
   .run();
@@ -92,7 +92,3 @@ const job = result.job('print_greeting')!;
 expect(job.status).toBe(ActExecStatus.SUCCESS);
 expect(job.output).toContain('Hello, Bruce!');
 ```
-
-## API
-
-`ForgejoRunner` extends `RunnerBase` and provides the same fluent builder API as `ActRunner`. See the [User Guide](./user-guide.md) for an overview and the [README](../README.md) for a quick introduction.

@@ -1,8 +1,9 @@
-import { runner, workflowPath } from './fixtures.js';
-import { ActExecStatus } from '../src/index.js';
+import { workflowPath } from '../fixtures.js';
+import { actRunner } from './fixtures.js';
+import { ActExecStatus } from '../../src/index.js';
 
 function matrixWorkflowRunner() {
-  return runner().withWorkflowFile(workflowPath('print_matrix_values'));
+  return actRunner().withWorkflowFile(workflowPath('print_matrix_values'));
 }
 
 test('runs workflow with all matrix values by default', async () => {

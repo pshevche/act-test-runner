@@ -56,7 +56,3 @@ Therefore, the initial release of the library has built-in support for a small s
 
 Additional unsupported arguments can be passed using the `withAdditionalArgs` method.
 Despite having this option, feel free to submit a feature request for a new option describing how the library and its users will benefit from having native support for it.
-
-## Contributing
-
-See [CONTRIBUTING.md](../CONTRIBUTING.md) for development setup and how to run the test suites.

@@ -97,7 +97,3 @@ expect(job.output).toContain('Hello, Bruce!');
 
 - [nektos/act](https://github.com/nektos/act): GitHub actions runner used by the plugin.
 - [act User Guide](https://nektosact.com): describes various configuration options that the runner provides, as well as the format for input files.
-
-## API
-
-`ActRunner` extends `RunnerBase` and provides the same fluent builder API. See the [User Guide](./user-guide.md) for an overview and the [README](../README.md) for a quick introduction.
