@@ -24,3 +24,4 @@ export { ActJobExecResult } from './ActJobExecResult.js';
 export { ActRunner } from './ActRunner.js';
 export { ActRunnerError } from './ActRunnerError.js';
 export { ActWorkflowExecResult } from './ActWorkflowExecResult.js';
+export { ForgejoRunner } from './ForgejoRunner.js';
