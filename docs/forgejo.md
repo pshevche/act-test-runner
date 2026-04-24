@@ -14,10 +14,10 @@ The binary can be downloaded from the [Forgejo Runner releases page](https://cod
 
 `DockerForgejoRunner` runs `forgejo-runner exec` inside a Docker container (`data.forgejo.org/forgejo/runner:<version>`). The current working directory and temp directory are automatically mounted so workflow files remain accessible. No local binary installation is required.
 
-The runner version defaults to `12` and can be overridden via the constructor:
+The runner version is specified via the constructor:
 
 ```typescript
-const runner = new DockerForgejoRunner('11');
+const runner = new DockerForgejoRunner('12');
 ```
 
 ## Usage
