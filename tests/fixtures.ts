@@ -1,18 +1,9 @@
 import path from 'node:path';
-import { ActRunner } from '../src/index.js';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 
 export function currentDir(): string {
   return dirname(fileURLToPath(import.meta.url));
-}
-
-export function runner(forwardOutput: boolean = false): ActRunner {
-  const runner = new ActRunner();
-  if (forwardOutput) {
-    runner.forwardOutput();
-  }
-  return runner;
 }
 
 export function workflowPath(workflowName: string): string {

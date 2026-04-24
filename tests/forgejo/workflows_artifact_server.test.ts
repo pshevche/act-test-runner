@@ -1,11 +1,12 @@
-import { runner, workflowPath } from './fixtures.js';
-import { ActExecStatus, ActRunner } from '../src/index.js';
+import { workflowPath } from '../fixtures.js';
+import { forgejoRunner } from './fixtures.js';
+import { ActExecStatus, ForgejoRunner } from '../../src/index.js';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { existsSync, mkdirSync, rmSync } from 'node:fs';
 
-function artifactServerWorkflowRunner(): ActRunner {
-  return runner().withWorkflowFile(
+function artifactServerWorkflowRunner(): ForgejoRunner {
+  return forgejoRunner().withWorkflowFile(
     workflowPath('save_file_in_artifact_server'),
   );
 }

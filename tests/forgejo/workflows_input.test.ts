@@ -1,8 +1,9 @@
-import { inputPath, runner, workflowPath } from './fixtures.js';
-import { ActExecStatus, ActRunner } from '../src/index.js';
+import { inputPath, workflowPath } from '../fixtures.js';
+import { forgejoRunner } from './fixtures.js';
+import { ActExecStatus, ForgejoRunner } from '../../src/index.js';
 
-function inputWorkflowRunner(): ActRunner {
-  return runner().withWorkflowFile(workflowPath('print_inputs'));
+function inputWorkflowRunner(): ForgejoRunner {
+  return forgejoRunner().withWorkflowFile(workflowPath('print_inputs'));
 }
 
 test('supports setting input values directly', async () => {
