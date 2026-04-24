@@ -2,13 +2,37 @@
 
 [![Build](https://github.com/pshevche/act-test-runner/actions/workflows/verify.yaml/badge.svg)](https://github.com/pshevche/act-test-runner/actions/workflows/verify.yaml)
 
-**Convenient wrapper around [act](https://github.com/nektos/act) for implementing e2e tests for GitHub actions**
+**Fluent builder API for end-to-end testing of GitHub Actions and Forgejo Actions workflows locally.**
 
-The library defines an opinionated runner interface for executing GitHub workflows locally using
-the [act](https://github.com/nektos/act) runner.
+This library provides an opinionated, type-safe wrapper around [nektos/act](https://github.com/nektos/act) and the [Forgejo Runner](https://forgejo.org/docs/latest/admin/actions/runner-installation/). It lets you write concise, readable tests that execute workflows in isolated Docker containers and assert on job outcomes, console output, artifacts, and cache entries.
 
-Consumers can assert on the outcome of the workflow execution, such as the jobs run, workflow's output, or artifacts
-persisted in the artifact server or action cache.
+## Sneak Preview
+
+```typescript
+import { ActRunner, ActExecStatus } from '@pshevche/act-test-runner';
+
+const result = await new ActRunner()
+  .withWorkflowBody(
+    `
+name: CI
+on: [push]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Hello, World!"
+  `,
+  )
+  .run();
+
+expect(result.status).toBe(ActExecStatus.SUCCESS);
+expect(result.job('test')!.output).toContain('Hello, World!');
+```
+
+## Documentation
+
+- **[User Guide](docs/user-guide.md)** — getting started, runner comparison, and links to runner-specific guides.
+- **[Contributing](CONTRIBUTING.md)** — development setup, prerequisites, and how to run the test suites.
 
 ## Usage
 
