@@ -1,9 +1,5 @@
 import { ForgejoRunner } from '../../src/index.js';
 
-export function forgejoRunner(forwardOutput: boolean = false): ForgejoRunner {
-  const runner = new ForgejoRunner();
-  if (forwardOutput) {
-    runner.forwardOutput();
-  }
-  return runner;
+export function forgejoRunner(): ForgejoRunner {
+  return new ForgejoRunner().forwardOutput();
 }
