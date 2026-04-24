@@ -1,11 +1,8 @@
-import { eventPayloadPath, workflowPath } from '../fixtures.js';
-import { forgejoRunner } from './fixtures.js';
-import { ActExecStatus, ForgejoRunner } from '../../src/index.js';
+import { eventPayloadPath, runner, workflowPath } from './fixtures.js';
+import { ActExecStatus } from '../src/index.js';
 
-function eventWorkflowRunner(): ForgejoRunner {
-  return forgejoRunner().withWorkflowFile(
-    workflowPath('print_issue_or_pr_title'),
-  );
+function eventWorkflowRunner() {
+  return runner().withWorkflowFile(workflowPath('print_issue_or_pr_title'));
 }
 
 test('uses the first event type lexicographically from workflow if no event type is set', async () => {

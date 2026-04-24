@@ -1,4 +1,5 @@
 import path from 'node:path';
+import { ActRunner, ForgejoRunner } from '../src/index.js';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 
@@ -19,4 +20,15 @@ export function eventPayloadPath(eventPayloadName: string): string {
     currentDir(),
     `resources/events/${eventPayloadName}.json`,
   );
+}
+
+export function runner(
+  forwardOutput: boolean = false,
+): ActRunner | ForgejoRunner {
+  const runnerType = process.env.RUNNER_TYPE || 'act';
+  const r = runnerType === 'forgejo' ? new ForgejoRunner() : new ActRunner();
+  if (forwardOutput) {
+    r.forwardOutput();
+  }
+  return r;
 }

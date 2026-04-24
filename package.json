@@ -56,9 +56,9 @@
     "prettier:check": "prettier --check .",
     "license:check": "addlicense -check src/",
     "package": "tsc --project tsconfig.package.json",
-    "test": "NODE_OPTIONS=--experimental-vm-modules NODE_NO_WARNINGS=1 jest",
-    "test:act": "NODE_OPTIONS=--experimental-vm-modules NODE_NO_WARNINGS=1 jest --testPathPatterns='tests/act/'",
-    "test:forgejo": "NODE_OPTIONS=--experimental-vm-modules NODE_NO_WARNINGS=1 jest --testPathPatterns='tests/forgejo/'",
+    "test": "npm run test:act && npm run test:forgejo",
+    "test:act": "RUNNER_TYPE=act NODE_OPTIONS=--experimental-vm-modules NODE_NO_WARNINGS=1 jest --testPathPatterns='tests/'",
+    "test:forgejo": "RUNNER_TYPE=forgejo NODE_OPTIONS=--experimental-vm-modules NODE_NO_WARNINGS=1 jest --testPathPatterns='tests/(workflows|config)'",
     "check": "npm run lint:check && npm run prettier:check && npm run package && npm run test"
   }
 }
