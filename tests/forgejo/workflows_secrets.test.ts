@@ -1,8 +1,9 @@
-import { inputPath, runner, workflowPath } from './fixtures.js';
-import { ActExecStatus } from '../src/index.js';
+import { inputPath, workflowPath } from '../fixtures.js';
+import { forgejoRunner } from './fixtures.js';
+import { ActExecStatus } from '../../src/index.js';
 
 function secretsWorkflowRunner() {
-  return runner()
+  return forgejoRunner()
     .withWorkflowFile(workflowPath('print_secrets'))
     .withAdditionalArgs('--insecure-secrets');
 }

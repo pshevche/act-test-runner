@@ -1,0 +1,15 @@
+name: Workflow printing inputs
+on:
+  workflow_call:
+    inputs:
+      greeting:
+        type: string
+      name:
+        type: string
+
+jobs:
+  print_greeting:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print greeting
+        run: echo "${{ forgejo.event.inputs.greeting }}, ${{ forgejo.event.inputs.name }}!"

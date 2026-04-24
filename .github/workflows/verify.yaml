@@ -10,7 +10,22 @@ on:
   workflow_dispatch:
 
 jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Install dependencies
+        run: |
+          npm install
+
+      - name: Run linter and packager
+        run: |
+          npm run lint:check && npm run prettier:check && npm run package
+
   verify-act:
+    needs: verify
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -26,11 +41,12 @@ jobs:
         run: |
           npm install
 
-      - name: Run check
+      - name: Run act tests
         run: |
-          npm run lint:check && npm run prettier:check && npm run package && npm run test:act
+          npm run test:act
 
   verify-forgejo:
+    needs: verify
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -38,7 +54,10 @@ jobs:
 
       - name: Setup forgejo-runner
         run: |
-          curl -L -o /usr/local/bin/forgejo-runner "https://code.forgejo.org/forgejo/runner/releases/download/v11.0.0/forgejo-runner-11.0.0-linux-amd64"
+          export ARCH=$(uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/')
+          export RUNNER_VERSION=$(curl -X 'GET' https://data.forgejo.org/api/v1/repos/forgejo/runner/releases/latest | jq .name -r | cut -c 2-)
+          export FORGEJO_URL="https://code.forgejo.org/forgejo/runner/releases/download/v${RUNNER_VERSION}/forgejo-runner-${RUNNER_VERSION}-linux-${ARCH}"
+          wget -O /usr/local/bin/forgejo-runner ${FORGEJO_URL} || curl -o /usr/local/bin/forgejo-runner ${FORGEJO_URL}
           chmod +x /usr/local/bin/forgejo-runner
           # Use the micro image to speed up tests
           echo "-P ubuntu-latest=node:16-buster-slim" > $HOME/.actrc

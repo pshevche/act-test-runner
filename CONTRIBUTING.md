@@ -11,20 +11,11 @@ You must install **both** runners to run the full test suite locally.
 
 ### Installing act
 
-Follow the [act installation guide](https://nektosact.com/installation.html). On macOS with Homebrew:
-
-```bash
-brew install act
-```
+Follow the [act installation guide](https://nektosact.com/installation.html).
 
 ### Installing forgejo-runner
 
-Follow the [Forgejo Runner installation guide](https://forgejo.org/docs/latest/admin/actions/runner-installation/). The binary can be downloaded from the [Forgejo Runner releases page](https://code.forgejo.org/forgejo/runner/releases):
-
-```bash
-curl -L -o /usr/local/bin/forgejo-runner "https://code.forgejo.org/forgejo/runner/releases/download/v11.0.0/forgejo-runner-11.0.0-linux-amd64"
-chmod +x /usr/local/bin/forgejo-runner
-```
+Follow the [Forgejo Runner installation guide](https://forgejo.org/docs/latest/admin/actions/installation).
 
 ## Development
 
@@ -35,8 +26,6 @@ npm install
 ```
 
 ## Running tests
-
-The test suite is parameterized via the `RUNNER_TYPE` environment variable. The same test source runs against both runners.
 
 Run all tests (both act and forgejo suites):
 

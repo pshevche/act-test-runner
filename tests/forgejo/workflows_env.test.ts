@@ -1,8 +1,9 @@
-import { inputPath, runner, workflowPath } from './fixtures.js';
-import { ActExecStatus } from '../src/index.js';
+import { inputPath, workflowPath } from '../fixtures.js';
+import { forgejoRunner } from './fixtures.js';
+import { ActExecStatus } from '../../src/index.js';
 
 function envWorkflowRunner() {
-  return runner().withWorkflowFile(workflowPath('print_env_variables'));
+  return forgejoRunner().withWorkflowFile(workflowPath('print_env_variables'));
 }
 
 test('supports setting environment variable values directly', async () => {
