@@ -20,7 +20,6 @@
  */
 
 import { Runner, RunnerArguments } from './RunnerBase.js';
-import { ActResourceSpec } from './internal/ActResourceSpec.js';
 import { checkExists, checkOneDefined } from './utils/checks.js';
 import { firstDefined } from './utils/objects.js';
 import {
@@ -34,7 +33,7 @@ import {
  *
  * Typically, the test code will provide a workflow file or workflow body to run, as well as required workflow inputs, such as environment variables or secrets.
  *
- * Assertions can then be made on the outcome of the `run()` method invocation, such as the jobs run, workflow output, or artifacts persisted in the artifact server or action cache.
+ * Assertions can then be made on the outcome of the `run()` method invocation, such as the jobs run, workflow output.
  *
  * The runner cannot be used concurrently due to limitations on the `forgejo-runner` side.
  */
@@ -43,18 +42,10 @@ export class ForgejoRunner extends Runner<ForgejoRunnerArguments> {
   private workingDir: string | undefined;
   private workflowBody: string | undefined;
   private eventType: string | undefined;
-  private eventPayloadFile: string | undefined;
   private envFile: string | undefined;
   private envValues: Map<String, String> = new Map<String, String>();
-  private inputsFile: string | undefined;
-  private inputsValues: Map<String, String> = new Map<String, String>();
-  private secretsFile: string | undefined;
   private secretsValues: Map<String, String> = new Map<String, String>();
-  private variablesFile: string | undefined;
   private variablesValues: Map<String, String> = new Map<String, String>();
-  private matrix: Map<String, any> = new Map<String, any>();
-  private cacheServer: ActResourceSpec | undefined;
-  private artifactServer: ActResourceSpec | undefined;
   private additionalArgs: string[] = [];
 
   /**
@@ -90,11 +81,9 @@ export class ForgejoRunner extends Runner<ForgejoRunnerArguments> {
    * Configures the event that triggers the workflow run (e.g., `push`).
    * If unspecified, the first event type specified in the workflow definition will be used.
    * @param type - type of the event to trigger the workflow
-   * @param payloadFile - path to the JSON file containing the event payload
    */
-  withEvent(type: string, payloadFile: string | undefined = undefined): this {
+  withEvent(type: string): this {
     this.eventType = type;
-    this.eventPayloadFile = payloadFile;
     return this;
   }
 
@@ -117,33 +106,6 @@ export class ForgejoRunner extends Runner<ForgejoRunnerArguments> {
   }
 
   /**
-   * Specifies the file containing inputs values to use when invoking the given workflow.
-   * @param {string} inputsFile - input file to read and use as action input
-   */
-  withInputsFile(inputsFile: string): this {
-    this.inputsFile = inputsFile;
-    return this;
-  }
-
-  /**
-   * Sets inputs values to use when invoking the given workflow.
-   * @param {...[string, string]} inputsValues - action input to make available to actions
-   */
-  withInputsValues(...inputsValues: [string, string][]): this {
-    inputsValues.forEach((entry) => this.inputsValues.set(entry[0], entry[1]));
-    return this;
-  }
-
-  /**
-   * Specifies the file containing secrets values to use when invoking the given workflow.
-   * @param {string} secretsFile - secrets file to read and use as action input
-   */
-  withSecretsFile(secretsFile: string): this {
-    this.secretsFile = secretsFile;
-    return this;
-  }
-
-  /**
    * Sets secrets values to use when invoking the given workflow.
    * @param {...[string, string]} secretsValues - secrets to make available to actions
    */
@@ -155,15 +117,6 @@ export class ForgejoRunner extends Runner<ForgejoRunnerArguments> {
   }
 
   /**
-   * Specifies the file containing workflow variables values to use when invoking the given workflow.
-   * @param {string} variablesFile - variables file to read and use as action input
-   */
-  withVariablesFile(variablesFile: string): this {
-    this.variablesFile = variablesFile;
-    return this;
-  }
-
-  /**
    * Sets variables values to use when invoking the given workflow.
    * @param {...[string, string]} variablesValues - secrets to make available to actions
    */
@@ -171,47 +124,6 @@ export class ForgejoRunner extends Runner<ForgejoRunnerArguments> {
     variablesValues.forEach((entry) =>
       this.variablesValues.set(entry[0], entry[1]),
     );
-    return this;
-  }
-
-  /**
-   * Set matrix values to run the workflow with.
-   * If undefined, all combinations specified in the workflow definition will be invoked.
-   * @param {...[string, any]} matrixValues - matrix values to run the workflow with
-   * @returns
-   */
-  withMatrix(...matrixValues: [string, any][]): this {
-    matrixValues.forEach((entry) => this.matrix.set(entry[0], entry[1]));
-    return this;
-  }
-
-  /**
-   * Configures the cache server to be used by the given workflow.
-   * @param {string} path - the path where the cache artifacts will be stored
-   * @param {string | undefined } host - the address to which the cache server binds
-   * @param {number | undefined } port - the port where the cache server listens
-   */
-  withCacheServer(
-    path: string,
-    host: string | undefined = undefined,
-    port: number | undefined = undefined,
-  ): this {
-    this.cacheServer = new ActResourceSpec(path, host, port);
-    return this;
-  }
-
-  /**
-   * Configures the artifact server to be used by the given workflow.
-   * @param {string} path - the path where the artifacts uploaded will be stored
-   * @param {string | undefined } host - the address to which the artifact server binds
-   * @param {number | undefined } port - the port where the artifact server listens
-   */
-  withArtifactServer(
-    path: string,
-    host: string | undefined = undefined,
-    port: number | undefined = undefined,
-  ): this {
-    this.artifactServer = new ActResourceSpec(path, host, port);
     return this;
   }
 
@@ -246,18 +158,10 @@ export class ForgejoRunner extends Runner<ForgejoRunnerArguments> {
     return new ForgejoRunnerArguments(
       workflowFilePath,
       this.eventType,
-      this.eventPayloadFile,
       this.envFile,
       this.envValues,
-      this.inputsFile,
-      this.inputsValues,
-      this.secretsFile,
       this.secretsValues,
-      this.variablesFile,
       this.variablesValues,
-      this.matrix,
-      this.cacheServer,
-      this.artifactServer,
       this.additionalArgs,
     );
   }
@@ -270,178 +174,64 @@ export class ForgejoRunner extends Runner<ForgejoRunnerArguments> {
 class ForgejoRunnerArguments implements RunnerArguments {
   private readonly workflowsPath: string;
   private readonly eventType: string | undefined;
-  private readonly eventPayloadFile: string | undefined;
   private readonly envFile: string | undefined;
   private readonly envValues: Map<String, String>;
-  private readonly inputFile: string | undefined;
-  private readonly inputValues: Map<String, String>;
-  private readonly secretsFile: string | undefined;
   private readonly secretsValues: Map<String, String>;
-  private readonly variablesFile: string | undefined;
   private readonly variablesValues: Map<String, String>;
-  private readonly matrix: Map<String, any>;
-  private readonly cacheServer: ActResourceSpec | undefined;
-  private readonly artifactServer: ActResourceSpec | undefined;
   private readonly additionalArgs: string[];
 
   constructor(
     workflowsPath: string,
     eventType: string | undefined,
-    eventPayloadFile: string | undefined,
     envFile: string | undefined,
     envValues: Map<String, String>,
-    inputFile: string | undefined,
-    inputValues: Map<String, String>,
-    secretsFile: string | undefined,
     secretsValues: Map<String, String>,
-    variablesFile: string | undefined,
     variablesValues: Map<String, String>,
-    matrix: Map<String, any>,
-    cacheServer: ActResourceSpec | undefined,
-    artifactServer: ActResourceSpec | undefined,
     additionalArgs: string[],
   ) {
     this.workflowsPath = workflowsPath;
     this.eventType = eventType;
-    this.eventPayloadFile = eventPayloadFile;
     this.envFile = envFile;
     this.envValues = envValues;
-    this.inputFile = inputFile;
-    this.inputValues = inputValues;
-    this.secretsFile = secretsFile;
     this.secretsValues = secretsValues;
-    this.variablesFile = variablesFile;
     this.variablesValues = variablesValues;
-    this.matrix = matrix;
-    this.cacheServer = cacheServer;
-    this.artifactServer = artifactServer;
     this.additionalArgs = additionalArgs;
   }
 
   asCliArgs(): string[] {
     const args = ['--workflows', this.workflowsPath];
 
-    this.addEvent(args, this.eventType, this.eventPayloadFile);
-
-    this.addInputs(
-      args,
-      '--env-file',
-      this.envFile,
-      'env values file',
-      '--env',
-      this.envValues,
+    args.push(
+      firstDefined(
+        () => this.eventType,
+        () => '--detect-event',
+      ),
     );
 
-    this.addInputs(
-      args,
-      '--input-file',
-      this.inputFile,
-      'input values file',
-      '--input',
-      this.inputValues,
-    );
+    if (this.envFile !== undefined) {
+      args.push('--env-file', this.envFile);
+    }
 
-    this.addInputs(
-      args,
-      '--secret-file',
-      this.secretsFile,
-      'secrets values file',
-      '--secret',
-      this.secretsValues,
-    );
+    if (this.envValues.size > 0) {
+      this.envValues.forEach((value, key) => {
+        args.push('--env', `${key}=${value}`);
+      });
+    }
 
-    this.addInputs(
-      args,
-      '--var-file',
-      this.variablesFile,
-      'variables values file',
-      '--var',
-      this.variablesValues,
-    );
+    if (this.secretsValues.size > 0) {
+      this.secretsValues.forEach((value, key) => {
+        args.push('--secret', `${key}=${value}`);
+      });
+    }
 
-    this.matrix.forEach((value, key) => {
-      args.push('--matrix');
-      args.push(`${key}:${value}`);
-    });
-
-    this.addResource(
-      args,
-      this.cacheServer,
-      '--cache-server-path',
-      '--cache-server-addr',
-      '--cache-server-port',
-    );
-
-    this.addResource(
-      args,
-      this.artifactServer,
-      '--artifact-server-path',
-      '--artifact-server-addr',
-      '--artifact-server-port',
-    );
+    if (this.variablesValues.size > 0) {
+      this.variablesValues.forEach((value, key) => {
+        args.push('--var', `${key}=${value}`);
+      });
+    }
 
     this.additionalArgs.forEach((arg) => args.push(arg));
 
     return args;
-  }
-
-  private addEvent(
-    args: string[],
-    eventType: string | undefined,
-    eventPayloadFile: string | undefined,
-  ) {
-    args.push(
-      firstDefined(
-        () => eventType,
-        () => '--detect-event',
-      ),
-    );
-    if (eventPayloadFile !== undefined) {
-      checkExists('event payload file', eventPayloadFile);
-      args.push('--eventpath', eventPayloadFile);
-    }
-  }
-
-  private addInputs(
-    args: string[],
-    fileArg: string,
-    file: string | undefined,
-    fileLabel: string,
-    valuesArg: string,
-    values: Map<String, String>,
-  ) {
-    if (file !== undefined) {
-      checkExists(fileLabel, file);
-      args.push(fileArg, file);
-    }
-
-    if (values.size > 0) {
-      values.forEach((value, key) => {
-        args.push(valuesArg, `${key}=${value}`);
-      });
-    }
-  }
-
-  private addResource(
-    args: string[],
-    resource: ActResourceSpec | undefined,
-    storageParam: string,
-    addressParam: string,
-    portParam: string,
-  ) {
-    if (resource !== undefined) {
-      args.push(storageParam);
-      args.push(resource.path);
-
-      if (resource.host !== undefined) {
-        args.push(addressParam);
-        args.push(resource.host);
-      }
-
-      if (resource.port !== undefined) {
-        args.push(portParam);
-        args.push(resource.port.toString());
-      }
-    }
   }
 }

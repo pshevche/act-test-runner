@@ -32,7 +32,7 @@ The library supports two workflow runners:
 - **[ActRunner](./act.md)** — wraps [nektos/act](https://github.com/nektos/act) for testing GitHub Actions workflows.
 - **[ForgejoRunner](./forgejo.md)** — wraps [Forgejo Runner](https://code.forgejo.org/forgejo/runner) for testing Forgejo Actions workflows.
 
-Both runners share the same fluent builder API and differ only in the underlying executable they invoke.
+Both runners share a fluent builder API. ForgejoRunner supports a subset of ActRunner's options; unsupported features can be passed via `withAdditionalArgs`.
 
 ## Getting Started
 

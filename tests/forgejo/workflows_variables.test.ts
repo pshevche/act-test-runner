@@ -1,4 +1,4 @@
-import { inputPath, workflowPath } from '../fixtures.js';
+import { workflowPath } from '../fixtures.js';
 import { forgejoRunner } from './fixtures.js';
 import { ActExecStatus } from '../../src/index.js';
 
@@ -15,15 +15,4 @@ test('supports setting workflow variables directly', async () => {
   const job = result.job('print_greeting')!;
   expect(job.status).toBe(ActExecStatus.SUCCESS);
   expect(job.output).toContain('Hello, Bruce!');
-});
-
-test('supports setting workflow variables from file', async () => {
-  const result = await variablesWorkflowRunner()
-    .withVariablesFile(inputPath('greeting.variables'))
-    .run();
-
-  expect(result.status).toBe(ActExecStatus.SUCCESS);
-  const job = result.job('print_greeting')!;
-  expect(job.status).toBe(ActExecStatus.SUCCESS);
-  expect(job.output).toContain('Hallo, Falco!');
 });
