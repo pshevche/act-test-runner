@@ -23,7 +23,8 @@ import { spawn } from 'node:child_process';
 import { ActWorkflowExecResult } from './ActWorkflowExecResult.js';
 import { ActExecStatus } from './ActExecStatus.js';
 import { ActRunnerError } from './ActRunnerError.js';
-import { createExecutionListener } from './internal/ActExecListener.js';
+import { JobTrackingActExecListener } from './internal/JobTrackingActExecListener.js';
+import { OutputForwardingActExecListener } from './internal/OutputForwardingActExecListener.js';
 
 export interface RunnerArguments {
   asCliArgs(): string[];
@@ -55,9 +56,11 @@ export abstract class Runner<ARGS extends RunnerArguments> {
       try {
         const args = this.validatedArguments();
 
-        const executionListener = createExecutionListener(
-          this.shouldForwardOutput,
-        );
+        const executionListener = this.shouldForwardOutput
+          ? new OutputForwardingActExecListener(
+              new JobTrackingActExecListener(),
+            )
+          : new JobTrackingActExecListener();
 
         const cmd = this.command();
         const process = spawn(cmd[0], [...cmd.slice(1), ...args.asCliArgs()]);

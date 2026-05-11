@@ -20,8 +20,6 @@
  */
 
 import { ActJobExecResult } from '../ActJobExecResult.js';
-import { JobTrackingActExecListener } from './JobTrackingActExecListener.js';
-import { OutputForwardingActExecListener } from './OutputForwardingActExecListener.js';
 
 export interface ActExecListener {
   onStdOutput(output: string): void;
@@ -31,12 +29,4 @@ export interface ActExecListener {
   getOutput(): string;
 
   getJobs(): Map<String, ActJobExecResult>;
-}
-
-export function createExecutionListener(
-  forwardOutput: boolean,
-): ActExecListener {
-  return forwardOutput
-    ? new OutputForwardingActExecListener(new JobTrackingActExecListener())
-    : new JobTrackingActExecListener();
 }
