@@ -19,12 +19,78 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+import { spawn } from 'node:child_process';
 import { ActWorkflowExecResult } from './ActWorkflowExecResult.js';
+import { ActExecStatus } from './ActExecStatus.js';
+import { ActRunnerError } from './ActRunnerError.js';
+import { createExecutionListener } from './internal/ActExecListener.js';
 
 export interface RunnerArguments {
   asCliArgs(): string[];
 }
 
-export abstract class Runner {
-  abstract run(): Promise<ActWorkflowExecResult>;
+export abstract class Runner<ARGS extends RunnerArguments> {
+  protected shouldForwardOutput: boolean = false;
+
+  protected abstract command(): string[];
+
+  protected abstract validatedArguments(): ARGS;
+
+  protected cleanup(): void {}
+
+  /**
+   * Forwards the runner output to `console`.
+   */
+  forwardOutput(): this {
+    this.shouldForwardOutput = true;
+    return this;
+  }
+
+  /**
+   * Invokes the runner with specified options.
+   * @returns workflow execution result for inspection
+   */
+  run(): Promise<ActWorkflowExecResult> {
+    return new Promise<ActWorkflowExecResult>((resolve, reject) => {
+      try {
+        const args = this.validatedArguments();
+
+        const executionListener = createExecutionListener(
+          this.shouldForwardOutput,
+        );
+
+        const cmd = this.command();
+        const process = spawn(cmd[0], [...cmd.slice(1), ...args.asCliArgs()]);
+
+        process.stdout.on('data', (data) =>
+          executionListener.onStdOutput(data.toString().trimEnd()),
+        );
+        process.stderr.on('data', (data) =>
+          executionListener.onStdError(data.toString().trimEnd()),
+        );
+
+        process.on('close', (code) => {
+          this.cleanup();
+          resolve(
+            new ActWorkflowExecResult(
+              code === 0 ? ActExecStatus.SUCCESS : ActExecStatus.FAILED,
+              executionListener.getOutput(),
+              executionListener.getJobs(),
+            ),
+          );
+        });
+      } catch (err) {
+        this.cleanup();
+        if (err instanceof ActRunnerError) {
+          reject(err);
+          return;
+        }
+        reject(
+          new ActRunnerError(
+            `Unexpected error occurred when executing runner: ${err}`,
+          ),
+        );
+      }
+    });
+  }
 }

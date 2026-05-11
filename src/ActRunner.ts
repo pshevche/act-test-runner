@@ -19,12 +19,7 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import { spawn } from 'node:child_process';
 import { Runner, RunnerArguments } from './Runner.js';
-import { ActExecStatus } from './ActExecStatus.js';
-import { ActRunnerError } from './ActRunnerError.js';
-import { ActWorkflowExecResult } from './ActWorkflowExecResult.js';
-import { createExecutionListener } from './internal/ActExecListener.js';
 import { ActResourceSpec } from './internal/ActResourceSpec.js';
 import { checkExists, checkOneDefined } from './utils/checks.js';
 import { firstDefined } from './utils/objects.js';
@@ -43,7 +38,7 @@ import {
  *
  * The runner cannot be used concurrently due to limitations on the `act` side.
  */
-export class ActRunner extends Runner {
+export class ActRunner extends Runner<ActRunnerArguments> {
   private workflowFile: string | undefined;
   private workingDir: string | undefined;
   private workflowBody: string | undefined;
@@ -61,7 +56,6 @@ export class ActRunner extends Runner {
   private cacheServer: ActResourceSpec | undefined;
   private artifactServer: ActResourceSpec | undefined;
   private additionalArgs: string[] = [];
-  private shouldForwardOutput: boolean = false;
 
   /**
    * Sets the directory to use for the runner's storage needs (default: directory in user's temp folder).
@@ -230,67 +224,11 @@ export class ActRunner extends Runner {
     return this;
   }
 
-  /**
-   * Forwards the runner output to `console`.
-   */
-  forwardOutput(): this {
-    this.shouldForwardOutput = true;
-    return this;
-  }
-
-  /**
-   * Invokes the runner with specified options.
-   * @returns workflow execution result for inspection
-   */
-  run(): Promise<ActWorkflowExecResult> {
-    return new Promise<ActWorkflowExecResult>((resolve, reject) => {
-      try {
-        const args = this.validatedArguments();
-
-        const executionListener = createExecutionListener(
-          this.shouldForwardOutput,
-        );
-
-        const cmd = this.command();
-        const process = spawn(cmd[0], [...cmd.slice(1), ...args.asCliArgs()]);
-
-        process.stdout.on('data', (data) =>
-          executionListener.onStdOutput(data.toString().trimEnd()),
-        );
-        process.stderr.on('data', (data) =>
-          executionListener.onStdError(data.toString().trimEnd()),
-        );
-
-        process.on('close', (code) => {
-          this.cleanup();
-          resolve(
-            new ActWorkflowExecResult(
-              code === 0 ? ActExecStatus.SUCCESS : ActExecStatus.FAILED,
-              executionListener.getOutput(),
-              executionListener.getJobs(),
-            ),
-          );
-        });
-      } catch (err) {
-        this.cleanup();
-        if (err instanceof ActRunnerError) {
-          reject(err);
-          return;
-        }
-        reject(
-          new ActRunnerError(
-            `Unexpected error occurred when executing runner: ${err}`,
-          ),
-        );
-      }
-    });
-  }
-
-  private command(): string[] {
+  protected command(): string[] {
     return ['act'];
   }
 
-  private validatedArguments(): ActRunnerArguments {
+  protected validatedArguments(): ActRunnerArguments {
     this.workingDir = checkExists(
       'working directory',
       firstDefined(() => this.workingDir, createTempDir),
@@ -324,7 +262,7 @@ export class ActRunner extends Runner {
     );
   }
 
-  private cleanup(): void {
+  protected cleanup(): void {
     cleanupDir(this.workingDir!);
   }
 }
