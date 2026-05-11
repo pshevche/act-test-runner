@@ -19,7 +19,15 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import { Runner, RunnerArguments } from './RunnerBase.js';
+import { GenericContainer } from 'testcontainers';
+import { Runner, RunnerArguments } from './Runner.js';
+import { ActExecStatus } from './ActExecStatus.js';
+import { ActRunnerError } from './ActRunnerError.js';
+import { ActWorkflowExecResult } from './ActWorkflowExecResult.js';
+import {
+  createExecutionListener,
+  type ActExecListener,
+} from './internal/ActExecListener.js';
 import { checkExists, checkOneDefined } from './utils/checks.js';
 import { firstDefined } from './utils/objects.js';
 import {
@@ -29,15 +37,16 @@ import {
 } from './utils/fsutils.js';
 
 /**
- * Invokes `forgejo-runner exec`, allowing end-to-end testing of custom Forgejo actions and workflows.
+ * Invokes a Forgejo runner via Docker (testcontainers), allowing end-to-end testing of custom Forgejo actions and workflows.
  *
  * Typically, the test code will provide a workflow file or workflow body to run, as well as required workflow inputs, such as environment variables or secrets.
  *
- * Assertions can then be made on the outcome of the `run()` method invocation, such as the jobs run, workflow output.
+ * Assertions can then be made on the outcome of the `run()` method invocation, such as the jobs run and workflow output.
  *
- * The runner cannot be used concurrently due to limitations on the `forgejo-runner` side.
+ * The runner cannot be used concurrently due to limitations on the underlying Forgejo runner.
  */
-export class ForgejoRunner extends Runner<ForgejoRunnerArguments> {
+export class ForgejoRunner extends Runner {
+  private runnerVersion: string = 'latest';
   private workflowFile: string | undefined;
   private workingDir: string | undefined;
   private workflowBody: string | undefined;
@@ -47,6 +56,7 @@ export class ForgejoRunner extends Runner<ForgejoRunnerArguments> {
   private secretsValues: Map<String, String> = new Map<String, String>();
   private variablesValues: Map<String, String> = new Map<String, String>();
   private additionalArgs: string[] = [];
+  private shouldForwardOutput: boolean = false;
 
   /**
    * Sets the directory to use for the runner's storage needs (default: directory in user's temp folder).
@@ -136,11 +146,88 @@ export class ForgejoRunner extends Runner<ForgejoRunnerArguments> {
     return this;
   }
 
-  protected command(): string[] {
+  /**
+   * Sets the Forgejo runner Docker image version tag.
+   * If unspecified, the `latest` tag will be used.
+   * @param {string} version - the Docker image version tag
+   */
+  withRunnerVersion(version: string): this {
+    this.runnerVersion = version;
+    return this;
+  }
+
+  /**
+   * Forwards the runner output to `console`.
+   */
+  forwardOutput(): this {
+    this.shouldForwardOutput = true;
+    return this;
+  }
+
+  /**
+   * Invokes the runner with specified options.
+   * @returns workflow execution result for inspection
+   */
+  async run(): Promise<ActWorkflowExecResult> {
+    const args = this.validatedArguments();
+
+    const executionListener = createExecutionListener(this.shouldForwardOutput);
+
+    const cmd = this.command();
+
+    try {
+      const container = await new GenericContainer(
+        `data.forgejo.org/forgejo/runner:${this.runnerVersion}`,
+      )
+        .withBindMounts([
+          {
+            source: this.workingDir!,
+            target: this.workingDir!,
+            mode: 'rw',
+          },
+        ])
+        .withCommand([...cmd, ...args.asCliArgs()])
+        .start();
+
+      try {
+        const logStream = await container.logs();
+
+        logStream.on('data', (chunk: Buffer) => {
+          executionListener.onStdOutput(chunk.toString());
+        });
+
+        await new Promise<void>((resolve, reject) => {
+          logStream.on('end', resolve);
+          logStream.on('error', reject);
+        });
+
+        this.cleanup();
+
+        return new ActWorkflowExecResult(
+          this.determineStatus(executionListener),
+          executionListener.getOutput(),
+          executionListener.getJobs(),
+        );
+      } finally {
+        await container.stop().catch(() => {});
+      }
+    } catch (err) {
+      this.cleanup();
+
+      if (err instanceof ActRunnerError) {
+        throw err;
+      }
+      throw new ActRunnerError(
+        `Unexpected error occurred when executing runner: ${err}`,
+      );
+    }
+  }
+
+  private command(): string[] {
     return ['forgejo-runner', 'exec'];
   }
 
-  protected validatedArguments(): ForgejoRunnerArguments {
+  private validatedArguments(): ForgejoRunnerArguments {
     this.workingDir = checkExists(
       'working directory',
       firstDefined(() => this.workingDir, createTempDir),
@@ -166,8 +253,19 @@ export class ForgejoRunner extends Runner<ForgejoRunnerArguments> {
     );
   }
 
-  protected cleanup(): void {
+  private cleanup(): void {
     cleanupDir(this.workingDir!);
+  }
+
+  private determineStatus(listener: ActExecListener): ActExecStatus {
+    const jobs = listener.getJobs();
+    if (jobs.size > 0) {
+      const hasFailed = Array.from(jobs.values()).some(
+        (job) => job.status === ActExecStatus.FAILED,
+      );
+      return hasFailed ? ActExecStatus.FAILED : ActExecStatus.SUCCESS;
+    }
+    return ActExecStatus.SUCCESS;
   }
 }
 

@@ -1,12 +1,13 @@
 # ForgejoRunner Guide
 
-`ForgejoRunner` is the runner for end-to-end testing of Forgejo Actions workflows using the [Forgejo Runner](https://code.forgejo.org/forgejo/runner).
+`ForgejoRunner` is the runner for end-to-end testing of Forgejo Actions workflows via a Docker container based on the [Forgejo Runner](https://code.forgejo.org/forgejo/runner) image (`data.forgejo.org/forgejo/runner`).
 
 ## Prerequisites
 
-Install `forgejo-runner` locally. The binary can be downloaded from the [Forgejo Runner releases page](https://code.forgejo.org/forgejo/runner/releases).
+- [Docker](https://docs.docker.com/engine/install/) must be installed and running locally.
+- The Forgejo Runner Docker image will be pulled automatically on first execution.
 
-> **Note:** A Docker-based runner is currently not supported.
+> **Note:** A pre-installed `forgejo-runner` binary is not required — the runner runs inside a Docker container managed by [testcontainers](https://testcontainers.com/).
 
 ## Usage
 

@@ -19,24 +19,12 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import { ActJobExecResult } from '../ActJobExecResult.js';
-import { JobTrackingActExecListener } from './JobTrackingActExecListener.js';
-import { OutputForwardingActExecListener } from './OutputForwardingActExecListener.js';
+import { ActWorkflowExecResult } from './ActWorkflowExecResult.js';
 
-export interface ActExecListener {
-  onStdOutput(output: string): void;
-
-  onStdError(output: string): void;
-
-  getOutput(): string;
-
-  getJobs(): Map<String, ActJobExecResult>;
+export interface RunnerArguments {
+  asCliArgs(): string[];
 }
 
-export function createExecutionListener(
-  forwardOutput: boolean,
-): ActExecListener {
-  return forwardOutput
-    ? new OutputForwardingActExecListener(new JobTrackingActExecListener())
-    : new JobTrackingActExecListener();
+export abstract class Runner {
+  abstract run(): Promise<ActWorkflowExecResult>;
 }
