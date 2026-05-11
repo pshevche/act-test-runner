@@ -4,7 +4,7 @@ This file provides guidance to OpenCode when working with code in this repositor
 
 ## Project Overview
 
-`@pshevche/act-test-runner` is a TypeScript library providing a fluent/builder-style API around [nektos/act](https://github.com/nektos/act) for end-to-end testing of GitHub Actions workflows locally. The main entry point is the `ActRunner` class.
+`@pshevche/act-test-runner` is a TypeScript library providing a fluent/builder-style API around [nektos/act](https://github.com/nektos/act) for end-to-end testing of GitHub Actions workflows locally. The main entry points are the `ActRunner` and `ForgejoRunner` classes.
 
 ## Commands
 
@@ -22,11 +22,13 @@ Fix variants: `npm run lint:fix`, `npm run prettier:fix`, `npm run license:fix`
 
 ## Architecture
 
-- **`src/ActRunner.ts`** — Main public API. Fluent builder that configures workflow execution parameters and translates them to `act` CLI arguments via `ActRunnerParams`.
-- **`src/ActWorkflowExecResult.ts`** / **`ActJobExecResult.ts`** — Result objects returned by `ActRunner.run()`. Workflow result contains a map of job results.
+- **`src/ActRunner.ts`** — Main public API. Fluent builder that configures workflow execution parameters and translates them to `act` CLI arguments via `ActRunnerArguments`.
+- **`src/ForgejoRunner.ts`** — Forgejo variant. Fluent builder that configures workflow execution parameters and translates them to `forgejo-runner exec` CLI arguments via `ForgejoRunnerArguments`.
+- **`src/Runner.ts`** — Generic base class providing the `run()` execution flow. Extended by both `ActRunner` and `ForgejoRunner`.
+- **`src/ActWorkflowExecResult.ts`** / **`ActJobExecResult.ts`** — Result objects returned by `ActRunner.run()` and `ForgejoRunner.run()`. Workflow result contains a map of job results.
 - **`src/internal/`** — Output parsing via listener pattern. `JobTrackingActExecListener` parses `act` stdout to extract job names and statuses. `OutputForwardingActExecListener` wraps it to also forward output to console.
 - **`src/utils/`** — Validation (`checks.ts`), temp file creation (`fsutils.ts`), and object helpers (`objects.ts`).
-- **`src/index.ts`** — Public exports: `ActRunner`, `ActWorkflowExecResult`, `ActJobExecResult`, `ActExecStatus`, `ActRunnerError`.
+- **`src/index.ts`** — Public exports: `ActRunner`, `ActWorkflowExecResult`, `ActJobExecResult`, `ActExecStatus`, `ActRunnerError`, `ForgejoRunner`.
 
 ## Key Constraints
 
