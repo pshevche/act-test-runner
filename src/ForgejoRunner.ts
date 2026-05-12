@@ -199,6 +199,7 @@ class ForgejoRunnerArguments implements RunnerArguments {
     }
 
     if (this.envFile !== undefined) {
+      checkExists('env values file', this.envFile);
       args.push('--env-file', this.envFile);
     }
 
