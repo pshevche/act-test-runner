@@ -28,6 +28,15 @@ import {
   createTempWorkflowFile,
 } from './utils/fsutils.js';
 
+/**
+ * Invokes `forgejo-runner exec`, allowing end-to-end testing of custom Forgejo actions and workflows.
+ *
+ * Typically, the test code will provide a workflow file or workflow body to run, as well as required workflow inputs, such as environment variables or secrets.
+ *
+ * Assertions can then be made on the outcome of the `run()` method invocation, such as the jobs run, workflow output.
+ *
+ * The runner cannot be used concurrently due to limitations on the `forgejo-runner` side.
+ */
 export class ForgejoRunner extends Runner<ForgejoRunnerArguments> {
   private workflowFile: string | undefined;
   private workingDir: string | undefined;
@@ -162,6 +171,10 @@ export class ForgejoRunner extends Runner<ForgejoRunnerArguments> {
   }
 }
 
+/**
+ * Internal argument builder for {@link ForgejoRunner}.
+ * Transforms runner configuration into CLI arguments for `forgejo-runner exec`.
+ */
 class ForgejoRunnerArguments implements RunnerArguments {
   private readonly workflowsPath: string;
   private readonly eventType: string | undefined;
