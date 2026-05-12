@@ -9,9 +9,11 @@ jobs:
   print_event_name:
     runs-on: ubuntu-latest
     steps:
-      - name: Print event name
+      - name: event
         run: |
-          echo "Event Name: ${{ forgejo.event_name }}"
+          cat <<'EOF'
+          ${{ toJSON(forgejo) }}
+          EOF
   print_issue_title:
     runs-on: ubuntu-latest
     steps:
