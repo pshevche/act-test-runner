@@ -203,23 +203,17 @@ class ForgejoRunnerArguments implements RunnerArguments {
       args.push('--env-file', this.envFile);
     }
 
-    if (this.envValues.size > 0) {
-      this.envValues.forEach((value, key) => {
-        args.push('--env', `${key}=${value}`);
-      });
-    }
+    this.envValues.forEach((value, key) => {
+      args.push('--env', `${key}=${value}`);
+    });
 
-    if (this.secretsValues.size > 0) {
-      this.secretsValues.forEach((value, key) => {
-        args.push('--secret', `${key}=${value}`);
-      });
-    }
+    this.secretsValues.forEach((value, key) => {
+      args.push('--secret', `${key}=${value}`);
+    });
 
-    if (this.variablesValues.size > 0) {
-      this.variablesValues.forEach((value, key) => {
-        args.push('--var', `${key}=${value}`);
-      });
-    }
+    this.variablesValues.forEach((value, key) => {
+      args.push('--var', `${key}=${value}`);
+    });
 
     this.additionalArgs.forEach((arg) => args.push(arg));
 
