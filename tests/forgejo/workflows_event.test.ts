@@ -9,9 +9,10 @@ function eventWorkflowRunner() {
 }
 
 test('uses the first event type lexicographically from workflow if no event type is set', async () => {
-  const result = await eventWorkflowRunner().forwardOutput().run();
+  const result = await eventWorkflowRunner().run();
 
   expect(result.status).toBe(ActExecStatus.SUCCESS);
+  expect(result.output).toContain('bla');
 
   const issueJob = result.job('print_issue_title')!;
   expect(issueJob.status).toBe(ActExecStatus.SUCCESS);
@@ -21,12 +22,10 @@ test('uses the first event type lexicographically from workflow if no event type
 });
 
 test('allows configuring the event type to trigger the workflow with', async () => {
-  const result = await eventWorkflowRunner()
-    .withEvent('pull_request')
-    .forwardOutput()
-    .run();
+  const result = await eventWorkflowRunner().withEvent('pull_request').run();
 
   expect(result.status).toBe(ActExecStatus.SUCCESS);
+  expect(result.output).toContain('bla');
 
   const issueJob = result.job('print_issue_title')!;
   expect(issueJob.status).toBe(ActExecStatus.SKIPPED);
