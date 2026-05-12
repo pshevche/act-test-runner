@@ -14,6 +14,7 @@ test('uses the first event type lexicographically from workflow if no event type
   expect(result.status).toBe(ActExecStatus.SUCCESS);
 
   const issueJob = result.job('print_issue_title')!;
+  expect(result.output).toContain('bla');
   expect(issueJob.status).toBe(ActExecStatus.SUCCESS);
 
   const prJob = result.job('print_pr_title')!;
@@ -26,6 +27,7 @@ test('allows configuring the event type to trigger the workflow with', async () 
   expect(result.status).toBe(ActExecStatus.SUCCESS);
 
   const issueJob = result.job('print_issue_title')!;
+  expect(result.output).toContain('bla');
   expect(issueJob.status).toBe(ActExecStatus.SKIPPED);
 
   const prJob = result.job('print_pr_title')!;
