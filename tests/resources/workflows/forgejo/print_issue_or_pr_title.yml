@@ -6,25 +6,17 @@ on:
     types: [opened]
 
 jobs:
-  print_event_name:
-    runs-on: ubuntu-latest
-    steps:
-      - name: event
-        run: |
-          cat <<'EOF'
-          ${{ toJSON(forgejo) }}
-          EOF
   print_issue_title:
     runs-on: ubuntu-latest
     steps:
       - name: Print issue title
-        if: forgejo.event_name == 'issues'
+        if: ${{ forgejo.event_name == 'issues' }}
         run: |
           echo "Issue Title: ${{ forgejo.event.issue.title }}"
   print_pr_title:
     runs-on: ubuntu-latest
     steps:
       - name: Print PR title
-        if: forgejo.event_name == 'pull_request'
+        if: ${{ forgejo.event_name == 'pull_request' }}
         run: |
           echo "PR Title: ${{ forgejo.event.pull_request.title }}"
