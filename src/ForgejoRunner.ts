@@ -192,12 +192,11 @@ class ForgejoRunnerArguments implements RunnerArguments {
   asCliArgs(): string[] {
     const args = ['--workflows', this.workflowsPath];
 
-    args.push(
-      firstDefined(
-        () => this.eventType,
-        () => '--detect-event',
-      ),
-    );
+    if (this.eventType !== undefined) {
+      args.push('--event', this.eventType);
+    } else {
+      args.push('--detect-event');
+    }
 
     if (this.envFile !== undefined) {
       args.push('--env-file', this.envFile);
