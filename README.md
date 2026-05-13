@@ -12,6 +12,10 @@ persisted in the artifact server or action cache.
 
 ## Usage
 
+### Example project
+
+To try it out yourself, check out the [act-test-runner-example](https://github.com/pshevche/act-test-runner-example) repository.
+
 ### Assert on the workflow file execution
 
 ```JavaScript
@@ -105,6 +109,7 @@ jobs:
 
 ## Useful links
 
+- [Example project](https://github.com/pshevche/act-test-runner-example): a sample project that demonstrates how to use `act-test-runner` with a custom action.
 - [nektos/act](https://github.com/nektos/act): GitHub actions runner used by the plugin.
 - [act User Guide](https://nektosact.com): describes various configuration options that the runner provides, as well as
   the format for input files.
