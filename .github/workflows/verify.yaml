@@ -20,11 +20,11 @@ jobs:
         run: |
           curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/nektos/act/master/install.sh | sudo bash -s -- -b "/usr/bin"
           # Use the micro image to speed up tests: https://nektosact.com/usage/runners.html
-          echo "-P ubuntu-latest=node:16-buster-slim" > $HOME/.actrc
+          echo "-P ubuntu-latest=node:24-slim" > $HOME/.actrc
 
       - name: Install dependencies
         run: |
-          npm install
+          npm ci
 
       - name: Run check
         run: |
