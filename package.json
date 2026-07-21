@@ -57,5 +57,10 @@
     "package": "tsc --project tsconfig.package.json",
     "test": "NODE_OPTIONS=--experimental-vm-modules NODE_NO_WARNINGS=1 jest",
     "check": "npm run lint:check && npm run prettier:check && npm run package && npm run test"
-  }
+  },
+  "engines": {
+    "node": "^22.23.1 || ^24.0.0 || >=26.0.0",
+    "npm": "10.9.8"
+  },
+  "packageManager": "npm@10.9.8"
 }
