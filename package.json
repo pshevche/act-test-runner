@@ -29,8 +29,6 @@
     }
   },
   "devDependencies": {
-    "@jest/globals": "^30.4.1",
-    "@types/jest": "^30.0.0",
     "@types/node": "^22.20.1",
     "@typescript-eslint/eslint-plugin": "^8.65.0",
     "@typescript-eslint/parser": "^8.65.0",
@@ -38,12 +36,11 @@
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.6",
     "globals": "^17.7.0",
-    "jest": "^30.4.2",
     "prettier": "^3.9.5",
-    "ts-jest": "^29.4.11",
-    "ts-jest-resolver": "^2.0.1",
-    "ts-node": "^10.9.2",
-    "typescript": "^6.0.3"
+    "typescript": "^6.0.3",
+    "typescript-5": "npm:typescript@^5.9.3",
+    "typescript-7": "npm:typescript@^7.0.2",
+    "vitest": "^4.1.10"
   },
   "peerDependencies": {
     "typescript": "^5.0.0-0 || ^6.0.0-0 || ^7.0.0-0"
@@ -58,8 +55,11 @@
     "prettier:check": "prettier --check .",
     "license:check": "addlicense -check src/",
     "types:check": "tsc --project tsconfig.check.json",
-    "test": "NODE_OPTIONS=--experimental-vm-modules NODE_NO_WARNINGS=1 jest",
-    "check": "npm run lint:check && npm run prettier:check && npm run types:check && npm run test"
+    "test": "TS_VERSION=typescript vitest run",
+    "test:ts5": "TS_VERSION=typescript-5 vitest run",
+    "test:ts7": "TS_VERSION=typescript-7 vitest run",
+    "test:all": "npm run test && npm run test:ts5 && npm run test:ts7",
+    "check:all": "npm run lint:check && npm run prettier:check && npm run types:check"
   },
   "engines": {
     "node": "^22.23.1 || ^24.0.0 || >=26.0.0",

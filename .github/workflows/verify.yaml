@@ -28,4 +28,5 @@ jobs:
 
       - name: Run check
         run: |
-          npm run check
+          npm run check:all
+          npm run test:all

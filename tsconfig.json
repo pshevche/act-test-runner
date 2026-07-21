@@ -11,6 +11,6 @@
     "outDir": "./dist",
     "skipLibCheck": true,
     "strict": true,
-    "types": ["node", "jest"]
+    "types": ["node"]
   }
 }
