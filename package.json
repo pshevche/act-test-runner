@@ -45,6 +45,9 @@
     "ts-node": "^10.9.2",
     "typescript": "^6.0.3"
   },
+  "peerDependencies": {
+    "typescript": "^5.0.0-0 || ^6.0.0-0 || ^7.0.0-0"
+  },
   "scripts": {
     "clean": "rm -r dist",
     "lint:fix": "eslint .",
