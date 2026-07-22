@@ -1,5 +1,20 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["config:recommended"],
-  "rangeStrategy": "replace"
+  "rangeStrategy": "replace",
+  "constraints": {
+    "node": "22.23.1"
+  },
+  "packageRules": [
+    {
+      "description": "Lock typescript-5 to TypeScript 5.x",
+      "matchDepNames": ["typescript-5"],
+      "allowedVersions": "^5.0.0"
+    },
+    {
+      "description": "Lock typescript-7 to TypeScript 7.x",
+      "matchDepNames": ["typescript-7"],
+      "allowedVersions": "^7.0.0"
+    }
+  ]
 }
