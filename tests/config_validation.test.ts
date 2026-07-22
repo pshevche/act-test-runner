@@ -1,3 +1,4 @@
+import { test, expect } from 'vitest';
 import { runner, workflowPath } from './fixtures.js';
 
 test('fails if the specified workflows location does not exist', async () => {

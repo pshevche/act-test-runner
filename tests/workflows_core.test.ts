@@ -1,3 +1,4 @@
+import { test, expect, beforeEach, afterEach } from 'vitest';
 import { ActExecStatus, ActWorkflowExecResult } from '../src/index.js';
 import { runner, workflowPath } from './fixtures.js';
 import { join } from 'node:path';
