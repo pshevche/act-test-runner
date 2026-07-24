@@ -2,42 +2,45 @@
 
 ## Development
 
+This project uses [pnpm](https://pnpm.io/installation) as the package manager.
+Make sure it is installed before proceeding.
+
 To install dependencies:
 
 ```bash
-npm install
+pnpm install
 ```
 
 To run static checks (lint, formatting, types):
 
 ```bash
-npm run check:all
+pnpm run check:all
 ```
 
 To compile TypeScript:
 
 ```bash
-npm run build
-npm run clean # remove dist/
+pnpm run build
+pnpm run clean # remove dist/
 ```
 
 To run tests:
 
 ```bash
-npm run test             # default TypeScript version (6.x)
-npm run test:ts5         # TypeScript 5.x
-npm run test:ts7         # TypeScript 7.x
-npm run test:all         # all supported versions
-npm run test -- <pattern>  # filter by file name
-npm run test -- -t "<name>"  # filter by test name
+pnpm run test             # default TypeScript version (6.x)
+pnpm run test:ts5         # TypeScript 5.x
+pnpm run test:ts7         # TypeScript 7.x
+pnpm run test:all         # all supported versions
+pnpm run test -- <pattern>  # filter by file name
+pnpm run test -- -t "<name>"  # filter by test name
 ```
 
 To auto-fix issues:
 
 ```bash
-npm run lint:fix
-npm run prettier:fix
-npm run license:fix
+pnpm run lint:fix
+pnpm run prettier:fix
+pnpm run license:fix
 ```
 
 ## OpenCode setup
