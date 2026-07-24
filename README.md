@@ -53,29 +53,32 @@ test('custom workflow with event', async () => {
   const result = await new ActRunner()
     .withWorkflowBody(
       `
-name: Workflow printing the event_type
+name: Workflow printing the PR title
 on:
   pull_request:
     types: [opened]
-  issues:
-    types: [opened]
 
 jobs:
-  print_event_type:
+  print_pr_title:
     runs-on: ubuntu-latest
     steps:
-      - name: Print event type
+      - name: Print PR title
+        if: github.event_name == 'pull_request'
         run: |
-          echo "Event type: \${{ github.event_name }}"
+          echo "PR Title: ${{ github.event.pull_request.title }}"
   `,
     )
-    .withEvent('pull_request')
+    .withEvent('pull_request', {
+      pull_request: {
+        title: 'Example PR payload as object',
+      },
+    })
     .run();
 
   expect(result.status).toBe(ActExecStatus.SUCCESS);
-  const job = result.job('print_event_type')!;
-  expect(job.status).toBe(ActExecStatus.SUCCESS);
-  expect(job.output).toContain('Event type: pull_request');
+  const job = result.job('print_pr_title')!;
+  expect(prJob.status).toBe(ActExecStatus.SUCCESS);
+  expect(prJob.output).toContain('PR Title: Example PR payload as object');
 });
 ```
 
