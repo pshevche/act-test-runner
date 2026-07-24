@@ -44,3 +44,22 @@ test('allows configuring event payload', async () => {
   expect(prJob.status).toBe(ActExecStatus.SUCCESS);
   expect(prJob.output).toContain('PR Title: Example PR payload');
 });
+
+test('allows passing event payload as object', async () => {
+  const result = await eventWorkflowRunner()
+    .withEvent('pull_request', {
+      pull_request: {
+        title: 'Example PR payload as object',
+      },
+    })
+    .run();
+
+  expect(result.status).toBe(ActExecStatus.SUCCESS);
+
+  const issueJob = result.job('print_issue_title')!;
+  expect(issueJob.status).toBe(ActExecStatus.SKIPPED);
+
+  const prJob = result.job('print_pr_title')!;
+  expect(prJob.status).toBe(ActExecStatus.SUCCESS);
+  expect(prJob.output).toContain('PR Title: Example PR payload as object');
+});

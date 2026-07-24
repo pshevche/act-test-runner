@@ -25,6 +25,12 @@ describe('checkOneDefined', () => {
 });
 
 describe('checkExists', () => {
+  test('throws if path is not defined', () => {
+    expect(() => checkExists('foo path')).toThrow(
+      'The specified foo path is undefined',
+    );
+  });
+
   test('throws if path does not exist', () => {
     expect(() => checkExists('foo path', 'foo')).toThrow(
       "The specified foo path 'foo' does not exist",
