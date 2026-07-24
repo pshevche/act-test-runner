@@ -29,10 +29,9 @@
     }
   },
   "devDependencies": {
+    "@eslint/core": "^1.2.1",
     "@octokit/webhooks-types": "^7.6.1",
     "@types/node": "^22.20.1",
-    "@typescript-eslint/eslint-plugin": "^8.65.0",
-    "@typescript-eslint/parser": "^8.65.0",
     "eslint": "10.7.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.6",
@@ -41,6 +40,7 @@
     "typescript": "^6.0.3",
     "typescript-5": "npm:typescript@^5.9.3",
     "typescript-7": "npm:typescript@^7.0.2",
+    "typescript-eslint": "^8.65.0",
     "vitest": "^4.1.10"
   },
   "peerDependencies": {
@@ -59,12 +59,12 @@
     "test": "TS_VERSION=typescript vitest run",
     "test:ts5": "TS_VERSION=typescript-5 vitest run",
     "test:ts7": "TS_VERSION=typescript-7 vitest run",
-    "test:all": "npm run test && npm run test:ts5 && npm run test:ts7",
-    "check:all": "npm run lint:check && npm run prettier:check && npm run types:check"
+    "test:all": "pnpm run test && pnpm run test:ts5 && pnpm run test:ts7",
+    "check:all": "pnpm run lint:check && pnpm run prettier:check && pnpm run types:check"
   },
   "engines": {
     "node": "^22.23.1 || ^24.0.0 || >=26.0.0",
-    "npm": "10.9.8"
+    "pnpm": "11.17.0"
   },
-  "packageManager": "npm@10.9.8"
+  "packageManager": "pnpm@11.17.0"
 }

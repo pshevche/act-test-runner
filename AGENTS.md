@@ -9,24 +9,24 @@ This file provides guidance to OpenCode when working with code in this repositor
 ## Commands
 
 ```bash
-npm run check:all          # Run static checks (lint, prettier, types)
-npm run build              # Compile TypeScript (outputs to dist/)
-npm run clean              # Remove dist/
-npm run test               # Run tests with Vitest (default TS version)
-npm run test:ts5           # Run tests with TypeScript 5.x
-npm run test:ts7           # Run tests with TypeScript 7.x
-npm run test:all           # Run tests against all supported TS versions
-npm run test -- <pattern>  # Run a specific test file (Vitest filter)
-npm run types:check        # TypeScript type check only (no emit)
-npm run lint:check         # ESLint (zero warnings allowed, flat config)
-npm run prettier:check     # Check formatting
-npm run license:check      # Verify MIT headers on src/ files
+pnpm run check:all          # Run static checks (lint, prettier, types)
+pnpm run build              # Compile TypeScript (outputs to dist/)
+pnpm run clean              # Remove dist/
+pnpm run test               # Run tests with Vitest (default TS version)
+pnpm run test:ts5           # Run tests with TypeScript 5.x
+pnpm run test:ts7           # Run tests with TypeScript 7.x
+pnpm run test:all           # Run tests against all supported TS versions
+pnpm run test -- <pattern>  # Run a specific test file (Vitest filter)
+pnpm run types:check        # TypeScript type check only (no emit)
+pnpm run lint:check         # ESLint (zero warnings allowed, flat config)
+pnpm run prettier:check     # Check formatting
+pnpm run license:check      # Verify MIT headers on src/ files
 ```
 
-Fix variants: `npm run lint:fix`, `npm run prettier:fix`, `npm run license:fix`
+Fix variants: `pnpm run lint:fix`, `pnpm run prettier:fix`, `pnpm run license:fix`
 
-Vitest test filter options: use `npm run test -- <pattern>` for file name
-matching, or `npm run test -- -t "<test name>"` for test name matching.
+Vitest test filter options: use `pnpm run test -- <pattern>` for file name
+matching, or `pnpm run test -- -t "<test name>"` for test name matching.
 
 ## Architecture
 
@@ -46,4 +46,4 @@ matching, or `npm run test -- -t "<test name>"` for test name matching.
 - **All source files require MIT license headers** — enforced by `addlicense` tool.
 - **TypeScript strict mode** — `noImplicitAny`, `noUnusedLocals`, `noUnusedParameters` enabled.
 - **Multi-TS-version testing** — tests run against TypeScript 5.x, 6.x, and 7.x via `TS_VERSION` env var.
-- **Node.js engine** — `^22.23.1 || ^24.0.0 || >=26.0.0` with npm `10.9.8` (engine-strict enabled).
+- **Node.js engine** — `^22.23.1 || ^24.0.0 || >=26.0.0` with pnpm `11.17.0` (engine-strict enabled).
