@@ -20,6 +20,7 @@
  */
 
 import { spawn } from 'node:child_process';
+import { WebhookEventMap, WebhookEventName } from '@octokit/webhooks-types';
 import { ActWorkflowExecResult } from './ActWorkflowExecResult.js';
 import { ActExecStatus } from './ActExecStatus.js';
 import { ActRunnerError } from './ActRunnerError.js';
@@ -28,11 +29,19 @@ import { OutputForwardingActExecListener } from './internal/OutputForwardingActE
 import {
   cleanupDir,
   createTempDir,
+  createTempEventPayloadFile,
   createTempWorkflowFile,
 } from './utils/fsutils.js';
 import { firstDefined } from './utils/objects.js';
 import { checkExists, checkOneDefined } from './utils/checks.js';
 import { ActResourceSpec } from './internal/ActResourceSpec.js';
+import { PartialDeep } from './utils/types.js';
+
+type EventPayload<TEventType extends WebhookEventName | undefined = undefined> =
+  | (TEventType extends WebhookEventName
+      ? PartialDeep<WebhookEventMap[TEventType]> | string
+      : string)
+  | undefined;
 
 /**
  * Invokes `act`, allowing end-to-end testing of custom GitHub actions and workflows.
@@ -43,12 +52,15 @@ import { ActResourceSpec } from './internal/ActResourceSpec.js';
  *
  * The runner cannot be used concurrently due to limitations on the `act` side.
  */
-export class ActRunner {
-  private workflowFile: string | undefined;
+export class ActRunner<
+  TEventType extends WebhookEventName | undefined = undefined,
+  TEventPayload extends EventPayload<TEventType> = undefined,
+> {
   private workingDir: string | undefined;
+  private workflowFile: string | undefined;
   private workflowBody: string | undefined;
-  private eventType: string | undefined;
-  private eventPayloadFile: string | undefined;
+  private eventType: TEventType | undefined;
+  private eventPayloadFileOrBody: TEventPayload | undefined;
   private envFile: string | undefined;
   private envValues: Map<String, String> = new Map<String, String>();
   private inputsFile: string | undefined;
@@ -67,7 +79,7 @@ export class ActRunner {
    * Sets the directory to use for the runner's storage needs (default: directory in user's temp folder).
    * @param {string} workingDir - the runner's working directory
    */
-  withWorkingDir(workingDir: string): ActRunner {
+  withWorkingDir(workingDir: string): this {
     this.workingDir = workingDir;
     return this;
   }
@@ -77,7 +89,7 @@ export class ActRunner {
    * Only one of `workflowPath` and `workflowBody` can be set.
    * @param {string} workflowsPath - path to the workflow file to run
    */
-  withWorkflowFile(workflowsPath: string): ActRunner {
+  withWorkflowFile(workflowsPath: string): this {
     this.workflowFile = workflowsPath;
     return this;
   }
@@ -87,7 +99,7 @@ export class ActRunner {
    * Only one of `workflowPath` and `workflowBody` can be set.
    * @param {string} workflowBody - body of the workflow to run
    */
-  withWorkflowBody(workflowBody: string): ActRunner {
+  withWorkflowBody(workflowBody: string): this {
     this.workflowBody = workflowBody;
     return this;
   }
@@ -96,22 +108,22 @@ export class ActRunner {
    * Configures the event that triggers the workflow run (e.g., `push`).
    * If unspecified, the first event type specified in the workflow definition will be used.
    * @param type - type of the event to trigger the workflow
-   * @param payloadFile - path to the JSON file containing the event payload
+   * @param payloadFileOrBody - event payload as plain JS object or path to the JSON file
    */
-  withEvent(
-    type: string,
-    payloadFile: string | undefined = undefined,
-  ): ActRunner {
-    this.eventType = type;
-    this.eventPayloadFile = payloadFile;
-    return this;
+  withEvent<E extends WebhookEventName, EP extends EventPayload<E>>(
+    type: E,
+    payloadFileOrBody?: EP,
+  ): ActRunner<E, EP> {
+    this.eventType = type as unknown as TEventType;
+    this.eventPayloadFileOrBody = payloadFileOrBody as unknown as TEventPayload;
+    return this as unknown as ActRunner<E, EP>;
   }
 
   /**
    * Specifies the file containing environment variables to use when invoking the given workflow.
    * @param {string} envFile - file containing environment variables values to use as env in the containers
    */
-  withEnvFile(envFile: string): ActRunner {
+  withEnvFile(envFile: string): this {
     this.envFile = envFile;
     return this;
   }
@@ -120,7 +132,7 @@ export class ActRunner {
    * Sets environment variables to use when invoking the given workflow.
    * @param {...[string, string]} envValues - environment variable values to use as env in the containers
    */
-  withEnvValues(...envValues: [string, string][]): ActRunner {
+  withEnvValues(...envValues: [string, string][]): this {
     envValues.forEach((entry) => this.envValues.set(entry[0], entry[1]));
     return this;
   }
@@ -129,7 +141,7 @@ export class ActRunner {
    * Specifies the file containing inputs values to use when invoking the given workflow.
    * @param {string} inputsFile - input file to read and use as action input
    */
-  withInputsFile(inputsFile: string): ActRunner {
+  withInputsFile(inputsFile: string): this {
     this.inputsFile = inputsFile;
     return this;
   }
@@ -138,7 +150,7 @@ export class ActRunner {
    * Sets inputs values to use when invoking the given workflow.
    * @param {...[string, string]} inputsValues - action input to make available to actions
    */
-  withInputsValues(...inputsValues: [string, string][]): ActRunner {
+  withInputsValues(...inputsValues: [string, string][]): this {
     inputsValues.forEach((entry) => this.inputsValues.set(entry[0], entry[1]));
     return this;
   }
@@ -147,7 +159,7 @@ export class ActRunner {
    * Specifies the file containing secrets values to use when invoking the given workflow.
    * @param {string} secretsFile - secrets file to read and use as action input
    */
-  withSecretsFile(secretsFile: string): ActRunner {
+  withSecretsFile(secretsFile: string): this {
     this.secretsFile = secretsFile;
     return this;
   }
@@ -156,7 +168,7 @@ export class ActRunner {
    * Sets secrets values to use when invoking the given workflow.
    * @param {...[string, string]} secretsValues - secrets to make available to actions
    */
-  withSecretsValues(...secretsValues: [string, string][]): ActRunner {
+  withSecretsValues(...secretsValues: [string, string][]): this {
     secretsValues.forEach((entry) =>
       this.secretsValues.set(entry[0], entry[1]),
     );
@@ -167,7 +179,7 @@ export class ActRunner {
    * Specifies the file containing workflow variables values to use when invoking the given workflow.
    * @param {string} variablesFile - variables file to read and use as action input
    */
-  withVariablesFile(variablesFile: string): ActRunner {
+  withVariablesFile(variablesFile: string): this {
     this.variablesFile = variablesFile;
     return this;
   }
@@ -176,7 +188,7 @@ export class ActRunner {
    * Sets variables values to use when invoking the given workflow.
    * @param {...[string, string]} variablesValues - secrets to make available to actions
    */
-  withVariablesValues(...variablesValues: [string, string][]): ActRunner {
+  withVariablesValues(...variablesValues: [string, string][]): this {
     variablesValues.forEach((entry) =>
       this.variablesValues.set(entry[0], entry[1]),
     );
@@ -189,7 +201,7 @@ export class ActRunner {
    * @param {...[string, any]} matrixValues - matrix values to run the workflow with
    * @returns
    */
-  withMatrix(...matrixValues: [string, any][]): ActRunner {
+  withMatrix(...matrixValues: [string, any][]): this {
     matrixValues.forEach((entry) => this.matrix.set(entry[0], entry[1]));
     return this;
   }
@@ -204,7 +216,7 @@ export class ActRunner {
     path: string,
     host: string | undefined = undefined,
     port: number | undefined = undefined,
-  ): ActRunner {
+  ): this {
     this.cacheServer = new ActResourceSpec(path, host, port);
     return this;
   }
@@ -219,7 +231,7 @@ export class ActRunner {
     path: string,
     host: string | undefined = undefined,
     port: number | undefined = undefined,
-  ): ActRunner {
+  ): this {
     this.artifactServer = new ActResourceSpec(path, host, port);
     return this;
   }
@@ -228,7 +240,7 @@ export class ActRunner {
    * Arbitrary additional arguments to pass to the `act` execution.
    * @param {...string} args - additional arguments to invoke `act` with
    */
-  withAdditionalArgs(...args: string[]): ActRunner {
+  withAdditionalArgs(...args: string[]): this {
     args.forEach((arg) => this.additionalArgs.push(arg));
     return this;
   }
@@ -236,7 +248,7 @@ export class ActRunner {
   /**
    * Forwards the `act` output to `console`.
    */
-  forwardOutput(): ActRunner {
+  forwardOutput(): this {
     this.shouldForwardOutput = true;
     return this;
   }
@@ -256,7 +268,7 @@ export class ActRunner {
             )
           : new JobTrackingActExecListener();
 
-        const process = spawn('act', (params as ActRunnerParams).asCliArgs());
+        const process = spawn('act', params.asCliArgs());
 
         process.stdout.on('data', (data) =>
           executionListener.onStdOutput(data.toString().trimEnd()),
@@ -288,25 +300,35 @@ export class ActRunner {
     });
   }
 
-  private validateRunnerParams(): ActRunnerParams {
-    this.workingDir = checkExists(
+  private validateRunnerParams(): ActRunnerParams<TEventType> {
+    const workingDir = checkExists(
       'working directory',
       firstDefined(() => this.workingDir, createTempDir),
     );
 
+    this.workingDir = workingDir;
+
     checkOneDefined(this.workflowFile, this.workflowBody);
     const workflowFilePath = checkExists(
       'workflow path',
-      firstDefined(
-        () => this.workflowFile,
-        () => createTempWorkflowFile(this.workingDir!, this.workflowBody!),
-      ),
+      this.workflowFile ||
+        (this.workflowBody !== undefined
+          ? createTempWorkflowFile(workingDir, this.workflowBody)
+          : undefined),
     );
+
+    const eventPayloadFileOrBody = this.eventPayloadFileOrBody;
+    const eventPayloadFilePath =
+      typeof eventPayloadFileOrBody === 'object'
+        ? createTempEventPayloadFile(workingDir, eventPayloadFileOrBody)
+        : typeof eventPayloadFileOrBody === 'string'
+          ? eventPayloadFileOrBody
+          : undefined;
 
     return new ActRunnerParams(
       workflowFilePath,
+      eventPayloadFilePath,
       this.eventType,
-      this.eventPayloadFile,
       this.envFile,
       this.envValues,
       this.inputsFile,
@@ -323,10 +345,12 @@ export class ActRunner {
   }
 }
 
-class ActRunnerParams {
+class ActRunnerParams<
+  EventType extends WebhookEventName | undefined = undefined,
+> {
   private readonly workflowsPath: string;
-  private readonly eventType: string | undefined;
-  private readonly eventPayloadFile: string | undefined;
+  private readonly eventPayloadFilePath: string | undefined;
+  private readonly eventType: EventType | undefined;
   private readonly envFile: string | undefined;
   private readonly envValues: Map<String, String>;
   private readonly inputFile: string | undefined;
@@ -342,8 +366,8 @@ class ActRunnerParams {
 
   constructor(
     workflowsPath: string,
-    eventType: string | undefined,
-    eventPayloadFile: string | undefined,
+    eventPayloadFilePath: string | undefined,
+    eventType: EventType | undefined,
     envFile: string | undefined,
     envValues: Map<String, String>,
     inputFile: string | undefined,
@@ -359,7 +383,7 @@ class ActRunnerParams {
   ) {
     this.workflowsPath = workflowsPath;
     this.eventType = eventType;
-    this.eventPayloadFile = eventPayloadFile;
+    this.eventPayloadFilePath = eventPayloadFilePath;
     this.envFile = envFile;
     this.envValues = envValues;
     this.inputFile = inputFile;
@@ -377,7 +401,7 @@ class ActRunnerParams {
   asCliArgs(): string[] {
     const args = ['--workflows', this.workflowsPath];
 
-    this.addEvent(args, this.eventType, this.eventPayloadFile);
+    this.addEvent(args, this.eventType, this.eventPayloadFilePath);
 
     this.addInputs(
       args,
@@ -444,7 +468,7 @@ class ActRunnerParams {
   private addEvent(
     args: string[],
     eventType: string | undefined,
-    eventPayloadFile: string | undefined,
+    eventPayloadFilePath: string | undefined,
   ) {
     args.push(
       firstDefined(
@@ -452,9 +476,9 @@ class ActRunnerParams {
         () => '--detect-event',
       ),
     );
-    if (eventPayloadFile !== undefined) {
-      checkExists('event payload file', eventPayloadFile);
-      args.push('--eventpath', eventPayloadFile);
+    if (eventPayloadFilePath !== undefined) {
+      checkExists('event payload file', eventPayloadFilePath);
+      args.push('--eventpath', eventPayloadFilePath);
     }
   }
 

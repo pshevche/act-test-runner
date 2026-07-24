@@ -33,7 +33,11 @@ export function checkOneDefined(first: any, second: any) {
   }
 }
 
-export function checkExists(label: string, path: string): string {
+export function checkExists(label: string, path?: string): string {
+  if (!path) {
+    throw new ActRunnerError(`The specified ${label} is undefined`);
+  }
+
   if (!existsSync(path)) {
     throw new ActRunnerError(`The specified ${label} '${path}' does not exist`);
   }

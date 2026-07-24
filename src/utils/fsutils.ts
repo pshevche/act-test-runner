@@ -22,6 +22,8 @@
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { existsSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { WebhookEvent } from '@octokit/webhooks-types';
+import { PartialDeep } from './types.js';
 
 export function createTempWorkflowFile(
   workingDir: string,
@@ -30,6 +32,16 @@ export function createTempWorkflowFile(
   const fileName = join(workingDir, 'workflow.yml');
   console.log(`Writing workflow body to file ${fileName}`);
   writeFileSync(fileName, workflowBody);
+  return fileName;
+}
+
+export function createTempEventPayloadFile(
+  workingDir: string,
+  eventPayloadBody: PartialDeep<WebhookEvent>,
+): string {
+  const fileName = join(workingDir, 'event.json');
+  console.log(`Writing event payload body to file ${fileName}`);
+  writeFileSync(fileName, JSON.stringify(eventPayloadBody));
   return fileName;
 }
 
