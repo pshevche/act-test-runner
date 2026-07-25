@@ -77,8 +77,8 @@ jobs:
 
   expect(result.status).toBe(ActExecStatus.SUCCESS);
   const job = result.job('print_pr_title')!;
-  expect(prJob.status).toBe(ActExecStatus.SUCCESS);
-  expect(prJob.output).toContain('PR Title: Example PR payload as object');
+  expect(job.status).toBe(ActExecStatus.SUCCESS);
+  expect(job.output).toContain('PR Title: Example PR payload as object');
 });
 ```
 
