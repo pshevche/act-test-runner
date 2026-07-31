@@ -2,6 +2,7 @@ import { defineConfig } from 'eslint/config';
 import tseslint from 'typescript-eslint';
 import prettier from 'eslint-plugin-prettier';
 import globals from 'globals';
+// @ts-expect-error - plugin ships no types
 import headerPlugin from 'eslint-plugin-yet-another-license-header';
 
 const licenseHeader = `
