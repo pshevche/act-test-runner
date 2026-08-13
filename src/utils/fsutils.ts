@@ -30,7 +30,6 @@ export function createTempWorkflowFile(
   workflowBody: string,
 ): string {
   const fileName = join(workingDir, 'workflow.yml');
-  console.log(`Writing workflow body to file ${fileName}`);
   writeFileSync(fileName, workflowBody);
   return fileName;
 }
@@ -40,7 +39,6 @@ export function createTempEventPayloadFile(
   eventPayloadBody: PartialDeep<WebhookEvent>,
 ): string {
   const fileName = join(workingDir, 'event.json');
-  console.log(`Writing event payload body to file ${fileName}`);
   writeFileSync(fileName, JSON.stringify(eventPayloadBody));
   return fileName;
 }
