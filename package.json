@@ -45,6 +45,7 @@
     "vitest": "^4.1.10"
   },
   "peerDependencies": {
+    "@octokit/webhooks-types": ">=4.0.0 <8.0.0",
     "typescript": "^5.0.0-0 || ^6.0.0-0 || ^7.0.0-0"
   },
   "scripts": {
