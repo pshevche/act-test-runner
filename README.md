@@ -121,9 +121,11 @@ jobs:
 
 ### Sequential runner invocations
 
-Currently, `act` command has a state shared between invocations.
-Invoking `act` in-parallel (e.g. to evaluate multiple workflows) may result in a polluted state and as a result flaky
-workflow executions.
+Currently, tests using `act` can't be reliably invoked in parallel.
+This is caused by `act` generating stable container names based on the workflow's `name` property.
+If your tests run in-parallel and reuse the same workflow file, then the generated container names will collide, resuling in test failures.
+If you still want to run your tests concurrently, ensure that the workflows have unique names.
+See [nektos/act#1287](https://github.com/nektos/act/issues/1287) for mode details.
 
 ### Supported `act` options
 
