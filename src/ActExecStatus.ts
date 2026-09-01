@@ -23,7 +23,7 @@
  * Outcome of the workflow or job execution.
  */
 export enum ActExecStatus {
-  SUCCESS,
-  FAILED,
-  SKIPPED,
+  SUCCESS = 'SUCCESS',
+  FAILED = 'FAILED',
+  SKIPPED = 'SKIPPED',
 }
