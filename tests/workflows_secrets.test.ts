@@ -13,9 +13,9 @@ test('supports setting secrets values directly', async () => {
     .withSecretsValues(['GREETING', 'Hello'], ['NAME', 'Bruce'])
     .run();
 
-  expect(result.status).toBe(ActExecStatus.SUCCESS);
+  expect(result).toHaveStatus(ActExecStatus.SUCCESS);
   const job = result.job('print_greeting')!;
-  expect(job.status).toBe(ActExecStatus.SUCCESS);
+  expect(job).toHaveStatus(ActExecStatus.SUCCESS);
   expect(job.output).toContain('Hello, Bruce!');
 });
 
@@ -24,8 +24,8 @@ test('supports setting secrets values from file', async () => {
     .withSecretsFile(inputPath('greeting.secrets'))
     .run();
 
-  expect(result.status).toBe(ActExecStatus.SUCCESS);
+  expect(result).toHaveStatus(ActExecStatus.SUCCESS);
   const job = result.job('print_greeting')!;
-  expect(job.status).toBe(ActExecStatus.SUCCESS);
+  expect(job).toHaveStatus(ActExecStatus.SUCCESS);
   expect(job.output).toContain('Hallo, Falco!');
 });
