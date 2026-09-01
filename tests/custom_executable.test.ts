@@ -42,6 +42,6 @@ test('runs workflow files with the supplied custom executable', async () => {
   );
   const result = await run(customExec);
 
-  expect(result.status).toBe(ActExecStatus.SUCCESS);
+  expect(result).toHaveStatus(ActExecStatus.SUCCESS);
   expect(result.output).toContain('Hello from custom act exec');
 });
