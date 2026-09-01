@@ -35,7 +35,7 @@ test('persists workflow artifacts in configured directory', async () => {
     .withEnvValues(['ACTIONS_RUNTIME_TOKEN', 'irrelevant'])
     .run();
 
-  expect(result.status).toBe(ActExecStatus.SUCCESS);
+  expect(result).toHaveStatus(ActExecStatus.SUCCESS);
   expect(result.job('store_file_in_artifact_server')!.status).toBe(
     ActExecStatus.SUCCESS,
   );

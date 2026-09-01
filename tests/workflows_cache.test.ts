@@ -27,8 +27,10 @@ test('persists cache entries in configured directory', async () => {
     .withCacheServer(customCacheDir)
     .run();
 
-  expect(result.status).toBe(ActExecStatus.SUCCESS);
-  expect(result.job('store_file_in_cache')!.status).toBe(ActExecStatus.SUCCESS);
+  expect(result).toHaveStatus(ActExecStatus.SUCCESS);
+  expect(result.job('store_file_in_cache')!).toHaveStatus(
+    ActExecStatus.SUCCESS,
+  );
 
   const cacheArtifact = join(customCacheDir, 'cache', '01', '1');
   expect(existsSync(cacheArtifact)).toBe(true);

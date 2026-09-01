@@ -11,9 +11,9 @@ test('supports setting input values directly', async () => {
     .withInputsValues(['greeting', 'Hello'], ['name', 'Bruce'])
     .run();
 
-  expect(result.status).toBe(ActExecStatus.SUCCESS);
+  expect(result).toHaveStatus(ActExecStatus.SUCCESS);
   const job = result.job('print_greeting')!;
-  expect(job.status).toBe(ActExecStatus.SUCCESS);
+  expect(job).toHaveStatus(ActExecStatus.SUCCESS);
   expect(job.output).toContain('Hello, Bruce!');
 });
 
@@ -22,8 +22,8 @@ test('supports setting input values from file', async () => {
     .withInputsFile(inputPath('greeting.input'))
     .run();
 
-  expect(result.status).toBe(ActExecStatus.SUCCESS);
+  expect(result).toHaveStatus(ActExecStatus.SUCCESS);
   const job = result.job('print_greeting')!;
-  expect(job.status).toBe(ActExecStatus.SUCCESS);
+  expect(job).toHaveStatus(ActExecStatus.SUCCESS);
   expect(job.output).toContain('Hallo, Falco!');
 });

@@ -18,6 +18,7 @@ export default defineConfig({
     exclude: ['**/dist/**', '**/node_modules/**'],
     testTimeout: 50_000,
     globalSetup: './vitest.global.setup.ts',
+    setupFiles: ['./tests/matchers.ts'],
   },
   resolve: {
     // Force Vite to alias any internal imports of 'typescript'

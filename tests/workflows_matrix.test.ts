@@ -9,7 +9,7 @@ function matrixWorkflowRunner(): ActRunner {
 test('runs workflow with all matrix values by default', async () => {
   const result = await matrixWorkflowRunner().run();
 
-  expect(result.status).toBe(ActExecStatus.SUCCESS);
+  expect(result).toHaveStatus(ActExecStatus.SUCCESS);
 
   const matrixJobs = Array.from(result.jobs.values()).filter((job) =>
     job.name.startsWith('print_greeting'),
@@ -32,8 +32,8 @@ test('supports restricting matrix values to run with', async () => {
     .withMatrix(['name', 'Bruce'])
     .run();
 
-  expect(result.status).toBe(ActExecStatus.SUCCESS);
+  expect(result).toHaveStatus(ActExecStatus.SUCCESS);
   const job = result.job('print_greeting')!;
-  expect(job.status).toBe(ActExecStatus.SUCCESS);
+  expect(job).toHaveStatus(ActExecStatus.SUCCESS);
   expect(job.output).toContain('Hallo, Bruce!');
 });
