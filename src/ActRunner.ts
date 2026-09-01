@@ -56,6 +56,7 @@ export class ActRunner<
   TEventType extends WebhookEventName | undefined = undefined,
   TEventPayload extends EventPayload<TEventType> = undefined,
 > {
+  private actExecutable: string | undefined;
   private workingDir: string | undefined;
   private workflowFile: string | undefined;
   private workflowBody: string | undefined;
@@ -74,6 +75,16 @@ export class ActRunner<
   private artifactServer: ActResourceSpec | undefined;
   private additionalArgs: string[] = [];
   private shouldForwardOutput: boolean = false;
+
+  /**
+   * Sets the path to the `act` executable (default: `act` binary on the `PATH`).
+   * Useful in the CI environments, where the executable is provisioned on demand in a controlled location.
+   * @param actExecutable - path to the `act` executable.
+   */
+  withActExecutable(actExecutable: string): this {
+    this.actExecutable = actExecutable;
+    return this;
+  }
 
   /**
    * Sets the directory to use for the runner's storage needs (default: directory in user's temp folder).
@@ -268,7 +279,7 @@ export class ActRunner<
             )
           : new JobTrackingActExecListener();
 
-        const process = spawn('act', params.asCliArgs());
+        const process = spawn(this.actExecutable ?? 'act', params.asCliArgs());
 
         process.stdout.on('data', (data) =>
           executionListener.onStdOutput(data.toString().trimEnd()),
@@ -301,6 +312,10 @@ export class ActRunner<
   }
 
   private validateRunnerParams(): ActRunnerParams<TEventType> {
+    if (this.actExecutable) {
+      checkExists('act executable', this.actExecutable);
+    }
+
     const workingDir = checkExists(
       'working directory',
       firstDefined(() => this.workingDir, createTempDir),
