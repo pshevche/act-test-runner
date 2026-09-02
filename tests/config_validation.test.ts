@@ -97,3 +97,14 @@ test('fails if additional arguments contain managed params', async () => {
     "The following act arguments must be set via dedicated ActRunner methods, and not via 'withAdditionalArguments': --detect-event,--input-file",
   );
 });
+
+test('fails if additional arguments contain internal params', async () => {
+  await expect(
+    runner()
+      .withWorkflowFile(workflowPath('always_passing_workflow'))
+      .withAdditionalArgs('--rm')
+      .run(),
+  ).rejects.toThrow(
+    "The following act arguments must not be set via 'withAdditionalArguments', as they are managed by the ActRunner: --rm",
+  );
+});

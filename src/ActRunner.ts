@@ -38,6 +38,7 @@ import { ActResourceSpec } from './internal/ActResourceSpec.js';
 import { PartialDeep } from './utils/types.js';
 import {
   ActRunnerParams,
+  INTERNAL_ACT_PARAMS,
   MANAGED_ACT_PARAMS,
 } from './internal/ActRunnerParams.js';
 
@@ -283,7 +284,9 @@ export class ActRunner<
             )
           : new JobTrackingActExecListener();
 
-        const process = spawn(this.actExecutable ?? 'act', params.asCliArgs());
+        // apply user arguments + additional internal arguments specific to test execution
+        const args = [...params.asCliArgs(), '--rm'];
+        const process = spawn(this.actExecutable ?? 'act', args);
 
         process.stdout.on('data', (data) =>
           executionListener.onStdOutput(data.toString().trimEnd()),
@@ -350,6 +353,15 @@ export class ActRunner<
     if (overwrittenManagedParams.length > 0) {
       throw new ActRunnerError(
         `The following act arguments must be set via dedicated ActRunner methods, and not via 'withAdditionalArguments': ${overwrittenManagedParams}`,
+      );
+    }
+
+    const overwrittenInternalParams = this.additionalArgs.filter((it) =>
+      INTERNAL_ACT_PARAMS.has(it),
+    );
+    if (overwrittenInternalParams.length > 0) {
+      throw new ActRunnerError(
+        `The following act arguments must not be set via 'withAdditionalArguments', as they are managed by the ActRunner: ${overwrittenInternalParams}`,
       );
     }
 
