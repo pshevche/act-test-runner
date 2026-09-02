@@ -81,3 +81,19 @@ test('fails if provided variables values file does not exist', async () => {
     "The specified variables values file 'non-existing' does not exist",
   );
 });
+
+test('fails if additional arguments contain managed params', async () => {
+  await expect(
+    runner()
+      .withWorkflowFile(workflowPath('always_passing_workflow'))
+      .withAdditionalArgs(
+        '--detect-event',
+        '--input-file',
+        'irrelevant',
+        '--list',
+      )
+      .run(),
+  ).rejects.toThrow(
+    "The following act arguments must be set via dedicated ActRunner methods, and not via 'withAdditionalArguments': --detect-event,--input-file",
+  );
+});
