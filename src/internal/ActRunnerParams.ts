@@ -48,6 +48,8 @@ export const MANAGED_ACT_PARAMS: Set<string> = new Set([
   '-e',
 ]);
 
+export const INTERNAL_ACT_PARAMS: Set<string> = new Set(['--rm']);
+
 export class ActRunnerParams<
   EventType extends WebhookEventName | undefined = undefined,
 > {
