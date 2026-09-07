@@ -42,7 +42,7 @@
     "typescript-5": "npm:typescript@^5.9.3",
     "typescript-7": "npm:typescript@^7.0.2",
     "typescript-eslint": "^8.65.0",
-    "vitest": "^4.1.10"
+    "vitest": "^5.0.0"
   },
   "peerDependencies": {
     "@octokit/webhooks-types": ">=4.0.0 <8.0.0",
