@@ -1,6 +1,6 @@
-# AGENTS.md
+# CLAUDE.md
 
-This file provides guidance to OpenCode when working with code in this repository.
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## Project Overview
 
@@ -11,16 +11,16 @@ This file provides guidance to OpenCode when working with code in this repositor
 ```bash
 pnpm run check:all          # Run static checks (lint, prettier, types)
 pnpm run build              # Compile TypeScript (outputs to dist/)
-pnpm run clean              # Remove dist/
-pnpm run test               # Run tests with Vitest (default TS version)
-pnpm run test:ts5           # Run tests with TypeScript 5.x
-pnpm run test:ts7           # Run tests with TypeScript 7.x
-pnpm run test:all           # Run tests against all supported TS versions
-pnpm run test -- <pattern>  # Run a specific test file (Vitest filter)
-pnpm run types:check        # TypeScript type check only (no emit)
-pnpm run lint:check         # ESLint (zero warnings allowed, flat config)
-pnpm run prettier:check     # Check formatting
-pnpm run license:check      # Verify MIT headers on src/ files
+pnpm run clean               # Remove dist/
+pnpm run test                # Run tests with Vitest (default TS version)
+pnpm run test:ts5            # Run tests with TypeScript 5.x
+pnpm run test:ts7            # Run tests with TypeScript 7.x
+pnpm run test:all            # Run tests against all supported TS versions
+pnpm run test -- <pattern>   # Run a specific test file (Vitest filter)
+pnpm run types:check         # TypeScript type check only (no emit)
+pnpm run lint:check          # ESLint (zero warnings allowed, flat config)
+pnpm run prettier:check      # Check formatting
+pnpm run license:check       # Verify MIT headers on src/ files
 ```
 
 Fix variants: `pnpm run lint:fix`, `pnpm run prettier:fix`, `pnpm run license:fix`
@@ -47,3 +47,7 @@ matching, or `pnpm run test -- -t "<test name>"` for test name matching.
 - **TypeScript strict mode** — `noImplicitAny`, `noUnusedLocals`, `noUnusedParameters` enabled.
 - **Multi-TS-version testing** — tests run against TypeScript 5.x, 6.x, and 7.x via `TS_VERSION` env var.
 - **Node.js engine** — `^22.23.1 || ^24.0.0 || >=26.0.0` with pnpm `11.17.0` (engine-strict enabled).
+
+## Commit Conventions
+
+@.claude/conventional-commits.md

@@ -43,9 +43,9 @@ pnpm run prettier:fix
 pnpm run license:fix
 ```
 
-## OpenCode setup
+## Claude Code setup
 
-This repository uses [OpenCode](https://opencode.ai) for AI-assisted
-development. Project instructions are defined in `AGENTS.md`. Additional
-OpenCode-specific configuration lives in `.opencode/`:
+This repository uses [Claude Code](https://claude.com/claude-code) for
+AI-assisted development. Project instructions are defined in `CLAUDE.md`.
+Additional Claude Code-specific configuration lives in `.claude/`: settings,
 instructions, and skills for common workflows.
