@@ -105,7 +105,7 @@ export class ActExecListener {
   private processOutput(output: JsonOutput): void {
     const msg = formattedMessage(output.msg, output.job);
     this.execOutput.push(msg);
-    if (output.jobID !== undefined) {
+    if (output.jobID !== undefined && output.job !== undefined) {
       const iterationNumber = this.getJobIterationIdx(
         output.jobID,
         output.matrix,
@@ -136,8 +136,8 @@ export class ActExecListener {
 
   private toActOutput(jsonOutput: JsonOutput): ActOutput {
     const job =
-      jsonOutput.job !== undefined
-        ? { id: jsonOutput.jobID!, name: jsonOutput.job }
+      jsonOutput.job !== undefined && jsonOutput.jobID !== undefined
+        ? { id: jsonOutput.jobID, name: jsonOutput.job }
         : undefined;
     return {
       time: jsonOutput.time,
