@@ -38,6 +38,7 @@ type JsonOutput = {
   jobID?: string;
   jobResult?: JobOrStepResult;
   step?: string;
+  stepResult?: JobOrStepResult;
   matrix: Object;
 };
 
@@ -105,14 +106,14 @@ export class ActExecListener {
   private processOutput(output: JsonOutput): void {
     const msg = formattedMessage(output.msg, output.job);
     this.execOutput.push(msg);
-    if (output.jobID !== undefined && output.job !== undefined) {
+    if (this.hasJobContext(output)) {
       const iterationNumber = this.getJobIterationIdx(
-        output.jobID,
+        output.jobID!,
         output.matrix,
       );
       const jobName =
         iterationNumber === undefined
-          ? output.jobID
+          ? output.jobID!
           : `${output.jobID}_${iterationNumber}`;
 
       const jobBuilder = this.createOrGetBuilder(jobName);
@@ -120,7 +121,7 @@ export class ActExecListener {
       jobBuilder.output(msg);
 
       // mark job as run only if it executed meaningful steps
-      if (output.step !== undefined && !JOB_LIFECYCLE_STEPS.has(output.step!)) {
+      if (this.isExecutedStep(output)) {
         jobBuilder.stepCompleted();
       }
 
@@ -134,11 +135,23 @@ export class ActExecListener {
     }
   }
 
+  private hasJobContext(output: JsonOutput): boolean {
+    return output.jobID !== undefined && output.job !== undefined;
+  }
+
+  private isExecutedStep(output: JsonOutput): boolean {
+    return (
+      output.step !== undefined &&
+      !JOB_LIFECYCLE_STEPS.has(output.step!) &&
+      output.stepResult !== undefined &&
+      output.stepResult !== 'skipped'
+    );
+  }
+
   private toActOutput(jsonOutput: JsonOutput): ActOutput {
-    const job =
-      jsonOutput.job !== undefined && jsonOutput.jobID !== undefined
-        ? { id: jsonOutput.jobID, name: jsonOutput.job }
-        : undefined;
+    const job = this.hasJobContext(jsonOutput)
+      ? { id: jsonOutput.jobID!, name: jsonOutput.job! }
+      : undefined;
     return {
       time: jsonOutput.time,
       level: jsonOutput.level,
