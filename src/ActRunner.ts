@@ -24,8 +24,7 @@ import { WebhookEventMap, WebhookEventName } from '@octokit/webhooks-types';
 import { ActWorkflowExecResult } from './ActWorkflowExecResult.js';
 import { ActExecStatus } from './ActExecStatus.js';
 import { ActRunnerError } from './ActRunnerError.js';
-import { JobTrackingActExecListener } from './internal/JobTrackingActExecListener.js';
-import { OutputForwardingActExecListener } from './internal/OutputForwardingActExecListener.js';
+import { ActExecListener } from './internal/ActExecListener.js';
 import {
   cleanupDir,
   createTempDir,
@@ -41,6 +40,11 @@ import {
   INTERNAL_ACT_PARAMS,
   MANAGED_ACT_PARAMS,
 } from './internal/ActRunnerParams.js';
+import {
+  ActOutputListener,
+  CompositeActOutputListener,
+  StdStreamOutputListener,
+} from './ActOutputListener.js';
 
 type EventPayload<TEventType extends WebhookEventName | undefined = undefined> =
   | (TEventType extends WebhookEventName
@@ -79,7 +83,7 @@ export class ActRunner<
   private cacheServer: ActResourceSpec | undefined;
   private artifactServer: ActResourceSpec | undefined;
   private additionalArgs: string[] = [];
-  private shouldForwardOutput: boolean = false;
+  private outputListener: ActOutputListener | undefined;
 
   /**
    * Sets the path to the `act` executable (default: `act` binary on the `PATH`).
@@ -215,7 +219,6 @@ export class ActRunner<
    * Set matrix values to run the workflow with.
    * If undefined, all combinations specified in the workflow definition will be invoked.
    * @param {...[string, any]} matrixValues - matrix values to run the workflow with
-   * @returns
    */
   withMatrix(...matrixValues: [string, any][]): this {
     matrixValues.forEach((entry) => this.matrix.set(entry[0], entry[1]));
@@ -262,10 +265,19 @@ export class ActRunner<
   }
 
   /**
-   * Forwards the `act` output to `console`.
+   * Forwards the act output to the supplied listeners.
+   * When the listener is unspecified, forwards the output to the console.
+   * @param outputListeners - output consumers.
    */
-  forwardOutput(): this {
-    this.shouldForwardOutput = true;
+  forwardOutput(
+    outputListeners:
+      ActOutputListener | ActOutputListener[] = new StdStreamOutputListener(),
+  ): this {
+    if (Array.isArray(outputListeners)) {
+      this.outputListener = new CompositeActOutputListener(outputListeners);
+    } else {
+      this.outputListener = outputListeners;
+    }
     return this;
   }
 
@@ -278,21 +290,17 @@ export class ActRunner<
       try {
         const params = this.validateRunnerParams();
 
-        const executionListener = this.shouldForwardOutput
-          ? new OutputForwardingActExecListener(
-              new JobTrackingActExecListener(),
-            )
-          : new JobTrackingActExecListener();
+        const executionListener = new ActExecListener(this.outputListener);
 
         // apply user arguments + additional internal arguments specific to test execution
-        const args = [...params.asCliArgs(), '--rm'];
+        const args = [...params.asCliArgs(), '--rm', '--json'];
         const process = spawn(this.actExecutable ?? 'act', args);
 
         process.stdout.on('data', (data) =>
-          executionListener.onStdOutput(data.toString().trimEnd()),
+          executionListener.onRawOutput(data.toString().trimEnd()),
         );
         process.stderr.on('data', (data) =>
-          executionListener.onStdError(data.toString().trimEnd()),
+          executionListener.onRawOutput(data.toString().trimEnd()),
         );
 
         process.on('close', (code) => {
