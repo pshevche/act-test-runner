@@ -27,6 +27,7 @@ export type {
   ActWorkflowSource,
   ActResourceServerSpec,
 } from './ActRunnerOptions.js';
+export type { ActRunOptions } from './ActRunner.js';
 export { ActRunnerError } from './ActRunnerError.js';
 export { ActWorkflowExecResult } from './ActWorkflowExecResult.js';
 export type { ActOutputListener, ActOutput } from './ActOutputListener.js';
