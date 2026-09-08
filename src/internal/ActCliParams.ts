@@ -50,7 +50,27 @@ export const MANAGED_ACT_PARAMS: Set<string> = new Set([
 
 export const INTERNAL_ACT_PARAMS: Set<string> = new Set(['--rm', '--json']);
 
-export class ActRunnerParams<
+export type ActCliParamsInput<
+  EventType extends WebhookEventName | undefined = undefined,
+> = {
+  workflowsPath: string;
+  eventPayloadFilePath: string | undefined;
+  eventType: EventType | undefined;
+  envFile: string | undefined;
+  envValues: Map<string, string>;
+  inputFile: string | undefined;
+  inputValues: Map<string, string>;
+  secretsFile: string | undefined;
+  secretsValues: Map<string, string>;
+  variablesFile: string | undefined;
+  variablesValues: Map<string, string>;
+  matrix: Map<string, string | number | boolean>;
+  cacheServer: ActResourceServerSpec | undefined;
+  artifactServer: ActResourceServerSpec | undefined;
+  additionalArgs: string[];
+};
+
+export class ActCliParams<
   EventType extends WebhookEventName | undefined = undefined,
 > {
   private readonly workflowsPath: string;
@@ -69,38 +89,22 @@ export class ActRunnerParams<
   private readonly artifactServer: ActResourceServerSpec | undefined;
   private readonly additionalArgs: string[];
 
-  constructor(
-    workflowsPath: string,
-    eventPayloadFilePath: string | undefined,
-    eventType: EventType | undefined,
-    envFile: string | undefined,
-    envValues: Map<string, string>,
-    inputFile: string | undefined,
-    inputValues: Map<string, string>,
-    secretsFile: string | undefined,
-    secretsValues: Map<string, string>,
-    variablesFile: string | undefined,
-    variablesValues: Map<string, string>,
-    matrix: Map<string, string | number | boolean>,
-    cacheServer: ActResourceServerSpec | undefined,
-    artifactServer: ActResourceServerSpec | undefined,
-    additionalArgs: string[],
-  ) {
-    this.workflowsPath = workflowsPath;
-    this.eventType = eventType;
-    this.eventPayloadFilePath = eventPayloadFilePath;
-    this.envFile = envFile;
-    this.envValues = envValues;
-    this.inputFile = inputFile;
-    this.inputValues = inputValues;
-    this.secretsFile = secretsFile;
-    this.secretsValues = secretsValues;
-    this.variablesFile = variablesFile;
-    this.variablesValues = variablesValues;
-    this.matrix = matrix;
-    this.cacheServer = cacheServer;
-    this.artifactServer = artifactServer;
-    this.additionalArgs = additionalArgs;
+  constructor(params: ActCliParamsInput<EventType>) {
+    this.workflowsPath = params.workflowsPath;
+    this.eventType = params.eventType;
+    this.eventPayloadFilePath = params.eventPayloadFilePath;
+    this.envFile = params.envFile;
+    this.envValues = params.envValues;
+    this.inputFile = params.inputFile;
+    this.inputValues = params.inputValues;
+    this.secretsFile = params.secretsFile;
+    this.secretsValues = params.secretsValues;
+    this.variablesFile = params.variablesFile;
+    this.variablesValues = params.variablesValues;
+    this.matrix = params.matrix;
+    this.cacheServer = params.cacheServer;
+    this.artifactServer = params.artifactServer;
+    this.additionalArgs = params.additionalArgs;
   }
 
   asCliArgs(): string[] {
