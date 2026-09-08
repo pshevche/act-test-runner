@@ -57,14 +57,14 @@ export class ActRunnerParams<
   private readonly eventPayloadFilePath: string | undefined;
   private readonly eventType: EventType | undefined;
   private readonly envFile: string | undefined;
-  private readonly envValues: Map<String, String>;
+  private readonly envValues: Map<string, string>;
   private readonly inputFile: string | undefined;
-  private readonly inputValues: Map<String, String>;
+  private readonly inputValues: Map<string, string>;
   private readonly secretsFile: string | undefined;
-  private readonly secretsValues: Map<String, String>;
+  private readonly secretsValues: Map<string, string>;
   private readonly variablesFile: string | undefined;
-  private readonly variablesValues: Map<String, String>;
-  private readonly matrix: Map<String, any>;
+  private readonly variablesValues: Map<string, string>;
+  private readonly matrix: Map<string, any>;
   private readonly cacheServer: ActResourceSpec | undefined;
   private readonly artifactServer: ActResourceSpec | undefined;
   private readonly additionalArgs: string[];
@@ -74,14 +74,14 @@ export class ActRunnerParams<
     eventPayloadFilePath: string | undefined,
     eventType: EventType | undefined,
     envFile: string | undefined,
-    envValues: Map<String, String>,
+    envValues: Map<string, string>,
     inputFile: string | undefined,
-    inputValues: Map<String, String>,
+    inputValues: Map<string, string>,
     secretsFile: string | undefined,
-    secretsValues: Map<String, String>,
+    secretsValues: Map<string, string>,
     variablesFile: string | undefined,
-    variablesValues: Map<String, String>,
-    matrix: Map<String, any>,
+    variablesValues: Map<string, string>,
+    matrix: Map<string, any>,
     cacheServer: ActResourceSpec | undefined,
     artifactServer: ActResourceSpec | undefined,
     additionalArgs: string[],
@@ -193,7 +193,7 @@ export class ActRunnerParams<
     file: string | undefined,
     fileLabel: string,
     valuesArg: string,
-    values: Map<String, String>,
+    values: Map<string, string>,
   ) {
     if (file !== undefined) {
       checkExists(fileLabel, file);
