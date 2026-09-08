@@ -33,7 +33,6 @@ import {
 } from './utils/fsutils.js';
 import { firstDefined } from './utils/objects.js';
 import { checkExists, checkOneDefined } from './utils/checks.js';
-import { ActResourceSpec } from './internal/ActResourceSpec.js';
 import { PartialDeep } from './utils/types.js';
 import {
   ActRunnerParams,
@@ -117,8 +116,8 @@ export class ActRunner<
     string,
     string | number | boolean
   >();
-  private cacheServer: ActResourceSpec | undefined;
-  private artifactServer: ActResourceSpec | undefined;
+  private cacheServer: ActResourceServerSpec | undefined;
+  private artifactServer: ActResourceServerSpec | undefined;
   private additionalArgs: string[] = [];
   private outputListener: ActOutputListener | undefined;
   private hasRun: boolean = false;
@@ -243,7 +242,7 @@ export class ActRunner<
    * @param spec - cache server configuration
    */
   withCacheServer(spec: ActResourceServerSpec): this {
-    this.cacheServer = new ActResourceSpec(spec.path, spec.host, spec.port);
+    this.cacheServer = spec;
     return this;
   }
 
@@ -252,7 +251,7 @@ export class ActRunner<
    * @param spec - artifact server configuration
    */
   withArtifactServer(spec: ActResourceServerSpec): this {
-    this.artifactServer = new ActResourceSpec(spec.path, spec.host, spec.port);
+    this.artifactServer = spec;
     return this;
   }
 
