@@ -8,7 +8,7 @@ function envWorkflowRunner(): ActRunner {
 
 test('supports setting environment variable values directly', async () => {
   const result = await envWorkflowRunner()
-    .withEnvValues({ GREETING: 'Hello', NAME: 'Bruce' })
+    .withEnv({ values: { GREETING: 'Hello', NAME: 'Bruce' } })
     .run();
 
   expect(result.status).toBe(ActExecStatus.SUCCESS);
@@ -19,7 +19,7 @@ test('supports setting environment variable values directly', async () => {
 
 test('supports setting environment variables from file', async () => {
   const result = await envWorkflowRunner()
-    .withEnvFile(inputPath('greeting.env'))
+    .withEnv({ file: inputPath('greeting.env') })
     .run();
 
   expect(result.status).toBe(ActExecStatus.SUCCESS);

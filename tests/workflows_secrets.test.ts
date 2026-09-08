@@ -10,7 +10,7 @@ function secretsWorkflowRunner(): ActRunner {
 
 test('supports setting secrets values directly', async () => {
   const result = await secretsWorkflowRunner()
-    .withSecretsValues({ GREETING: 'Hello', NAME: 'Bruce' })
+    .withSecrets({ values: { GREETING: 'Hello', NAME: 'Bruce' } })
     .run();
 
   expect(result).toHaveStatus(ActExecStatus.SUCCESS);
@@ -21,7 +21,7 @@ test('supports setting secrets values directly', async () => {
 
 test('supports setting secrets values from file', async () => {
   const result = await secretsWorkflowRunner()
-    .withSecretsFile(inputPath('greeting.secrets'))
+    .withSecrets({ file: inputPath('greeting.secrets') })
     .run();
 
   expect(result).toHaveStatus(ActExecStatus.SUCCESS);

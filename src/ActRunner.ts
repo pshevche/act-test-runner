@@ -53,6 +53,20 @@ type EventPayload<TEventType extends WebhookEventName | undefined = undefined> =
   | undefined;
 
 /**
+ * Source of key/value pairs (environment variables, inputs, secrets, or variables), provided via a file, inline values, or both.
+ */
+export type ActValueSource = {
+  /**
+   * Path to a file containing the values.
+   */
+  file?: string;
+  /**
+   * Inline values.
+   */
+  values?: Record<string, string>;
+};
+
+/**
  * Invokes `act`, allowing end-to-end testing of custom GitHub actions and workflows.
  *
  * Typically, the test code will provide a workflow file or workflow body to run, as well as required workflow inputs, such as environment variables or secrets.
@@ -146,83 +160,52 @@ export class ActRunner<
   }
 
   /**
-   * Specifies the file containing environment variables to use when invoking the given workflow.
-   * @param {string} envFile - file containing environment variables values to use as env in the containers
+   * Specifies environment variables to use when invoking the given workflow, provided via a file, inline values, or both.
+   * @param source - environment variables source
    */
-  withEnvFile(envFile: string): this {
-    this.envFile = envFile;
+  withEnv(source: ActValueSource): this {
+    this.envFile = source.file;
+    this.setValues(this.envValues, source.values);
     return this;
   }
 
   /**
-   * Sets environment variables to use when invoking the given workflow.
-   * @param envValues - environment variable values to use as env in the containers
+   * Specifies inputs values to use when invoking the given workflow, provided via a file, inline values, or both.
+   * @param source - inputs values source
    */
-  withEnvValues(envValues: Record<string, string>): this {
-    Object.entries(envValues).forEach(([key, value]) =>
-      this.envValues.set(key, value),
-    );
+  withInputs(source: ActValueSource): this {
+    this.inputsFile = source.file;
+    this.setValues(this.inputsValues, source.values);
     return this;
   }
 
   /**
-   * Specifies the file containing inputs values to use when invoking the given workflow.
-   * @param {string} inputsFile - input file to read and use as action input
+   * Specifies secrets values to use when invoking the given workflow, provided via a file, inline values, or both.
+   * @param source - secrets values source
    */
-  withInputsFile(inputsFile: string): this {
-    this.inputsFile = inputsFile;
+  withSecrets(source: ActValueSource): this {
+    this.secretsFile = source.file;
+    this.setValues(this.secretsValues, source.values);
     return this;
   }
 
   /**
-   * Sets inputs values to use when invoking the given workflow.
-   * @param inputsValues - action input to make available to actions
+   * Specifies workflow variables values to use when invoking the given workflow, provided via a file, inline values, or both.
+   * @param source - variables values source
    */
-  withInputsValues(inputsValues: Record<string, string>): this {
-    Object.entries(inputsValues).forEach(([key, value]) =>
-      this.inputsValues.set(key, value),
-    );
+  withVariables(source: ActValueSource): this {
+    this.variablesFile = source.file;
+    this.setValues(this.variablesValues, source.values);
     return this;
   }
 
-  /**
-   * Specifies the file containing secrets values to use when invoking the given workflow.
-   * @param {string} secretsFile - secrets file to read and use as action input
-   */
-  withSecretsFile(secretsFile: string): this {
-    this.secretsFile = secretsFile;
-    return this;
-  }
-
-  /**
-   * Sets secrets values to use when invoking the given workflow.
-   * @param secretsValues - secrets to make available to actions
-   */
-  withSecretsValues(secretsValues: Record<string, string>): this {
-    Object.entries(secretsValues).forEach(([key, value]) =>
-      this.secretsValues.set(key, value),
-    );
-    return this;
-  }
-
-  /**
-   * Specifies the file containing workflow variables values to use when invoking the given workflow.
-   * @param {string} variablesFile - variables file to read and use as action input
-   */
-  withVariablesFile(variablesFile: string): this {
-    this.variablesFile = variablesFile;
-    return this;
-  }
-
-  /**
-   * Sets variables values to use when invoking the given workflow.
-   * @param variablesValues - secrets to make available to actions
-   */
-  withVariablesValues(variablesValues: Record<string, string>): this {
-    Object.entries(variablesValues).forEach(([key, value]) =>
-      this.variablesValues.set(key, value),
-    );
-    return this;
+  private setValues(
+    target: Map<string, string>,
+    values: Record<string, string> | undefined,
+  ): void {
+    if (values !== undefined) {
+      Object.entries(values).forEach(([key, value]) => target.set(key, value));
+    }
   }
 
   /**
