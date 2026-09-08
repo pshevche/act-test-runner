@@ -34,7 +34,11 @@ import {
 import { firstDefined } from './utils/objects.js';
 import { checkExists, checkOneDefined } from './utils/checks.js';
 import { PartialDeep } from './utils/types.js';
-import type { ActResourceServerSpec } from './ActResourceServerSpec.js';
+import type {
+  ActValueSource,
+  ActWorkflowSource,
+  ActResourceServerSpec,
+} from './ActRunnerOptions.js';
 import {
   ActRunnerParams,
   INTERNAL_ACT_PARAMS,
@@ -51,27 +55,6 @@ type EventPayload<TEventType extends WebhookEventName | undefined = undefined> =
       ? PartialDeep<WebhookEventMap[TEventType]> | string
       : string)
   | undefined;
-
-/**
- * Source of key/value pairs (environment variables, inputs, secrets, or variables), provided via a file, inline values, or both.
- */
-export type ActValueSource = {
-  /**
-   * Path to a file containing the values.
-   */
-  file?: string;
-  /**
-   * Inline values.
-   */
-  values?: Record<string, string>;
-};
-
-export type { ActResourceServerSpec };
-
-/**
- * Source of the GitHub workflow to run, provided either as a file path or inline body.
- */
-export type ActWorkflowSource = { file: string } | { body: string };
 
 /**
  * Invokes `act`, allowing end-to-end testing of custom GitHub actions and workflows.

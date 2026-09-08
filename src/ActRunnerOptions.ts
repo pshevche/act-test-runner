@@ -20,6 +20,25 @@
  */
 
 /**
+ * Source of key/value pairs (environment variables, inputs, secrets, or variables), provided via a file, inline values, or both.
+ */
+export type ActValueSource = {
+  /**
+   * Path to a file containing the values.
+   */
+  file?: string;
+  /**
+   * Inline values.
+   */
+  values?: Record<string, string>;
+};
+
+/**
+ * Source of the GitHub workflow to run, provided either as a file path or inline body.
+ */
+export type ActWorkflowSource = { file: string } | { body: string };
+
+/**
  * Configuration for the cache or artifact server used by a workflow run.
  */
 export type ActResourceServerSpec = {

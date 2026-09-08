@@ -20,7 +20,7 @@
  */
 
 import { WebhookEventName } from '@octokit/webhooks-types';
-import type { ActResourceServerSpec } from '../ActResourceServerSpec.js';
+import type { ActResourceServerSpec } from '../ActRunnerOptions.js';
 import { checkExists } from '../utils/checks.js';
 import { firstDefined } from '../utils/objects.js';
 
