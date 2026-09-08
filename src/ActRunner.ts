@@ -319,6 +319,7 @@ export class ActRunner<
       } catch (err) {
         if (err instanceof ActRunnerError) {
           reject(err);
+          return;
         }
         reject(
           new ActRunnerError(
