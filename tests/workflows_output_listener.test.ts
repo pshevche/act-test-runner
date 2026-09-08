@@ -44,7 +44,7 @@ afterEach(() => {
 });
 
 test('does not forward output to console by default', async () => {
-  const result = await runner().withWorkflowBody(WORKFLOW_BODY).run();
+  const result = await runner().withWorkflow({ body: WORKFLOW_BODY }).run();
 
   expect(result).toHaveStatus(ActExecStatus.SUCCESS);
   expect(result.output).toContain('Hello, World!');
@@ -53,7 +53,7 @@ test('does not forward output to console by default', async () => {
 
 test('forwards output to console when listener is not provided', async () => {
   const result = await runner()
-    .withWorkflowBody(WORKFLOW_BODY)
+    .withWorkflow({ body: WORKFLOW_BODY })
     .forwardOutput()
     .run();
 
@@ -66,7 +66,7 @@ test('forwards output to console when listener is not provided', async () => {
 
 test('forwards output to the specified custom listener', async () => {
   const result = await runner()
-    .withWorkflowBody(WORKFLOW_BODY)
+    .withWorkflow({ body: WORKFLOW_BODY })
     .forwardOutput(customListener)
     .run();
 
@@ -78,7 +78,7 @@ test('forwards output to the specified custom listener', async () => {
 
 test('supports combining multiple listeners', async () => {
   const result = await runner()
-    .withWorkflowBody(WORKFLOW_BODY)
+    .withWorkflow({ body: WORKFLOW_BODY })
     .forwardOutput([customListener, new StdStreamOutputListener()])
     .run();
 

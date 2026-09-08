@@ -3,7 +3,7 @@ import { inputPath, runner, workflowPath } from './fixtures.js';
 import { ActExecStatus, ActRunner } from '../src/index.js';
 
 function envWorkflowRunner(): ActRunner {
-  return runner().withWorkflowFile(workflowPath('print_env_variables'));
+  return runner().withWorkflow({ file: workflowPath('print_env_variables') });
 }
 
 test('supports setting environment variable values directly', async () => {

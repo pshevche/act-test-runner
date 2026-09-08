@@ -34,7 +34,11 @@ import {
 import { firstDefined } from './utils/objects.js';
 import { checkExists, checkOneDefined } from './utils/checks.js';
 import { PartialDeep } from './utils/types.js';
-import type { ActResourceServerSpec } from './ActResourceServerSpec.js';
+import type {
+  ActValueSource,
+  ActWorkflowSource,
+  ActResourceServerSpec,
+} from './ActRunnerOptions.js';
 import {
   ActRunnerParams,
   INTERNAL_ACT_PARAMS,
@@ -53,22 +57,6 @@ type EventPayload<TEventType extends WebhookEventName | undefined = undefined> =
   | undefined;
 
 /**
- * Source of key/value pairs (environment variables, inputs, secrets, or variables), provided via a file, inline values, or both.
- */
-export type ActValueSource = {
-  /**
-   * Path to a file containing the values.
-   */
-  file?: string;
-  /**
-   * Inline values.
-   */
-  values?: Record<string, string>;
-};
-
-export type { ActResourceServerSpec };
-
-/**
  * Invokes `act`, allowing end-to-end testing of custom GitHub actions and workflows.
  *
  * Typically, the test code will provide a workflow file or workflow body to run, as well as required workflow inputs, such as environment variables or secrets.
@@ -85,8 +73,7 @@ export class ActRunner<
 > {
   private actExecutable: string | undefined;
   private workingDir: string | undefined;
-  private workflowFile: string | undefined;
-  private workflowBody: string | undefined;
+  private workflowSource: ActWorkflowSource | undefined;
   private eventType: TEventType | undefined;
   private eventPayloadFileOrBody: TEventPayload | undefined;
   private envFile: string | undefined;
@@ -127,22 +114,11 @@ export class ActRunner<
   }
 
   /**
-   * Specifies the GitHub workflow file to run.
-   * Only one of `workflowPath` and `workflowBody` can be set.
-   * @param {string} workflowsPath - path to the workflow file to run
+   * Specifies the GitHub workflow to run, either as a file path or an inline body.
+   * @param source - the workflow source
    */
-  withWorkflowFile(workflowsPath: string): this {
-    this.workflowFile = workflowsPath;
-    return this;
-  }
-
-  /**
-   * Specifies the content of the GitHub workflow to run.
-   * Only one of `workflowPath` and `workflowBody` can be set.
-   * @param {string} workflowBody - body of the workflow to run
-   */
-  withWorkflowBody(workflowBody: string): this {
-    this.workflowBody = workflowBody;
+  withWorkflow(source: ActWorkflowSource): this {
+    this.workflowSource = source;
     return this;
   }
 
@@ -335,12 +311,21 @@ export class ActRunner<
 
     this.workingDir = workingDir;
 
-    checkOneDefined(this.workflowFile, this.workflowBody);
+    const workflowFile =
+      this.workflowSource && 'file' in this.workflowSource
+        ? this.workflowSource.file
+        : undefined;
+    const workflowBody =
+      this.workflowSource && 'body' in this.workflowSource
+        ? this.workflowSource.body
+        : undefined;
+
+    checkOneDefined(workflowFile, workflowBody);
     const workflowFilePath = checkExists(
       'workflow path',
-      this.workflowFile ||
-        (this.workflowBody !== undefined
-          ? createTempWorkflowFile(workingDir, this.workflowBody)
+      workflowFile ||
+        (workflowBody !== undefined
+          ? createTempWorkflowFile(workingDir, workflowBody)
           : undefined),
     );
 
