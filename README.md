@@ -100,7 +100,7 @@ jobs:
         run: echo "$GREETING, $NAME!"
   `,
     )
-    .withEnvValues(['GREETING', 'Hello'], ['NAME', 'Bruce'])
+    .withEnvValues({ GREETING: 'Hello', NAME: 'Bruce' })
     .run();
 
   expect(result.status).toBe(ActExecStatus.SUCCESS);

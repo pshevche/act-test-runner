@@ -156,10 +156,12 @@ export class ActRunner<
 
   /**
    * Sets environment variables to use when invoking the given workflow.
-   * @param {...[string, string]} envValues - environment variable values to use as env in the containers
+   * @param envValues - environment variable values to use as env in the containers
    */
-  withEnvValues(...envValues: [string, string][]): this {
-    envValues.forEach((entry) => this.envValues.set(entry[0], entry[1]));
+  withEnvValues(envValues: Record<string, string>): this {
+    Object.entries(envValues).forEach(([key, value]) =>
+      this.envValues.set(key, value),
+    );
     return this;
   }
 
@@ -174,10 +176,12 @@ export class ActRunner<
 
   /**
    * Sets inputs values to use when invoking the given workflow.
-   * @param {...[string, string]} inputsValues - action input to make available to actions
+   * @param inputsValues - action input to make available to actions
    */
-  withInputsValues(...inputsValues: [string, string][]): this {
-    inputsValues.forEach((entry) => this.inputsValues.set(entry[0], entry[1]));
+  withInputsValues(inputsValues: Record<string, string>): this {
+    Object.entries(inputsValues).forEach(([key, value]) =>
+      this.inputsValues.set(key, value),
+    );
     return this;
   }
 
@@ -192,11 +196,11 @@ export class ActRunner<
 
   /**
    * Sets secrets values to use when invoking the given workflow.
-   * @param {...[string, string]} secretsValues - secrets to make available to actions
+   * @param secretsValues - secrets to make available to actions
    */
-  withSecretsValues(...secretsValues: [string, string][]): this {
-    secretsValues.forEach((entry) =>
-      this.secretsValues.set(entry[0], entry[1]),
+  withSecretsValues(secretsValues: Record<string, string>): this {
+    Object.entries(secretsValues).forEach(([key, value]) =>
+      this.secretsValues.set(key, value),
     );
     return this;
   }
@@ -212,11 +216,11 @@ export class ActRunner<
 
   /**
    * Sets variables values to use when invoking the given workflow.
-   * @param {...[string, string]} variablesValues - secrets to make available to actions
+   * @param variablesValues - secrets to make available to actions
    */
-  withVariablesValues(...variablesValues: [string, string][]): this {
-    variablesValues.forEach((entry) =>
-      this.variablesValues.set(entry[0], entry[1]),
+  withVariablesValues(variablesValues: Record<string, string>): this {
+    Object.entries(variablesValues).forEach(([key, value]) =>
+      this.variablesValues.set(key, value),
     );
     return this;
   }
@@ -224,10 +228,12 @@ export class ActRunner<
   /**
    * Set matrix values to run the workflow with.
    * If undefined, all combinations specified in the workflow definition will be invoked.
-   * @param {...[string, string | number | boolean]} matrixValues - matrix values to run the workflow with
+   * @param matrixValues - matrix values to run the workflow with
    */
-  withMatrix(...matrixValues: [string, string | number | boolean][]): this {
-    matrixValues.forEach((entry) => this.matrix.set(entry[0], entry[1]));
+  withMatrix(matrixValues: Record<string, string | number | boolean>): this {
+    Object.entries(matrixValues).forEach(([key, value]) =>
+      this.matrix.set(key, value),
+    );
     return this;
   }
 

@@ -8,7 +8,7 @@ function variablesWorkflowRunner(): ActRunner {
 
 test('supports setting workflow variables directly', async () => {
   const result = await variablesWorkflowRunner()
-    .withVariablesValues(['GREETING', 'Hello'], ['NAME', 'Bruce'])
+    .withVariablesValues({ GREETING: 'Hello', NAME: 'Bruce' })
     .run();
 
   expect(result).toHaveStatus(ActExecStatus.SUCCESS);

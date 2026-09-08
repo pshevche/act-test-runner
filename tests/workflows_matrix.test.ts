@@ -33,8 +33,7 @@ test('runs workflow with all matrix values by default', async () => {
 
 test('supports restricting matrix values to run with', async () => {
   const result = await matrixWorkflowRunner()
-    .withMatrix(['greeting', 'Hallo'])
-    .withMatrix(['name', 'Bruce'])
+    .withMatrix({ greeting: 'Hallo', name: 'Bruce' })
     .run();
 
   expect(result).toHaveStatus(ActExecStatus.SUCCESS);
