@@ -351,22 +351,22 @@ export class ActRunner<
       );
     }
 
-    return new ActRunnerParams(
-      workflowFilePath,
+    return new ActRunnerParams({
+      workflowsPath: workflowFilePath,
       eventPayloadFilePath,
-      this.eventType,
-      this.envFile,
-      this.envValues,
-      this.inputsFile,
-      this.inputsValues,
-      this.secretsFile,
-      this.secretsValues,
-      this.variablesFile,
-      this.variablesValues,
-      this.matrix,
-      this.cacheServer,
-      this.artifactServer,
-      this.additionalArgs,
-    );
+      eventType: this.eventType,
+      envFile: this.envFile,
+      envValues: this.envValues,
+      inputFile: this.inputsFile,
+      inputValues: this.inputsValues,
+      secretsFile: this.secretsFile,
+      secretsValues: this.secretsValues,
+      variablesFile: this.variablesFile,
+      variablesValues: this.variablesValues,
+      matrix: this.matrix,
+      cacheServer: this.cacheServer,
+      artifactServer: this.artifactServer,
+      additionalArgs: this.additionalArgs,
+    });
   }
 }
