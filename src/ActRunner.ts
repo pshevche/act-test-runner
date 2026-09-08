@@ -60,6 +60,8 @@ type EventPayload<TEventType extends WebhookEventName | undefined = undefined> =
  * Assertions can then be made on the outcome of the `run()` method invocation, such as the jobs run, workflow output, or artifacts persisted in the artifact server or action cache.
  *
  * The runner cannot be used concurrently due to limitations on the `act` side.
+ *
+ * Each instance is single-use: calling `run()` more than once on the same instance rejects with an `ActRunnerError`. Create a new instance for each run.
  */
 export class ActRunner<
   TEventType extends WebhookEventName | undefined = undefined,
@@ -87,6 +89,7 @@ export class ActRunner<
   private artifactServer: ActResourceSpec | undefined;
   private additionalArgs: string[] = [];
   private outputListener: ActOutputListener | undefined;
+  private hasRun: boolean = false;
 
   /**
    * Sets the path to the `act` executable (default: `act` binary on the `PATH`).
@@ -291,6 +294,13 @@ export class ActRunner<
   run(): Promise<ActWorkflowExecResult> {
     return new Promise<ActWorkflowExecResult>((resolve, reject) => {
       try {
+        if (this.hasRun) {
+          throw new ActRunnerError(
+            'ActRunner instances cannot be reused; create a new instance for each run()',
+          );
+        }
+        this.hasRun = true;
+
         const params = this.validateRunnerParams();
 
         const executionListener = new ActExecListener(this.outputListener);

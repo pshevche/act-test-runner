@@ -50,3 +50,23 @@ test('runs workflow files with the supplied custom executable', async () => {
   expect(result).toHaveStatus(ActExecStatus.SUCCESS);
   expect(result.output).toContain('Hello from custom act exec');
 });
+
+test('rejects if run() is called more than once on the same instance', async () => {
+  const customExec = join(customExecDir, 'customAct');
+  writeFileSync(
+    customExec,
+    `#!/usr/bin/env bash
+    echo "Hello from custom act exec!"
+  `,
+    { mode: 0o744 },
+  );
+  const testRunner = runner()
+    .withActExecutable(customExec)
+    .withWorkflowFile(workflowPath('always_passing_workflow'));
+
+  await testRunner.run();
+
+  await expect(testRunner.run()).rejects.toThrow(
+    'ActRunner instances cannot be reused; create a new instance for each run()',
+  );
+});
