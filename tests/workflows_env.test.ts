@@ -8,7 +8,7 @@ function envWorkflowRunner(): ActRunner {
 
 test('supports setting environment variable values directly', async () => {
   const result = await envWorkflowRunner()
-    .withEnvValues(['GREETING', 'Hello'], ['NAME', 'Bruce'])
+    .withEnvValues({ GREETING: 'Hello', NAME: 'Bruce' })
     .run();
 
   expect(result.status).toBe(ActExecStatus.SUCCESS);

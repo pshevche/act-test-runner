@@ -8,7 +8,7 @@ function inputWorkflowRunner(): ActRunner {
 
 test('supports setting input values directly', async () => {
   const result = await inputWorkflowRunner()
-    .withInputsValues(['greeting', 'Hello'], ['name', 'Bruce'])
+    .withInputsValues({ greeting: 'Hello', name: 'Bruce' })
     .run();
 
   expect(result).toHaveStatus(ActExecStatus.SUCCESS);

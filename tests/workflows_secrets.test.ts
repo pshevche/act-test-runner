@@ -10,7 +10,7 @@ function secretsWorkflowRunner(): ActRunner {
 
 test('supports setting secrets values directly', async () => {
   const result = await secretsWorkflowRunner()
-    .withSecretsValues(['GREETING', 'Hello'], ['NAME', 'Bruce'])
+    .withSecretsValues({ GREETING: 'Hello', NAME: 'Bruce' })
     .run();
 
   expect(result).toHaveStatus(ActExecStatus.SUCCESS);
