@@ -22,7 +22,10 @@
 import { ActRunnerError } from '../ActRunnerError.js';
 import { existsSync } from 'node:fs';
 
-export function checkOneDefined(first: any, second: any) {
+export function checkOneDefined<T>(
+  first: T | undefined,
+  second: T | undefined,
+) {
   if (
     (first === undefined && second === undefined) ||
     (first !== undefined && second !== undefined)
