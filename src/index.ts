@@ -25,4 +25,7 @@ export { ActRunner } from './ActRunner.js';
 export { ActRunnerError } from './ActRunnerError.js';
 export { ActWorkflowExecResult } from './ActWorkflowExecResult.js';
 export type { ActOutputListener, ActOutput } from './ActOutputListener.js';
-export { StdStreamOutputListener } from './ActOutputListener.js';
+export {
+  ActOutputLevel,
+  StdStreamOutputListener,
+} from './ActOutputListener.js';
