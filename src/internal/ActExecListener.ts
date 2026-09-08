@@ -24,7 +24,7 @@ import {
   ActOutputLevel,
   ActOutputListener,
 } from '../ActOutputListener.js';
-import type { ActJobExecResult } from '../ActRunnerResult.js';
+import type { ActJobExecResult, ActMatrixValues } from '../ActRunnerResult.js';
 import { ActJobExecResultBuilder } from './ActJobExecResultBuilder.js';
 import { formattedMessage } from './outputFormatter.js';
 
@@ -39,7 +39,7 @@ type JsonOutput = {
   jobResult?: JobOrStepResult;
   step?: string;
   stepResult?: JobOrStepResult;
-  matrix: Record<string, string>;
+  matrix: ActMatrixValues;
 };
 
 const JOB_LIFECYCLE_STEPS = new Set<string>(['Set up job', 'Complete job']);
@@ -47,13 +47,14 @@ const JOB_LIFECYCLE_STEPS = new Set<string>(['Set up job', 'Complete job']);
 class JobIterationTracker {
   private readonly matrixIdx: Map<string, number> = new Map<string, number>();
 
-  private matrixKey(matrix: Record<string, string>): string {
-    return Object.values(matrix)
+  private matrixKey(matrix: ActMatrixValues): string {
+    return Object.entries(matrix)
+      .map((value) => `${value[0]}\u0000${value[1]}`)
       .sort((a, b) => (a > b ? 1 : -1))
-      .reduce((prev, curr) => `${prev}_${curr}`);
+      .reduce((prev, curr) => `${prev}\u0000${curr}`);
   }
 
-  iterationIndex(matrix: Record<string, string>): number {
+  iterationIndex(matrix: ActMatrixValues): number {
     const key = this.matrixKey(matrix);
     if (this.matrixIdx.has(key)) {
       return this.matrixIdx.get(key)!;
@@ -107,16 +108,7 @@ export class ActExecListener {
     const msg = formattedMessage(output.msg, output.job);
     this.execOutput.push(msg);
     if (this.hasJobContext(output)) {
-      const iterationNumber = this.getJobIterationIdx(
-        output.jobID!,
-        output.matrix,
-      );
-      const jobName =
-        iterationNumber === undefined
-          ? output.jobID!
-          : `${output.jobID}_${iterationNumber}`;
-
-      const jobBuilder = this.createOrGetBuilder(jobName);
+      const jobBuilder = this.createOrGetBuilder(output.jobID!, output.matrix);
 
       jobBuilder.output(msg);
 
@@ -173,16 +165,26 @@ export class ActExecListener {
     );
   }
 
-  private createOrGetBuilder(jobName: string): ActJobExecResultBuilder {
+  private createOrGetBuilder(
+    jobId: string,
+    matrix: ActMatrixValues,
+  ): ActJobExecResultBuilder {
+    const iterationNumber = this.getJobIterationIdx(jobId, matrix);
+    const jobName =
+      iterationNumber === undefined ? jobId : `${jobId}_${iterationNumber}`;
+
     if (!this.jobsByName.has(jobName)) {
-      this.jobsByName.set(jobName, new ActJobExecResultBuilder(jobName));
+      this.jobsByName.set(
+        jobName,
+        new ActJobExecResultBuilder(jobName, matrix),
+      );
     }
     return this.jobsByName.get(jobName)!;
   }
 
   private getJobIterationIdx(
     jobName: string,
-    matrix: Record<string, string>,
+    matrix: ActMatrixValues,
   ): number | undefined {
     if (Object.keys(matrix).length == 0) {
       return undefined;

@@ -20,6 +20,11 @@
  */
 
 /**
+ * Matrix values a job ran with.
+ */
+export type ActMatrixValues = Record<string, string | number | boolean>;
+
+/**
  * Result of the workflow execution.
  */
 export type ActWorkflowExecResult = {
@@ -67,6 +72,10 @@ export type ActJobExecResult = {
    * Job's console output.
    */
   readonly output: string;
+  /**
+   * Matrix values the job ran with.
+   */
+  readonly matrix: ActMatrixValues;
 };
 
 /**

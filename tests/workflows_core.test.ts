@@ -34,6 +34,7 @@ test('reports successful workflows', async () => {
   const successfulJob = result.jobs['successful_job']!;
   expect(successfulJob).toHaveStatus(ActExecStatus.SUCCESS);
   expect(successfulJob.output).toContain('Hello, World!');
+  expect(successfulJob.matrix).toStrictEqual({});
 });
 
 test('captures workflow failures', async () => {

@@ -48,7 +48,10 @@ import {
   StdStreamOutputListener,
 } from './ActOutputListener.js';
 import { ActExecStatus, ActRunnerError } from './ActRunnerResult.js';
-import type { ActWorkflowExecResult } from './ActRunnerResult.js';
+import type {
+  ActMatrixValues,
+  ActWorkflowExecResult,
+} from './ActRunnerResult.js';
 
 type EventPayload<TEventType extends WebhookEventName | undefined = undefined> =
   | (TEventType extends WebhookEventName
@@ -191,7 +194,7 @@ export class ActRunner<
    * If undefined, all combinations specified in the workflow definition will be invoked.
    * @param matrixValues - matrix values to run the workflow with
    */
-  withMatrix(matrixValues: Record<string, string | number | boolean>): this {
+  withMatrix(matrixValues: ActMatrixValues): this {
     Object.entries(matrixValues).forEach(([key, value]) =>
       this.matrix.set(key, value),
     );
