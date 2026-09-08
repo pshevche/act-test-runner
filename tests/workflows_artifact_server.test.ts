@@ -30,7 +30,7 @@ afterEach(() => {
 
 test('persists workflow artifacts in configured directory', async () => {
   const result = await artifactServerWorkflowRunner()
-    .withArtifactServer(artifactServerDir)
+    .withArtifactServer({ path: artifactServerDir })
     // required to execute upload-artifact action
     .withEnv({ values: { ACTIONS_RUNTIME_TOKEN: 'irrelevant' } })
     .run();

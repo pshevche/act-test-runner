@@ -33,8 +33,8 @@ import {
 } from './utils/fsutils.js';
 import { firstDefined } from './utils/objects.js';
 import { checkExists, checkOneDefined } from './utils/checks.js';
-import { ActResourceSpec } from './internal/ActResourceSpec.js';
 import { PartialDeep } from './utils/types.js';
+import type { ActResourceServerSpec } from './ActResourceServerSpec.js';
 import {
   ActRunnerParams,
   INTERNAL_ACT_PARAMS,
@@ -65,6 +65,8 @@ export type ActValueSource = {
    */
   values?: Record<string, string>;
 };
+
+export type { ActResourceServerSpec };
 
 /**
  * Invokes `act`, allowing end-to-end testing of custom GitHub actions and workflows.
@@ -99,8 +101,8 @@ export class ActRunner<
     string,
     string | number | boolean
   >();
-  private cacheServer: ActResourceSpec | undefined;
-  private artifactServer: ActResourceSpec | undefined;
+  private cacheServer: ActResourceServerSpec | undefined;
+  private artifactServer: ActResourceServerSpec | undefined;
   private additionalArgs: string[] = [];
   private outputListener: ActOutputListener | undefined;
   private hasRun: boolean = false;
@@ -222,31 +224,19 @@ export class ActRunner<
 
   /**
    * Configures the cache server to be used by the given workflow.
-   * @param {string} path - the path where the cache artifacts will be stored
-   * @param {string | undefined } host - the address to which the cache server binds
-   * @param {number | undefined } port - the port where the cache server listens
+   * @param spec - cache server configuration
    */
-  withCacheServer(
-    path: string,
-    host: string | undefined = undefined,
-    port: number | undefined = undefined,
-  ): this {
-    this.cacheServer = new ActResourceSpec(path, host, port);
+  withCacheServer(spec: ActResourceServerSpec): this {
+    this.cacheServer = spec;
     return this;
   }
 
   /**
    * Configures the artifact server to be used by the given workflow.
-   * @param {string} path - the path where the artifacts uploaded will be stored
-   * @param {string | undefined } host - the address to which the artifact server binds
-   * @param {number | undefined } port - the port where the artifact server listens
+   * @param spec - artifact server configuration
    */
-  withArtifactServer(
-    path: string,
-    host: string | undefined = undefined,
-    port: number | undefined = undefined,
-  ): this {
-    this.artifactServer = new ActResourceSpec(path, host, port);
+  withArtifactServer(spec: ActResourceServerSpec): this {
+    this.artifactServer = spec;
     return this;
   }
 

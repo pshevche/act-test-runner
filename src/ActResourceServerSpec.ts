@@ -19,18 +19,20 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-export class ActResourceSpec {
-  readonly path: string;
-  readonly host: string | undefined;
-  readonly port: number | undefined;
-
-  constructor(
-    path: string,
-    host: string | undefined,
-    port: number | undefined,
-  ) {
-    this.path = path;
-    this.host = host;
-    this.port = port;
-  }
-}
+/**
+ * Configuration for the cache or artifact server used by a workflow run.
+ */
+export type ActResourceServerSpec = {
+  /**
+   * The path where the server's data will be stored.
+   */
+  path: string;
+  /**
+   * The address to which the server binds.
+   */
+  host?: string;
+  /**
+   * The port on which the server listens.
+   */
+  port?: number;
+};

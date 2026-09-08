@@ -20,7 +20,7 @@
  */
 
 import { WebhookEventName } from '@octokit/webhooks-types';
-import { ActResourceSpec } from './ActResourceSpec.js';
+import type { ActResourceServerSpec } from '../ActResourceServerSpec.js';
 import { checkExists } from '../utils/checks.js';
 import { firstDefined } from '../utils/objects.js';
 
@@ -65,8 +65,8 @@ export class ActRunnerParams<
   private readonly variablesFile: string | undefined;
   private readonly variablesValues: Map<string, string>;
   private readonly matrix: Map<string, string | number | boolean>;
-  private readonly cacheServer: ActResourceSpec | undefined;
-  private readonly artifactServer: ActResourceSpec | undefined;
+  private readonly cacheServer: ActResourceServerSpec | undefined;
+  private readonly artifactServer: ActResourceServerSpec | undefined;
   private readonly additionalArgs: string[];
 
   constructor(
@@ -82,8 +82,8 @@ export class ActRunnerParams<
     variablesFile: string | undefined,
     variablesValues: Map<string, string>,
     matrix: Map<string, string | number | boolean>,
-    cacheServer: ActResourceSpec | undefined,
-    artifactServer: ActResourceSpec | undefined,
+    cacheServer: ActResourceServerSpec | undefined,
+    artifactServer: ActResourceServerSpec | undefined,
     additionalArgs: string[],
   ) {
     this.workflowsPath = workflowsPath;
@@ -209,7 +209,7 @@ export class ActRunnerParams<
 
   private addResource(
     args: string[],
-    resource: ActResourceSpec | undefined,
+    resource: ActResourceServerSpec | undefined,
     storageParam: string,
     addressParam: string,
     portParam: string,

@@ -22,7 +22,7 @@
 export { ActExecStatus } from './ActExecStatus.js';
 export { ActJobExecResult } from './ActJobExecResult.js';
 export { ActRunner } from './ActRunner.js';
-export type { ActValueSource } from './ActRunner.js';
+export type { ActValueSource, ActResourceServerSpec } from './ActRunner.js';
 export { ActRunnerError } from './ActRunnerError.js';
 export { ActWorkflowExecResult } from './ActWorkflowExecResult.js';
 export type { ActOutputListener, ActOutput } from './ActOutputListener.js';
