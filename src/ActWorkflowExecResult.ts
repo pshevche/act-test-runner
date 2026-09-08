@@ -37,12 +37,12 @@ export class ActWorkflowExecResult {
   /**
    * Jobs executed by the workflow.
    */
-  readonly jobs: Map<String, ActJobExecResult>;
+  readonly jobs: Map<string, ActJobExecResult>;
 
   constructor(
     status: ActExecStatus,
     output: string,
-    jobs: Map<String, ActJobExecResult>,
+    jobs: Map<string, ActJobExecResult>,
   ) {
     this.status = status;
     this.output = output;

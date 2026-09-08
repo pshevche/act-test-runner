@@ -67,8 +67,8 @@ class JobIterationTracker {
 
 export class ActExecListener {
   private readonly execOutput: string[] = [];
-  private readonly jobsByName: Map<String, ActJobExecResultBuilder> = new Map<
-    String,
+  private readonly jobsByName: Map<string, ActJobExecResultBuilder> = new Map<
+    string,
     ActJobExecResultBuilder
   >();
   private readonly jobIterationTrackers: Map<string, JobIterationTracker> =
@@ -164,7 +164,7 @@ export class ActExecListener {
     return this.execOutput.join('\n');
   }
 
-  getJobs(): Map<String, ActJobExecResult> {
+  getJobs(): Map<string, ActJobExecResult> {
     return new Map(
       Array.from(this.jobsByName).map(([name, jobBuilder]) => [
         name,
