@@ -38,6 +38,7 @@ import type {
   ActValueSource,
   ActWorkflowSource,
   ActResourceServerSpec,
+  ActProcessOptions,
 } from './ActRunnerOptions.js';
 import {
   ActCliParams,
@@ -55,18 +56,6 @@ type EventPayload<TEventType extends WebhookEventName | undefined = undefined> =
       ? PartialDeep<WebhookEventMap[TEventType]> | string
       : string)
   | undefined;
-
-/**
- * Options controlling a single `run()` invocation.
- */
-export type ActRunOptions = {
-  /**
-   * Signal used to abort a running act invocation. On abort, the underlying
-   * act process is killed and the returned promise rejects with an
-   * ActRunnerError.
-   */
-  signal?: AbortSignal;
-};
 
 /**
  * Invokes `act`, allowing end-to-end testing of custom GitHub actions and workflows.
@@ -255,7 +244,7 @@ export class ActRunner<
    * @param options - options controlling this run, such as an abort signal
    * @returns workflow execution result for inspection
    */
-  run(options?: ActRunOptions): Promise<ActWorkflowExecResult> {
+  run(options?: ActProcessOptions): Promise<ActWorkflowExecResult> {
     return new Promise<ActWorkflowExecResult>((resolve, reject) => {
       try {
         if (this.hasRun) {
