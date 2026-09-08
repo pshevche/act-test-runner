@@ -34,7 +34,7 @@ import {
 import { firstDefined } from './utils/objects.js';
 import { checkExists, checkOneDefined } from './utils/checks.js';
 import { PartialDeep } from './utils/types.js';
-import type { ActResourceServerSpec } from './internal/ActResourceServerSpec.js';
+import type { ActResourceServerSpec } from './ActResourceServerSpec.js';
 import {
   ActRunnerParams,
   INTERNAL_ACT_PARAMS,
