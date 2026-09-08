@@ -20,16 +20,18 @@
  */
 
 import { ActExecStatus } from '../ActRunnerResult.js';
-import type { ActJobExecResult } from '../ActRunnerResult.js';
+import type { ActJobExecResult, ActMatrixValues } from '../ActRunnerResult.js';
 
 export class ActJobExecResultBuilder {
   private readonly name: string;
+  private readonly matrix: ActMatrixValues;
   private hasExecutedSteps: boolean = false;
   private status: ActExecStatus | undefined;
   private readonly outputLines: string[] = [];
 
-  constructor(name: string) {
+  constructor(name: string, matrix: ActMatrixValues) {
     this.name = name;
+    this.matrix = matrix;
   }
 
   output(line: string): ActJobExecResultBuilder {
@@ -59,6 +61,7 @@ export class ActJobExecResultBuilder {
       name: this.name,
       status: this.status!,
       output: this.outputLines.join('\n'),
+      matrix: this.matrix,
     };
   }
 }

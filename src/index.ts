@@ -34,5 +34,6 @@ export {
 export { ActExecStatus, ActRunnerError } from './ActRunnerResult.js';
 export type {
   ActJobExecResult,
+  ActMatrixValues,
   ActWorkflowExecResult,
 } from './ActRunnerResult.js';

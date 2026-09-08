@@ -1,0 +1,14 @@
+name: Simple workflow using different types of matrix values
+on: [push]
+
+jobs:
+  a_job:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        number: [11, 22]
+        string: ['foo', 'bar']
+        boolean: [false, true]
+    steps:
+      - name: Irrelevant
+        run: echo "Irrelevant"
