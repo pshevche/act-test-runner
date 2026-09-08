@@ -64,7 +64,7 @@ export class ActRunnerParams<
   private readonly secretsValues: Map<string, string>;
   private readonly variablesFile: string | undefined;
   private readonly variablesValues: Map<string, string>;
-  private readonly matrix: Map<string, any>;
+  private readonly matrix: Map<string, string | number | boolean>;
   private readonly cacheServer: ActResourceSpec | undefined;
   private readonly artifactServer: ActResourceSpec | undefined;
   private readonly additionalArgs: string[];
@@ -81,7 +81,7 @@ export class ActRunnerParams<
     secretsValues: Map<string, string>,
     variablesFile: string | undefined,
     variablesValues: Map<string, string>,
-    matrix: Map<string, any>,
+    matrix: Map<string, string | number | boolean>,
     cacheServer: ActResourceSpec | undefined,
     artifactServer: ActResourceSpec | undefined,
     additionalArgs: string[],

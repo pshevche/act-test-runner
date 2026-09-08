@@ -79,7 +79,10 @@ export class ActRunner<
   private secretsValues: Map<string, string> = new Map<string, string>();
   private variablesFile: string | undefined;
   private variablesValues: Map<string, string> = new Map<string, string>();
-  private matrix: Map<string, any> = new Map<string, any>();
+  private matrix: Map<string, string | number | boolean> = new Map<
+    string,
+    string | number | boolean
+  >();
   private cacheServer: ActResourceSpec | undefined;
   private artifactServer: ActResourceSpec | undefined;
   private additionalArgs: string[] = [];
@@ -218,9 +221,9 @@ export class ActRunner<
   /**
    * Set matrix values to run the workflow with.
    * If undefined, all combinations specified in the workflow definition will be invoked.
-   * @param {...[string, any]} matrixValues - matrix values to run the workflow with
+   * @param {...[string, string | number | boolean]} matrixValues - matrix values to run the workflow with
    */
-  withMatrix(...matrixValues: [string, any][]): this {
+  withMatrix(...matrixValues: [string, string | number | boolean][]): this {
     matrixValues.forEach((entry) => this.matrix.set(entry[0], entry[1]));
     return this;
   }
