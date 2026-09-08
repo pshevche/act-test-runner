@@ -316,6 +316,10 @@ export class ActRunner<
             ),
           );
         });
+
+        child.on('error', (err) => {
+          reject(new ActRunnerError(`Failed to launch act: ${err.message}`));
+        });
       } catch (err) {
         if (err instanceof ActRunnerError) {
           reject(err);

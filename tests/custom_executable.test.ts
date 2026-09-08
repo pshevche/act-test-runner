@@ -31,6 +31,11 @@ test('fails if the supplied custom executable does not exist', async () => {
   );
 });
 
+test('rejects with a clear error if the supplied executable cannot be launched', async () => {
+  // a directory exists on disk but can never be spawned as a process
+  await expect(run(customExecDir)).rejects.toThrow(/Failed to launch act/);
+});
+
 test('runs workflow files with the supplied custom executable', async () => {
   const customExec = join(customExecDir, 'customAct');
   writeFileSync(
