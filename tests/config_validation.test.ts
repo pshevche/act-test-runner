@@ -31,7 +31,7 @@ test('fails if provided env file does not exist', async () => {
   await expect(
     runner()
       .withWorkflowFile(workflowPath('always_passing_workflow'))
-      .withEnvFile('non-existing')
+      .withEnv({ file: 'non-existing' })
       .run(),
   ).rejects.toThrow(
     "The specified env values file 'non-existing' does not exist",
@@ -42,7 +42,7 @@ test('fails if provided input values file does not exist', async () => {
   await expect(
     runner()
       .withWorkflowFile(workflowPath('always_passing_workflow'))
-      .withInputsFile('non-existing')
+      .withInputs({ file: 'non-existing' })
       .run(),
   ).rejects.toThrow(
     "The specified input values file 'non-existing' does not exist",
@@ -64,7 +64,7 @@ test('fails if provided secrets values file does not exist', async () => {
   await expect(
     runner()
       .withWorkflowFile(workflowPath('always_passing_workflow'))
-      .withSecretsFile('non-existing')
+      .withSecrets({ file: 'non-existing' })
       .run(),
   ).rejects.toThrow(
     "The specified secrets values file 'non-existing' does not exist",
@@ -75,7 +75,7 @@ test('fails if provided variables values file does not exist', async () => {
   await expect(
     runner()
       .withWorkflowFile(workflowPath('always_passing_workflow'))
-      .withVariablesFile('non-existing')
+      .withVariables({ file: 'non-existing' })
       .run(),
   ).rejects.toThrow(
     "The specified variables values file 'non-existing' does not exist",

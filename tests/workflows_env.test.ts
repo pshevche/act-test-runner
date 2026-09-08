@@ -8,7 +8,7 @@ function envWorkflowRunner(): ActRunner {
 
 test('supports setting environment variable values directly', async () => {
   const result = await envWorkflowRunner()
-    .withEnvValues({ GREETING: 'Hello', NAME: 'Bruce' })
+    .withEnv({ values: { GREETING: 'Hello', NAME: 'Bruce' } })
     .run();
 
   expect(result.status).toBe(ActExecStatus.SUCCESS);
@@ -19,11 +19,24 @@ test('supports setting environment variable values directly', async () => {
 
 test('supports setting environment variables from file', async () => {
   const result = await envWorkflowRunner()
-    .withEnvFile(inputPath('greeting.env'))
+    .withEnv({ file: inputPath('greeting.env') })
     .run();
 
   expect(result.status).toBe(ActExecStatus.SUCCESS);
   const job = result.job('print_greeting')!;
   expect(job).toHaveStatus(ActExecStatus.SUCCESS);
   expect(job.output).toContain('Hallo, Falco!');
+});
+
+test('supports combining a values file with inline overrides', async () => {
+  // greeting.env sets GREETING=Hallo, NAME=Falco; NAME is overridden inline
+  // while GREETING is left to come from the file, proving both sources apply
+  const result = await envWorkflowRunner()
+    .withEnv({ file: inputPath('greeting.env'), values: { NAME: 'Bruce' } })
+    .run();
+
+  expect(result.status).toBe(ActExecStatus.SUCCESS);
+  const job = result.job('print_greeting')!;
+  expect(job).toHaveStatus(ActExecStatus.SUCCESS);
+  expect(job.output).toContain('Hallo, Bruce!');
 });

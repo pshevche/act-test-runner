@@ -32,7 +32,7 @@ test('persists workflow artifacts in configured directory', async () => {
   const result = await artifactServerWorkflowRunner()
     .withArtifactServer(artifactServerDir)
     // required to execute upload-artifact action
-    .withEnvValues({ ACTIONS_RUNTIME_TOKEN: 'irrelevant' })
+    .withEnv({ values: { ACTIONS_RUNTIME_TOKEN: 'irrelevant' } })
     .run();
 
   expect(result).toHaveStatus(ActExecStatus.SUCCESS);
