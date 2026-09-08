@@ -31,9 +31,8 @@ export {
   ActOutputLevel,
   StdStreamOutputListener,
 } from './ActOutputListener.js';
-export {
-  ActExecStatus,
+export { ActExecStatus, ActRunnerError } from './ActRunnerResult.js';
+export type {
   ActJobExecResult,
-  ActRunnerError,
   ActWorkflowExecResult,
 } from './ActRunnerResult.js';

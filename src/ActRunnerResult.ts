@@ -22,7 +22,7 @@
 /**
  * Result of the workflow execution.
  */
-export class ActWorkflowExecResult {
+export type ActWorkflowExecResult = {
   /**
    * Outcome of the workflow run.
    */
@@ -35,17 +35,7 @@ export class ActWorkflowExecResult {
    * Jobs executed by the workflow, keyed by job name.
    */
   readonly jobs: Record<string, ActJobExecResult>;
-
-  constructor(
-    status: ActExecStatus,
-    output: string,
-    jobs: Record<string, ActJobExecResult>,
-  ) {
-    this.status = status;
-    this.output = output;
-    this.jobs = jobs;
-  }
-}
+};
 
 /**
  * Outcome of the workflow or job execution.
@@ -64,7 +54,7 @@ export type ActExecStatus = (typeof ActExecStatus)[keyof typeof ActExecStatus];
 /**
  * Job execution result for inspection.
  */
-export class ActJobExecResult {
+export type ActJobExecResult = {
   /**
    * Name of the job run.
    */
@@ -77,13 +67,7 @@ export class ActJobExecResult {
    * Job's console output.
    */
   readonly output: string;
-
-  constructor(name: string, status: ActExecStatus, output: string) {
-    this.name = name;
-    this.status = status;
-    this.output = output;
-  }
-}
+};
 
 /**
  * Error thrown if the `ActRunner` is mis-configured or if the runner encounters an unexpected error.

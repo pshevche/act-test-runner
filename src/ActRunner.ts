@@ -47,11 +47,8 @@ import {
   CompositeActOutputListener,
   StdStreamOutputListener,
 } from './ActOutputListener.js';
-import {
-  ActExecStatus,
-  ActRunnerError,
-  ActWorkflowExecResult,
-} from './ActRunnerResult.js';
+import { ActExecStatus, ActRunnerError } from './ActRunnerResult.js';
+import type { ActWorkflowExecResult } from './ActRunnerResult.js';
 
 type EventPayload<TEventType extends WebhookEventName | undefined = undefined> =
   | (TEventType extends WebhookEventName
@@ -288,13 +285,11 @@ export class ActRunner<
             reject(new ActRunnerError('act execution was aborted'));
             return;
           }
-          resolve(
-            new ActWorkflowExecResult(
-              code === 0 ? ActExecStatus.SUCCESS : ActExecStatus.FAILED,
-              executionListener.getOutput(),
-              executionListener.getJobs(),
-            ),
-          );
+          resolve({
+            status: code === 0 ? ActExecStatus.SUCCESS : ActExecStatus.FAILED,
+            output: executionListener.getOutput(),
+            jobs: executionListener.getJobs(),
+          });
         });
 
         child.on('error', (err) => {

@@ -24,7 +24,7 @@ import {
   ActOutputLevel,
   ActOutputListener,
 } from '../ActOutputListener.js';
-import { ActJobExecResult } from '../ActRunnerResult.js';
+import type { ActJobExecResult } from '../ActRunnerResult.js';
 import { ActJobExecResultBuilder } from './ActJobExecResultBuilder.js';
 import { formattedMessage } from './outputFormatter.js';
 
