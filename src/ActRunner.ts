@@ -40,10 +40,10 @@ import type {
   ActResourceServerSpec,
 } from './ActRunnerOptions.js';
 import {
-  ActRunnerParams,
+  ActCliParams,
   INTERNAL_ACT_PARAMS,
   MANAGED_ACT_PARAMS,
-} from './internal/ActRunnerParams.js';
+} from './internal/ActCliParams.js';
 import {
   ActOutputListener,
   CompositeActOutputListener,
@@ -295,7 +295,7 @@ export class ActRunner<
     });
   }
 
-  private validateRunnerParams(): ActRunnerParams<TEventType> {
+  private validateRunnerParams(): ActCliParams<TEventType> {
     if (this.actExecutable) {
       checkExists('act executable', this.actExecutable);
     }
@@ -351,7 +351,7 @@ export class ActRunner<
       );
     }
 
-    return new ActRunnerParams({
+    return new ActCliParams({
       workflowsPath: workflowFilePath,
       eventPayloadFilePath,
       eventType: this.eventType,

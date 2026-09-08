@@ -50,7 +50,7 @@ export const MANAGED_ACT_PARAMS: Set<string> = new Set([
 
 export const INTERNAL_ACT_PARAMS: Set<string> = new Set(['--rm', '--json']);
 
-export type ActRunnerParamsInput<
+export type ActCliParamsInput<
   EventType extends WebhookEventName | undefined = undefined,
 > = {
   workflowsPath: string;
@@ -70,7 +70,7 @@ export type ActRunnerParamsInput<
   additionalArgs: string[];
 };
 
-export class ActRunnerParams<
+export class ActCliParams<
   EventType extends WebhookEventName | undefined = undefined,
 > {
   private readonly workflowsPath: string;
@@ -89,7 +89,7 @@ export class ActRunnerParams<
   private readonly artifactServer: ActResourceServerSpec | undefined;
   private readonly additionalArgs: string[];
 
-  constructor(params: ActRunnerParamsInput<EventType>) {
+  constructor(params: ActCliParamsInput<EventType>) {
     this.workflowsPath = params.workflowsPath;
     this.eventType = params.eventType;
     this.eventPayloadFilePath = params.eventPayloadFilePath;
