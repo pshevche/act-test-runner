@@ -57,6 +57,18 @@ type EventPayload<TEventType extends WebhookEventName | undefined = undefined> =
   | undefined;
 
 /**
+ * Options controlling a single `run()` invocation.
+ */
+export type ActRunOptions = {
+  /**
+   * Signal used to abort a running act invocation. On abort, the underlying
+   * act process is killed and the returned promise rejects with an
+   * ActRunnerError.
+   */
+  signal?: AbortSignal;
+};
+
+/**
  * Invokes `act`, allowing end-to-end testing of custom GitHub actions and workflows.
  *
  * Typically, the test code will provide a workflow file or workflow body to run, as well as required workflow inputs, such as environment variables or secrets.
@@ -240,9 +252,10 @@ export class ActRunner<
 
   /**
    * Invokes `act` with specified options.
+   * @param options - options controlling this run, such as an abort signal
    * @returns workflow execution result for inspection
    */
-  run(): Promise<ActWorkflowExecResult> {
+  run(options?: ActRunOptions): Promise<ActWorkflowExecResult> {
     return new Promise<ActWorkflowExecResult>((resolve, reject) => {
       try {
         if (this.hasRun) {
@@ -252,6 +265,11 @@ export class ActRunner<
         }
         this.hasRun = true;
 
+        const signal = options?.signal;
+        if (signal?.aborted) {
+          throw new ActRunnerError('act execution was aborted');
+        }
+
         const params = this.validateRunnerParams();
 
         const executionListener = new ActExecListener(this.outputListener);
@@ -259,6 +277,11 @@ export class ActRunner<
         // apply user arguments + additional internal arguments specific to test execution
         const args = [...params.asCliArgs(), '--rm', '--json'];
         const child = spawn(this.actExecutable ?? 'act', args);
+
+        const onAbort = () => {
+          child.kill();
+        };
+        signal?.addEventListener('abort', onAbort, { once: true });
 
         child.stdout.on('data', (data) =>
           executionListener.onRawOutput(data.toString().trimEnd()),
@@ -268,7 +291,12 @@ export class ActRunner<
         );
 
         child.on('close', (code) => {
+          signal?.removeEventListener('abort', onAbort);
           cleanupDir(this.workingDir!);
+          if (signal?.aborted) {
+            reject(new ActRunnerError('act execution was aborted'));
+            return;
+          }
           resolve(
             new ActWorkflowExecResult(
               code === 0 ? ActExecStatus.SUCCESS : ActExecStatus.FAILED,
@@ -279,6 +307,7 @@ export class ActRunner<
         });
 
         child.on('error', (err) => {
+          signal?.removeEventListener('abort', onAbort);
           reject(new ActRunnerError(`Failed to launch act: ${err.message}`));
         });
       } catch (err) {

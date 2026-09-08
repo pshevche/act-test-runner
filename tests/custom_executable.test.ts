@@ -70,3 +70,23 @@ test('rejects if run() is called more than once on the same instance', async () 
     'ActRunner instances cannot be reused; create a new instance for each run()',
   );
 });
+
+test('rejects and kills the process when the abort signal fires', async () => {
+  const customExec = join(customExecDir, 'slowAct');
+  writeFileSync(
+    customExec,
+    `#!/usr/bin/env bash
+    sleep 30
+  `,
+    { mode: 0o744 },
+  );
+  const controller = new AbortController();
+  const resultPromise = runner()
+    .withActExecutable(customExec)
+    .withWorkflow({ file: workflowPath('always_passing_workflow') })
+    .run({ signal: controller.signal });
+
+  controller.abort();
+
+  await expect(resultPromise).rejects.toThrow('act execution was aborted');
+});
