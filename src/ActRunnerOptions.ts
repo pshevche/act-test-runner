@@ -20,6 +20,18 @@
  */
 
 /**
+ * Options controlling a single `run()` invocation.
+ */
+export type ActProcessOptions = {
+  /**
+   * Signal used to abort a running act invocation. On abort, the underlying
+   * act process is killed and the returned promise rejects with an
+   * ActRunnerError.
+   */
+  signal?: AbortSignal;
+};
+
+/**
  * Source of key/value pairs (environment variables, inputs, secrets, or variables), provided via a file, inline values, or both.
  */
 export type ActValueSource = {

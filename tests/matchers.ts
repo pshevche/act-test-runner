@@ -1,7 +1,9 @@
 import { expect } from 'vitest';
-import { ActWorkflowExecResult } from '../src/ActWorkflowExecResult.js';
-import { ActJobExecResult } from '../src/ActJobExecResult.js';
-import { ActExecStatus } from '../src/ActExecStatus.js';
+import {
+  ActExecStatus,
+  ActJobExecResult,
+  ActWorkflowExecResult,
+} from '../src/ActRunnerResult.js';
 
 interface CustomMatchers<R = unknown> {
   toHaveStatus(expected: ActExecStatus): R;

@@ -19,19 +19,20 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-export { ActExecStatus } from './ActExecStatus.js';
-export { ActJobExecResult } from './ActJobExecResult.js';
 export { ActRunner } from './ActRunner.js';
 export type {
+  ActProcessOptions,
   ActValueSource,
   ActWorkflowSource,
   ActResourceServerSpec,
 } from './ActRunnerOptions.js';
-export type { ActRunOptions } from './ActRunner.js';
-export { ActRunnerError } from './ActRunnerError.js';
-export { ActWorkflowExecResult } from './ActWorkflowExecResult.js';
 export type { ActOutputListener, ActOutput } from './ActOutputListener.js';
 export {
   ActOutputLevel,
   StdStreamOutputListener,
 } from './ActOutputListener.js';
+export { ActExecStatus, ActRunnerError } from './ActRunnerResult.js';
+export type {
+  ActJobExecResult,
+  ActWorkflowExecResult,
+} from './ActRunnerResult.js';

@@ -19,8 +19,8 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import { ActJobExecResult } from '../ActJobExecResult.js';
-import { ActExecStatus } from '../ActExecStatus.js';
+import { ActExecStatus } from '../ActRunnerResult.js';
+import type { ActJobExecResult } from '../ActRunnerResult.js';
 
 export class ActJobExecResultBuilder {
   private readonly name: string;
@@ -55,10 +55,10 @@ export class ActJobExecResultBuilder {
   }
 
   build(): ActJobExecResult {
-    return new ActJobExecResult(
-      this.name,
-      this.status!,
-      this.outputLines.join('\n'),
-    );
+    return {
+      name: this.name,
+      status: this.status!,
+      output: this.outputLines.join('\n'),
+    };
   }
 }

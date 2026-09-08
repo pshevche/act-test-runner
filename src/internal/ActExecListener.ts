@@ -19,12 +19,12 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import { ActJobExecResult } from '../ActJobExecResult.js';
 import {
   ActOutput,
   ActOutputLevel,
   ActOutputListener,
 } from '../ActOutputListener.js';
+import type { ActJobExecResult } from '../ActRunnerResult.js';
 import { ActJobExecResultBuilder } from './ActJobExecResultBuilder.js';
 import { formattedMessage } from './outputFormatter.js';
 

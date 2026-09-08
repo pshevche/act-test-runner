@@ -20,6 +20,56 @@
  */
 
 /**
+ * Result of the workflow execution.
+ */
+export type ActWorkflowExecResult = {
+  /**
+   * Outcome of the workflow run.
+   */
+  readonly status: ActExecStatus;
+  /**
+   * Workflow's console output.
+   */
+  readonly output: string;
+  /**
+   * Jobs executed by the workflow, keyed by job name.
+   */
+  readonly jobs: Record<string, ActJobExecResult>;
+};
+
+/**
+ * Outcome of the workflow or job execution.
+ */
+export const ActExecStatus = {
+  SUCCESS: 'SUCCESS',
+  FAILED: 'FAILED',
+  SKIPPED: 'SKIPPED',
+} as const;
+
+/**
+ * Outcome of the workflow or job execution.
+ */
+export type ActExecStatus = (typeof ActExecStatus)[keyof typeof ActExecStatus];
+
+/**
+ * Job execution result for inspection.
+ */
+export type ActJobExecResult = {
+  /**
+   * Name of the job run.
+   */
+  readonly name: string;
+  /**
+   * Result of the job execution.
+   */
+  readonly status: ActExecStatus;
+  /**
+   * Job's console output.
+   */
+  readonly output: string;
+};
+
+/**
  * Error thrown if the `ActRunner` is mis-configured or if the runner encounters an unexpected error.
  */
 export class ActRunnerError extends Error {}

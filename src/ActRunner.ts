@@ -21,9 +21,6 @@
 
 import { spawn } from 'node:child_process';
 import { WebhookEventMap, WebhookEventName } from '@octokit/webhooks-types';
-import { ActWorkflowExecResult } from './ActWorkflowExecResult.js';
-import { ActExecStatus } from './ActExecStatus.js';
-import { ActRunnerError } from './ActRunnerError.js';
 import { ActExecListener } from './internal/ActExecListener.js';
 import {
   cleanupDir,
@@ -38,6 +35,7 @@ import type {
   ActValueSource,
   ActWorkflowSource,
   ActResourceServerSpec,
+  ActProcessOptions,
 } from './ActRunnerOptions.js';
 import {
   ActCliParams,
@@ -49,24 +47,14 @@ import {
   CompositeActOutputListener,
   StdStreamOutputListener,
 } from './ActOutputListener.js';
+import { ActExecStatus, ActRunnerError } from './ActRunnerResult.js';
+import type { ActWorkflowExecResult } from './ActRunnerResult.js';
 
 type EventPayload<TEventType extends WebhookEventName | undefined = undefined> =
   | (TEventType extends WebhookEventName
       ? PartialDeep<WebhookEventMap[TEventType]> | string
       : string)
   | undefined;
-
-/**
- * Options controlling a single `run()` invocation.
- */
-export type ActRunOptions = {
-  /**
-   * Signal used to abort a running act invocation. On abort, the underlying
-   * act process is killed and the returned promise rejects with an
-   * ActRunnerError.
-   */
-  signal?: AbortSignal;
-};
 
 /**
  * Invokes `act`, allowing end-to-end testing of custom GitHub actions and workflows.
@@ -255,7 +243,7 @@ export class ActRunner<
    * @param options - options controlling this run, such as an abort signal
    * @returns workflow execution result for inspection
    */
-  run(options?: ActRunOptions): Promise<ActWorkflowExecResult> {
+  run(options?: ActProcessOptions): Promise<ActWorkflowExecResult> {
     return new Promise<ActWorkflowExecResult>((resolve, reject) => {
       try {
         if (this.hasRun) {
@@ -297,13 +285,11 @@ export class ActRunner<
             reject(new ActRunnerError('act execution was aborted'));
             return;
           }
-          resolve(
-            new ActWorkflowExecResult(
-              code === 0 ? ActExecStatus.SUCCESS : ActExecStatus.FAILED,
-              executionListener.getOutput(),
-              executionListener.getJobs(),
-            ),
-          );
+          resolve({
+            status: code === 0 ? ActExecStatus.SUCCESS : ActExecStatus.FAILED,
+            output: executionListener.getOutput(),
+            jobs: executionListener.getJobs(),
+          });
         });
 
         child.on('error', (err) => {
