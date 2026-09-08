@@ -19,8 +19,8 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import { ActRunnerError } from '../ActRunnerError.js';
 import { existsSync } from 'node:fs';
+import { ActRunnerError } from '../ActRunnerResult.js';
 
 export function checkOneDefined<T>(
   first: T | undefined,

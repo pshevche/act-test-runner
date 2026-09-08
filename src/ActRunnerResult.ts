@@ -19,9 +19,6 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import { ActExecStatus } from './ActExecStatus.js';
-import { ActJobExecResult } from './ActJobExecResult.js';
-
 /**
  * Result of the workflow execution.
  */
@@ -49,3 +46,46 @@ export class ActWorkflowExecResult {
     this.jobs = jobs;
   }
 }
+
+/**
+ * Outcome of the workflow or job execution.
+ */
+export const ActExecStatus = {
+  SUCCESS: 'SUCCESS',
+  FAILED: 'FAILED',
+  SKIPPED: 'SKIPPED',
+} as const;
+
+/**
+ * Outcome of the workflow or job execution.
+ */
+export type ActExecStatus = (typeof ActExecStatus)[keyof typeof ActExecStatus];
+
+/**
+ * Job execution result for inspection.
+ */
+export class ActJobExecResult {
+  /**
+   * Name of the job run.
+   */
+  readonly name: string;
+  /**
+   * Result of the job execution.
+   */
+  readonly status: ActExecStatus;
+  /**
+   * Job's console output.
+   */
+  readonly output: string;
+
+  constructor(name: string, status: ActExecStatus, output: string) {
+    this.name = name;
+    this.status = status;
+    this.output = output;
+  }
+}
+
+/**
+ * Error thrown if the `ActRunner` is mis-configured or if the runner encounters an unexpected error.
+ */
+export class ActRunnerError extends Error {}

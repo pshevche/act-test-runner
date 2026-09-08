@@ -19,8 +19,7 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import { ActJobExecResult } from '../ActJobExecResult.js';
-import { ActExecStatus } from '../ActExecStatus.js';
+import { ActExecStatus, ActJobExecResult } from '../ActRunnerResult.js';
 
 export class ActJobExecResultBuilder {
   private readonly name: string;

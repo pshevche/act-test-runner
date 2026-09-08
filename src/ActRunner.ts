@@ -21,9 +21,6 @@
 
 import { spawn } from 'node:child_process';
 import { WebhookEventMap, WebhookEventName } from '@octokit/webhooks-types';
-import { ActWorkflowExecResult } from './ActWorkflowExecResult.js';
-import { ActExecStatus } from './ActExecStatus.js';
-import { ActRunnerError } from './ActRunnerError.js';
 import { ActExecListener } from './internal/ActExecListener.js';
 import {
   cleanupDir,
@@ -50,6 +47,11 @@ import {
   CompositeActOutputListener,
   StdStreamOutputListener,
 } from './ActOutputListener.js';
+import {
+  ActExecStatus,
+  ActRunnerError,
+  ActWorkflowExecResult,
+} from './ActRunnerResult.js';
 
 type EventPayload<TEventType extends WebhookEventName | undefined = undefined> =
   | (TEventType extends WebhookEventName
