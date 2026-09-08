@@ -67,6 +67,24 @@ export type ActValueSource = {
 };
 
 /**
+ * Configuration for the cache or artifact server used by a workflow run.
+ */
+export type ActResourceServerSpec = {
+  /**
+   * The path where the server's data will be stored.
+   */
+  path: string;
+  /**
+   * The address to which the server binds.
+   */
+  host?: string;
+  /**
+   * The port on which the server listens.
+   */
+  port?: number;
+};
+
+/**
  * Invokes `act`, allowing end-to-end testing of custom GitHub actions and workflows.
  *
  * Typically, the test code will provide a workflow file or workflow body to run, as well as required workflow inputs, such as environment variables or secrets.
@@ -222,31 +240,19 @@ export class ActRunner<
 
   /**
    * Configures the cache server to be used by the given workflow.
-   * @param {string} path - the path where the cache artifacts will be stored
-   * @param {string | undefined } host - the address to which the cache server binds
-   * @param {number | undefined } port - the port where the cache server listens
+   * @param spec - cache server configuration
    */
-  withCacheServer(
-    path: string,
-    host: string | undefined = undefined,
-    port: number | undefined = undefined,
-  ): this {
-    this.cacheServer = new ActResourceSpec(path, host, port);
+  withCacheServer(spec: ActResourceServerSpec): this {
+    this.cacheServer = new ActResourceSpec(spec.path, spec.host, spec.port);
     return this;
   }
 
   /**
    * Configures the artifact server to be used by the given workflow.
-   * @param {string} path - the path where the artifacts uploaded will be stored
-   * @param {string | undefined } host - the address to which the artifact server binds
-   * @param {number | undefined } port - the port where the artifact server listens
+   * @param spec - artifact server configuration
    */
-  withArtifactServer(
-    path: string,
-    host: string | undefined = undefined,
-    port: number | undefined = undefined,
-  ): this {
-    this.artifactServer = new ActResourceSpec(path, host, port);
+  withArtifactServer(spec: ActResourceServerSpec): this {
+    this.artifactServer = new ActResourceSpec(spec.path, spec.host, spec.port);
     return this;
   }
 
