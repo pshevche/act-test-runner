@@ -8,7 +8,7 @@ import { existsSync, mkdirSync, rmSync } from 'node:fs';
 export async function run(
   workflowFile: string,
 ): Promise<ActWorkflowExecResult> {
-  return runner().withWorkflowFile(workflowFile).run();
+  return runner().withWorkflow({ file: workflowFile }).run();
 }
 
 const customWorkingDir = join(tmpdir(), 'actTestRunner', 'workflows_core');
@@ -71,8 +71,8 @@ test('reports all jobs', async () => {
 
 test('supports defining workflow body instead of file', async () => {
   const result = await runner()
-    .withWorkflowBody(
-      `
+    .withWorkflow({
+      body: `
 name: Simple passing workflow
 on: [push]
 
@@ -83,7 +83,7 @@ jobs:
       - name: Successful step
         run: echo "Hello, World!"
   `,
-    )
+    })
     .run();
 
   expect(result).toHaveStatus(ActExecStatus.SUCCESS);
@@ -98,8 +98,8 @@ jobs:
 test('supports defining custom working directory', async () => {
   const result = await runner()
     .withWorkingDir(customWorkingDir)
-    .withWorkflowBody(
-      `
+    .withWorkflow({
+      body: `
 name: Simple passing workflow
 on: [push]
 
@@ -110,7 +110,7 @@ jobs:
       - name: Successful step
         run: echo "Hello, World!"
   `,
-    )
+    })
     .run();
 
   expect(result).toHaveStatus(ActExecStatus.SUCCESS);

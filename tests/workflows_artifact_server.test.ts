@@ -6,9 +6,9 @@ import { tmpdir } from 'node:os';
 import { existsSync, mkdirSync, rmSync } from 'node:fs';
 
 function artifactServerWorkflowRunner(): ActRunner {
-  return runner().withWorkflowFile(
-    workflowPath('save_file_in_artifact_server'),
-  );
+  return runner().withWorkflow({
+    file: workflowPath('save_file_in_artifact_server'),
+  });
 }
 
 const artifactServerDir = join(

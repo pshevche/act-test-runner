@@ -21,8 +21,8 @@ To try it out yourself, check out the [act-test-runner-example](https://github.c
 ```JavaScript
 test('custom workflow', async () => {
   const result = await new ActRunner()
-    .withWorkflowBody(
-      `
+    .withWorkflow({
+      body: `
 name: Simple passing workflow
 on: [push]
 
@@ -33,7 +33,7 @@ jobs:
       - name: Successful step
         run: echo "Hello, World!"
   `,
-    )
+    })
     .run();
 
   expect(result.status).toBe(ActExecStatus.SUCCESS);
@@ -51,8 +51,8 @@ jobs:
 ```JavaScript
 test('custom workflow with event', async () => {
   const result = await new ActRunner()
-    .withWorkflowBody(
-      `
+    .withWorkflow({
+      body: `
 name: Workflow printing the PR title
 on:
   pull_request:
@@ -67,7 +67,7 @@ jobs:
         run: |
           echo "PR Title: ${{ github.event.pull_request.title }}"
   `,
-    )
+    })
     .withEvent('pull_request', {
       pull_request: {
         title: 'Example PR payload as object',
@@ -87,8 +87,8 @@ jobs:
 ```JavaScript
 test('custom workflow with inputs', async () => {
   const result = await new ActRunner()
-    .withWorkflowBody(
-      `
+    .withWorkflow({
+      body: `
 name: Simple workflow printing a couple of environment variables
 on: [push]
 
@@ -99,7 +99,7 @@ jobs:
       - name: Print greeting from env variables
         run: echo "$GREETING, $NAME!"
   `,
-    )
+    })
     .withEnv({ values: { GREETING: 'Hello', NAME: 'Bruce' } })
     .run();
 

@@ -3,7 +3,7 @@ import { inputPath, runner, workflowPath } from './fixtures.js';
 import { ActExecStatus, ActRunner } from '../src/index.js';
 
 function inputWorkflowRunner(): ActRunner {
-  return runner().withWorkflowFile(workflowPath('print_inputs'));
+  return runner().withWorkflow({ file: workflowPath('print_inputs') });
 }
 
 test('supports setting input values directly', async () => {

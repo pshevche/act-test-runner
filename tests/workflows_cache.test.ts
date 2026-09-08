@@ -6,7 +6,7 @@ import { tmpdir } from 'node:os';
 import { existsSync, mkdirSync, rmSync } from 'node:fs';
 
 function cacheWorkflowRunner(): ActRunner {
-  return runner().withWorkflowFile(workflowPath('save_file_in_cache'));
+  return runner().withWorkflow({ file: workflowPath('save_file_in_cache') });
 }
 
 const customCacheDir = join(tmpdir(), 'actTestRunner', 'workflows_cache');

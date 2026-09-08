@@ -1,8 +1,11 @@
 import { test, expect } from 'vitest';
 import { runner, workflowPath } from './fixtures.js';
+import { ActWorkflowSource } from '../src/index.js';
 
 test('fails if the specified workflows location does not exist', async () => {
-  await expect(runner().withWorkflowFile('non-existing').run()).rejects.toThrow(
+  await expect(
+    runner().withWorkflow({ file: 'non-existing' }).run(),
+  ).rejects.toThrow(
     "The specified workflow path 'non-existing' does not exist",
   );
 });
@@ -14,9 +17,13 @@ test('fails if the specified working directory does not exist', async () => {
 });
 
 test('fails if both the workflow file and workflow body are specified', async () => {
-  await expect(
-    runner().withWorkflowFile('file').withWorkflowBody('body').run(),
-  ).rejects.toThrow(
+  // bypasses the type system to exercise the runtime guard for untyped (e.g. plain JS) callers
+  const bothSpecified = {
+    file: 'file',
+    body: 'body',
+  } as unknown as ActWorkflowSource;
+
+  await expect(runner().withWorkflow(bothSpecified).run()).rejects.toThrow(
     "Expected one value out of 'file' and 'body' to be defined",
   );
 });
@@ -30,7 +37,7 @@ test('either workflow file or body is required', async () => {
 test('fails if provided env file does not exist', async () => {
   await expect(
     runner()
-      .withWorkflowFile(workflowPath('always_passing_workflow'))
+      .withWorkflow({ file: workflowPath('always_passing_workflow') })
       .withEnv({ file: 'non-existing' })
       .run(),
   ).rejects.toThrow(
@@ -41,7 +48,7 @@ test('fails if provided env file does not exist', async () => {
 test('fails if provided input values file does not exist', async () => {
   await expect(
     runner()
-      .withWorkflowFile(workflowPath('always_passing_workflow'))
+      .withWorkflow({ file: workflowPath('always_passing_workflow') })
       .withInputs({ file: 'non-existing' })
       .run(),
   ).rejects.toThrow(
@@ -52,7 +59,7 @@ test('fails if provided input values file does not exist', async () => {
 test('fails if provided event payload file does not exist', async () => {
   await expect(
     runner()
-      .withWorkflowFile(workflowPath('always_passing_workflow'))
+      .withWorkflow({ file: workflowPath('always_passing_workflow') })
       .withEvent('push', 'non-existing')
       .run(),
   ).rejects.toThrow(
@@ -63,7 +70,7 @@ test('fails if provided event payload file does not exist', async () => {
 test('fails if provided secrets values file does not exist', async () => {
   await expect(
     runner()
-      .withWorkflowFile(workflowPath('always_passing_workflow'))
+      .withWorkflow({ file: workflowPath('always_passing_workflow') })
       .withSecrets({ file: 'non-existing' })
       .run(),
   ).rejects.toThrow(
@@ -74,7 +81,7 @@ test('fails if provided secrets values file does not exist', async () => {
 test('fails if provided variables values file does not exist', async () => {
   await expect(
     runner()
-      .withWorkflowFile(workflowPath('always_passing_workflow'))
+      .withWorkflow({ file: workflowPath('always_passing_workflow') })
       .withVariables({ file: 'non-existing' })
       .run(),
   ).rejects.toThrow(
@@ -85,7 +92,7 @@ test('fails if provided variables values file does not exist', async () => {
 test('fails if additional arguments contain managed params', async () => {
   await expect(
     runner()
-      .withWorkflowFile(workflowPath('always_passing_workflow'))
+      .withWorkflow({ file: workflowPath('always_passing_workflow') })
       .withAdditionalArgs(
         '--detect-event',
         '--input-file',
@@ -101,7 +108,7 @@ test('fails if additional arguments contain managed params', async () => {
 test('fails if additional arguments contain internal params', async () => {
   await expect(
     runner()
-      .withWorkflowFile(workflowPath('always_passing_workflow'))
+      .withWorkflow({ file: workflowPath('always_passing_workflow') })
       .withAdditionalArgs('--rm')
       .run(),
   ).rejects.toThrow(

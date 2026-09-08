@@ -8,7 +8,7 @@ import { existsSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
 export async function run(executable: string): Promise<ActWorkflowExecResult> {
   return runner()
     .withActExecutable(executable)
-    .withWorkflowFile(workflowPath('always_passing_workflow'))
+    .withWorkflow({ file: workflowPath('always_passing_workflow') })
     .run();
 }
 
@@ -62,7 +62,7 @@ test('rejects if run() is called more than once on the same instance', async () 
   );
   const testRunner = runner()
     .withActExecutable(customExec)
-    .withWorkflowFile(workflowPath('always_passing_workflow'));
+    .withWorkflow({ file: workflowPath('always_passing_workflow') });
 
   await testRunner.run();
 
