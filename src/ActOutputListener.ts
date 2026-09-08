@@ -24,7 +24,18 @@ import { formattedMessage } from './internal/outputFormatter.js';
 /**
  * Message's log level.
  */
-export type ActOutputLevel = 'debug' | 'info' | 'warning' | 'error';
+export const ActOutputLevel = {
+  DEBUG: 'debug',
+  INFO: 'info',
+  WARNING: 'warning',
+  ERROR: 'error',
+} as const;
+
+/**
+ * Message's log level.
+ */
+export type ActOutputLevel =
+  (typeof ActOutputLevel)[keyof typeof ActOutputLevel];
 
 /**
  * Single message in the act output stream.

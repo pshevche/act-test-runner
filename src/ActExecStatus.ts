@@ -22,8 +22,13 @@
 /**
  * Outcome of the workflow or job execution.
  */
-export enum ActExecStatus {
-  SUCCESS = 'SUCCESS',
-  FAILED = 'FAILED',
-  SKIPPED = 'SKIPPED',
-}
+export const ActExecStatus = {
+  SUCCESS: 'SUCCESS',
+  FAILED: 'FAILED',
+  SKIPPED: 'SKIPPED',
+} as const;
+
+/**
+ * Outcome of the workflow or job execution.
+ */
+export type ActExecStatus = (typeof ActExecStatus)[keyof typeof ActExecStatus];
