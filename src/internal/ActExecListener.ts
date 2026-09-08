@@ -39,7 +39,7 @@ type JsonOutput = {
   jobResult?: JobOrStepResult;
   step?: string;
   stepResult?: JobOrStepResult;
-  matrix: Object;
+  matrix: Record<string, string>;
 };
 
 const JOB_LIFECYCLE_STEPS = new Set<string>(['Set up job', 'Complete job']);
@@ -47,13 +47,13 @@ const JOB_LIFECYCLE_STEPS = new Set<string>(['Set up job', 'Complete job']);
 class JobIterationTracker {
   private readonly matrixIdx: Map<string, number> = new Map<string, number>();
 
-  private matrixKey(matrix: Object): string {
+  private matrixKey(matrix: Record<string, string>): string {
     return Object.values(matrix)
       .sort((a, b) => (a > b ? 1 : -1))
       .reduce((prev, curr) => `${prev}_${curr}`);
   }
 
-  iterationIndex(matrix: Object): number {
+  iterationIndex(matrix: Record<string, string>): number {
     const key = this.matrixKey(matrix);
     if (this.matrixIdx.has(key)) {
       return this.matrixIdx.get(key)!;
@@ -182,7 +182,7 @@ export class ActExecListener {
 
   private getJobIterationIdx(
     jobName: string,
-    matrix: Object,
+    matrix: Record<string, string>,
   ): number | undefined {
     if (Object.keys(matrix).length == 0) {
       return undefined;
