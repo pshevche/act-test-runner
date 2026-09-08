@@ -34,6 +34,7 @@ import {
 import { firstDefined } from './utils/objects.js';
 import { checkExists, checkOneDefined } from './utils/checks.js';
 import { PartialDeep } from './utils/types.js';
+import type { ActResourceServerSpec } from './internal/ActResourceServerSpec.js';
 import {
   ActRunnerParams,
   INTERNAL_ACT_PARAMS,
@@ -65,23 +66,7 @@ export type ActValueSource = {
   values?: Record<string, string>;
 };
 
-/**
- * Configuration for the cache or artifact server used by a workflow run.
- */
-export type ActResourceServerSpec = {
-  /**
-   * The path where the server's data will be stored.
-   */
-  path: string;
-  /**
-   * The address to which the server binds.
-   */
-  host?: string;
-  /**
-   * The port on which the server listens.
-   */
-  port?: number;
-};
+export type { ActResourceServerSpec };
 
 /**
  * Invokes `act`, allowing end-to-end testing of custom GitHub actions and workflows.
