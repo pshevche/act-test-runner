@@ -38,9 +38,9 @@ jobs:
 
   expect(result.status).toBe(ActExecStatus.SUCCESS);
   expect(result.output).toContain('Hello, World!');
-  expect(result.jobs.size).toBe(1);
+  expect(Object.keys(result.jobs).length).toBe(1);
 
-  const successfulJob = result.job('successful_job')!;
+  const successfulJob = result.jobs['successful_job']!;
   expect(successfulJob.status).toBe(ActExecStatus.SUCCESS);
   expect(successfulJob.output).toContain('Hello, World!');
 });
@@ -76,7 +76,7 @@ jobs:
     .run();
 
   expect(result.status).toBe(ActExecStatus.SUCCESS);
-  const job = result.job('print_pr_title')!;
+  const job = result.jobs['print_pr_title']!;
   expect(job.status).toBe(ActExecStatus.SUCCESS);
   expect(job.output).toContain('PR Title: Example PR payload as object');
 });
@@ -104,7 +104,7 @@ jobs:
     .run();
 
   expect(result.status).toBe(ActExecStatus.SUCCESS);
-  const job = result.job('print_greeting')!;
+  const job = result.jobs['print_greeting']!;
   expect(job.status).toBe(ActExecStatus.SUCCESS);
   expect(job.output).toContain('Hello, Bruce!');
 });

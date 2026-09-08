@@ -13,10 +13,10 @@ test('uses the first event type lexicographically from workflow if no event type
 
   expect(result).toHaveStatus(ActExecStatus.SUCCESS);
 
-  const issueJob = result.job('print_issue_title')!;
+  const issueJob = result.jobs['print_issue_title']!;
   expect(issueJob).toHaveStatus(ActExecStatus.SUCCESS);
 
-  const prJob = result.job('print_pr_title')!;
+  const prJob = result.jobs['print_pr_title']!;
   expect(prJob).toHaveStatus(ActExecStatus.SKIPPED);
 });
 
@@ -25,10 +25,10 @@ test('allows configuring the event type to trigger the workflow with', async () 
 
   expect(result).toHaveStatus(ActExecStatus.SUCCESS);
 
-  const issueJob = result.job('print_issue_title')!;
+  const issueJob = result.jobs['print_issue_title']!;
   expect(issueJob).toHaveStatus(ActExecStatus.SKIPPED);
 
-  const prJob = result.job('print_pr_title')!;
+  const prJob = result.jobs['print_pr_title']!;
   expect(prJob).toHaveStatus(ActExecStatus.SUCCESS);
 });
 
@@ -39,10 +39,10 @@ test('allows configuring event payload', async () => {
 
   expect(result).toHaveStatus(ActExecStatus.SUCCESS);
 
-  const issueJob = result.job('print_issue_title')!;
+  const issueJob = result.jobs['print_issue_title']!;
   expect(issueJob).toHaveStatus(ActExecStatus.SKIPPED);
 
-  const prJob = result.job('print_pr_title')!;
+  const prJob = result.jobs['print_pr_title']!;
   expect(prJob).toHaveStatus(ActExecStatus.SUCCESS);
   expect(prJob.output).toContain('PR Title: Example PR payload');
 });
@@ -58,10 +58,10 @@ test('allows passing event payload as object', async () => {
 
   expect(result).toHaveStatus(ActExecStatus.SUCCESS);
 
-  const issueJob = result.job('print_issue_title')!;
+  const issueJob = result.jobs['print_issue_title']!;
   expect(issueJob).toHaveStatus(ActExecStatus.SKIPPED);
 
-  const prJob = result.job('print_pr_title')!;
+  const prJob = result.jobs['print_pr_title']!;
   expect(prJob).toHaveStatus(ActExecStatus.SUCCESS);
   expect(prJob.output).toContain('PR Title: Example PR payload as object');
 });

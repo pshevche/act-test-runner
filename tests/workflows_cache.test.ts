@@ -28,7 +28,7 @@ test('persists cache entries in configured directory', async () => {
     .run();
 
   expect(result).toHaveStatus(ActExecStatus.SUCCESS);
-  expect(result.job('store_file_in_cache')!).toHaveStatus(
+  expect(result.jobs['store_file_in_cache']!).toHaveStatus(
     ActExecStatus.SUCCESS,
   );
 

@@ -164,8 +164,8 @@ export class ActExecListener {
     return this.execOutput.join('\n');
   }
 
-  getJobs(): Map<string, ActJobExecResult> {
-    return new Map(
+  getJobs(): Record<string, ActJobExecResult> {
+    return Object.fromEntries(
       Array.from(this.jobsByName).map(([name, jobBuilder]) => [
         name,
         jobBuilder.build(),
