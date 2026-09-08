@@ -297,16 +297,16 @@ export class ActRunner<
 
         // apply user arguments + additional internal arguments specific to test execution
         const args = [...params.asCliArgs(), '--rm', '--json'];
-        const process = spawn(this.actExecutable ?? 'act', args);
+        const child = spawn(this.actExecutable ?? 'act', args);
 
-        process.stdout.on('data', (data) =>
+        child.stdout.on('data', (data) =>
           executionListener.onRawOutput(data.toString().trimEnd()),
         );
-        process.stderr.on('data', (data) =>
+        child.stderr.on('data', (data) =>
           executionListener.onRawOutput(data.toString().trimEnd()),
         );
 
-        process.on('close', (code) => {
+        child.on('close', (code) => {
           cleanupDir(this.workingDir!);
           resolve(
             new ActWorkflowExecResult(
