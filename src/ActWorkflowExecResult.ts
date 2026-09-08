@@ -35,25 +35,17 @@ export class ActWorkflowExecResult {
    */
   readonly output: string;
   /**
-   * Jobs executed by the workflow.
+   * Jobs executed by the workflow, keyed by job name.
    */
-  readonly jobs: Map<string, ActJobExecResult>;
+  readonly jobs: Record<string, ActJobExecResult>;
 
   constructor(
     status: ActExecStatus,
     output: string,
-    jobs: Map<string, ActJobExecResult>,
+    jobs: Record<string, ActJobExecResult>,
   ) {
     this.status = status;
     this.output = output;
     this.jobs = jobs;
-  }
-
-  /**
-   * @param name - name of the job executed by the given workflow.
-   * @returns job - result of executing the given job in the context of the current workflow.
-   */
-  job(name: string): ActJobExecResult | undefined {
-    return this.jobs.get(name);
   }
 }

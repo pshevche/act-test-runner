@@ -36,7 +36,7 @@ test('persists workflow artifacts in configured directory', async () => {
     .run();
 
   expect(result).toHaveStatus(ActExecStatus.SUCCESS);
-  expect(result.job('store_file_in_artifact_server')!.status).toBe(
+  expect(result.jobs['store_file_in_artifact_server']!.status).toBe(
     ActExecStatus.SUCCESS,
   );
 
