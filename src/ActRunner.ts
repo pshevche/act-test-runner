@@ -227,18 +227,14 @@ export class ActRunner<
 
   /**
    * Forwards the act output to the supplied listeners.
-   * When the listener is unspecified, forwards the output to the console.
-   * @param outputListeners - output consumers.
+   * When no listener is specified, forwards the output to the console.
+   * @param listeners - output consumers.
    */
-  forwardOutput(
-    outputListeners:
-      ActOutputListener | ActOutputListener[] = new StdStreamOutputListener(),
-  ): this {
-    if (Array.isArray(outputListeners)) {
-      this.outputListener = new CompositeActOutputListener(outputListeners);
-    } else {
-      this.outputListener = outputListeners;
-    }
+  forwardOutput(...listeners: ActOutputListener[]): this {
+    this.outputListener =
+      listeners.length === 0
+        ? new StdStreamOutputListener()
+        : new CompositeActOutputListener(listeners);
     return this;
   }
 

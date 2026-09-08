@@ -79,7 +79,7 @@ test('forwards output to the specified custom listener', async () => {
 test('supports combining multiple listeners', async () => {
   const result = await runner()
     .withWorkflow({ body: WORKFLOW_BODY })
-    .forwardOutput([customListener, new StdStreamOutputListener()])
+    .forwardOutput(customListener, new StdStreamOutputListener())
     .run();
 
   expect(result).toHaveStatus(ActExecStatus.SUCCESS);
