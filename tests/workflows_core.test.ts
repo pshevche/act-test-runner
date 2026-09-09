@@ -1,4 +1,4 @@
-import { test, expect, beforeEach, afterEach } from 'vitest';
+import { describe, test, expect, beforeEach, afterEach } from 'vitest';
 import { ActExecStatus, ActWorkflowExecResult } from '../src/index.js';
 import { runner, workflowPath } from './fixtures.js';
 import { join } from 'node:path';
@@ -12,68 +12,70 @@ export async function run(
 }
 
 const customWorkingDir = join(tmpdir(), 'actTestRunner', 'workflows_core');
-beforeEach(() => {
-  if (!existsSync(customWorkingDir)) {
-    mkdirSync(customWorkingDir, { recursive: true });
-  }
-});
 
-afterEach(() => {
-  if (existsSync(customWorkingDir)) {
-    rmSync(customWorkingDir, { recursive: true, force: true });
-  }
-});
+describe('core', () => {
+  beforeEach(() => {
+    if (!existsSync(customWorkingDir)) {
+      mkdirSync(customWorkingDir, { recursive: true });
+    }
+  });
 
-test('reports successful workflows', async () => {
-  const result = await run(workflowPath('always_passing_workflow'));
+  afterEach(() => {
+    if (existsSync(customWorkingDir)) {
+      rmSync(customWorkingDir, { recursive: true, force: true });
+    }
+  });
 
-  expect(result).toHaveStatus(ActExecStatus.SUCCESS);
-  expect(result.output).toContain('Hello, World!');
-  expect(Object.keys(result.jobs).length).toBe(1);
+  test('reports successful workflows', async () => {
+    const result = await run(workflowPath('always_passing_workflow'));
 
-  const successfulJob = result.jobs['successful_job']!;
-  expect(successfulJob).toHaveStatus(ActExecStatus.SUCCESS);
-  expect(successfulJob.output).toContain('Hello, World!');
-  expect(successfulJob.matrix).toStrictEqual({});
-});
+    expect(result).toHaveStatus(ActExecStatus.SUCCESS);
+    expect(result.output).toContain('Hello, World!');
+    expect(Object.keys(result.jobs).length).toBe(1);
 
-test('captures workflow failures', async () => {
-  const result = await run(workflowPath('always_failing_workflow'));
+    const successfulJob = result.jobs['successful_job']!;
+    expect(successfulJob).toHaveStatus(ActExecStatus.SUCCESS);
+    expect(successfulJob.output).toContain('Hello, World!');
+    expect(successfulJob.matrix).toStrictEqual({});
+  });
 
-  expect(result).toHaveStatus(ActExecStatus.FAILED);
-  expect(result.output).toContain('Hello, World!');
-  expect(Object.keys(result.jobs).length).toBe(1);
+  test('captures workflow failures', async () => {
+    const result = await run(workflowPath('always_failing_workflow'));
 
-  const failingJob = result.jobs['failing_job']!;
-  expect(failingJob).toHaveStatus(ActExecStatus.FAILED);
-  expect(failingJob.output).toContain('Hello, World!');
-});
+    expect(result).toHaveStatus(ActExecStatus.FAILED);
+    expect(result.output).toContain('Hello, World!');
+    expect(Object.keys(result.jobs).length).toBe(1);
 
-test('reports all jobs', async () => {
-  const result = await run(
-    workflowPath('workflow_with_failing_and_passing_jobs'),
-  );
+    const failingJob = result.jobs['failing_job']!;
+    expect(failingJob).toHaveStatus(ActExecStatus.FAILED);
+    expect(failingJob.output).toContain('Hello, World!');
+  });
 
-  expect(result).toHaveStatus(ActExecStatus.FAILED);
-  expect(result.output).toContain('I succeed!');
-  expect(result.output).toContain('I fail!');
-  expect(Object.keys(result.jobs).length).toBe(2);
+  test('reports all jobs', async () => {
+    const result = await run(
+      workflowPath('workflow_with_failing_and_passing_jobs'),
+    );
 
-  const successfulJob = result.jobs['successful_job']!;
-  expect(successfulJob).toHaveStatus(ActExecStatus.SUCCESS);
-  expect(successfulJob.output).toContain('I succeed!');
-  expect(successfulJob.output).not.toContain('I fail!');
+    expect(result).toHaveStatus(ActExecStatus.FAILED);
+    expect(result.output).toContain('I succeed!');
+    expect(result.output).toContain('I fail!');
+    expect(Object.keys(result.jobs).length).toBe(2);
 
-  const failingJob = result.jobs['failing_job']!;
-  expect(failingJob).toHaveStatus(ActExecStatus.FAILED);
-  expect(failingJob.output).toContain('I fail!');
-  expect(failingJob.output).not.toContain('I succeed!');
-});
+    const successfulJob = result.jobs['successful_job']!;
+    expect(successfulJob).toHaveStatus(ActExecStatus.SUCCESS);
+    expect(successfulJob.output).toContain('I succeed!');
+    expect(successfulJob.output).not.toContain('I fail!');
 
-test('supports defining workflow body instead of file', async () => {
-  const result = await runner()
-    .withWorkflow({
-      body: `
+    const failingJob = result.jobs['failing_job']!;
+    expect(failingJob).toHaveStatus(ActExecStatus.FAILED);
+    expect(failingJob.output).toContain('I fail!');
+    expect(failingJob.output).not.toContain('I succeed!');
+  });
+
+  test('supports defining workflow body instead of file', async () => {
+    const result = await runner()
+      .withWorkflow({
+        body: `
 name: Simple passing workflow
 on: [push]
 
@@ -84,23 +86,23 @@ jobs:
       - name: Successful step
         run: echo "Hello, World!"
   `,
-    })
-    .run();
+      })
+      .run();
 
-  expect(result).toHaveStatus(ActExecStatus.SUCCESS);
-  expect(result.output).toContain('Hello, World!');
-  expect(Object.keys(result.jobs).length).toBe(1);
+    expect(result).toHaveStatus(ActExecStatus.SUCCESS);
+    expect(result.output).toContain('Hello, World!');
+    expect(Object.keys(result.jobs).length).toBe(1);
 
-  const successfulJob = result.jobs['successful_job']!;
-  expect(successfulJob).toHaveStatus(ActExecStatus.SUCCESS);
-  expect(successfulJob.output).toContain('Hello, World!');
-});
+    const successfulJob = result.jobs['successful_job']!;
+    expect(successfulJob).toHaveStatus(ActExecStatus.SUCCESS);
+    expect(successfulJob.output).toContain('Hello, World!');
+  });
 
-test('supports defining custom working directory', async () => {
-  const result = await runner()
-    .withWorkingDir(customWorkingDir)
-    .withWorkflow({
-      body: `
+  test('supports defining custom working directory', async () => {
+    const result = await runner()
+      .withWorkingDir(customWorkingDir)
+      .withWorkflow({
+        body: `
 name: Simple passing workflow
 on: [push]
 
@@ -111,14 +113,15 @@ jobs:
       - name: Successful step
         run: echo "Hello, World!"
   `,
-    })
-    .run();
+      })
+      .run();
 
-  expect(result).toHaveStatus(ActExecStatus.SUCCESS);
-  expect(result.output).toContain('Hello, World!');
-  expect(Object.keys(result.jobs).length).toBe(1);
+    expect(result).toHaveStatus(ActExecStatus.SUCCESS);
+    expect(result.output).toContain('Hello, World!');
+    expect(Object.keys(result.jobs).length).toBe(1);
 
-  const successfulJob = result.jobs['successful_job']!;
-  expect(successfulJob).toHaveStatus(ActExecStatus.SUCCESS);
-  expect(successfulJob.output).toContain('Hello, World!');
+    const successfulJob = result.jobs['successful_job']!;
+    expect(successfulJob).toHaveStatus(ActExecStatus.SUCCESS);
+    expect(successfulJob.output).toContain('Hello, World!');
+  });
 });

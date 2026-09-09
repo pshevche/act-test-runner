@@ -1,4 +1,4 @@
-import { test, expect, beforeEach, afterEach } from 'vitest';
+import { describe, test, expect, beforeEach, afterEach } from 'vitest';
 import { runner, workflowPath } from './fixtures.js';
 import { ActExecStatus, ActRunner } from '../src/index.js';
 import { join } from 'node:path';
@@ -10,28 +10,31 @@ function cacheWorkflowRunner(): ActRunner {
 }
 
 const customCacheDir = join(tmpdir(), 'actTestRunner', 'workflows_cache');
-beforeEach(() => {
-  if (!existsSync(customCacheDir)) {
-    mkdirSync(customCacheDir, { recursive: true });
-  }
+
+describe('cache', () => {
+  beforeEach(() => {
+    if (!existsSync(customCacheDir)) {
+      mkdirSync(customCacheDir, { recursive: true });
+    }
+  });
+
+  afterEach(() => {
+    if (existsSync(customCacheDir)) {
+      rmSync(customCacheDir, { recursive: true, force: true });
+    }
+  });
+
+  test('persists cache entries in configured directory', async () => {
+    const result = await cacheWorkflowRunner()
+      .withCacheServer({ path: customCacheDir })
+      .run();
+
+    expect(result).toHaveStatus(ActExecStatus.SUCCESS);
+    expect(result.jobs['store_file_in_cache']!).toHaveStatus(
+      ActExecStatus.SUCCESS,
+    );
+
+    const cacheArtifact = join(customCacheDir, 'cache', '01', '1');
+    expect(existsSync(cacheArtifact)).toBe(true);
+  }, 60_000);
 });
-
-afterEach(() => {
-  if (existsSync(customCacheDir)) {
-    rmSync(customCacheDir, { recursive: true, force: true });
-  }
-});
-
-test('persists cache entries in configured directory', async () => {
-  const result = await cacheWorkflowRunner()
-    .withCacheServer({ path: customCacheDir })
-    .run();
-
-  expect(result).toHaveStatus(ActExecStatus.SUCCESS);
-  expect(result.jobs['store_file_in_cache']!).toHaveStatus(
-    ActExecStatus.SUCCESS,
-  );
-
-  const cacheArtifact = join(customCacheDir, 'cache', '01', '1');
-  expect(existsSync(cacheArtifact)).toBe(true);
-}, 60_000);
