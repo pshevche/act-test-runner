@@ -74,11 +74,8 @@ export class ActJobExecResultBuilder {
       status: this.status!,
       output: this.outputLines.join('\n'),
       matrix: this.matrix,
-      steps: Object.fromEntries(
-        Array.from(this.stepsById.values()).map((stepBuilder) => {
-          const step = stepBuilder.build();
-          return [step.name, step];
-        }),
+      steps: Array.from(this.stepsById.values()).map((stepBuilder) =>
+        stepBuilder.build(),
       ),
     };
   }

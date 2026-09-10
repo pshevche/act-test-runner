@@ -77,9 +77,9 @@ export type ActJobExecResult = {
    */
   readonly matrix: ActMatrixValues;
   /**
-   * Steps executed by the job, keyed by step name.
+   * Steps executed by the job, in the order they ran.
    */
-  readonly steps: Record<string, ActStepExecResult>;
+  readonly steps: ActStepExecResult[];
 };
 
 /**

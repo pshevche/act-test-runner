@@ -78,17 +78,18 @@ describe('core', () => {
     expect(result).toHaveStatus(ActExecStatus.FAILED);
 
     const job = result.jobs['multi_step_job']!;
-    expect(Object.keys(job.steps).length).toBe(2);
+    expect(job.steps.length).toBe(2);
 
-    const firstStep = job.steps['First step']!;
+    const [firstStep, secondStep] = job.steps;
+    expect(firstStep!.name).toBe('First step');
     expect(firstStep).toHaveStatus(ActExecStatus.SUCCESS);
-    expect(firstStep.output).toContain('Step 1 output');
-    expect(firstStep.output).not.toContain('Step 2 output');
+    expect(firstStep!.output).toContain('Step 1 output');
+    expect(firstStep!.output).not.toContain('Step 2 output');
 
-    const secondStep = job.steps['Second step']!;
+    expect(secondStep!.name).toBe('Second step');
     expect(secondStep).toHaveStatus(ActExecStatus.FAILED);
-    expect(secondStep.output).toContain('Step 2 output');
-    expect(secondStep.output).not.toContain('Step 1 output');
+    expect(secondStep!.output).toContain('Step 2 output');
+    expect(secondStep!.output).not.toContain('Step 1 output');
   });
 
   test('supports defining workflow body instead of file', async () => {
