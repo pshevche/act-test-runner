@@ -10,43 +10,7 @@ the [act](https://github.com/nektos/act) runner.
 Consumers can assert on the outcome of the workflow execution, such as the jobs run, workflow's output, or artifacts
 persisted in the artifact server or action cache.
 
-## Usage
-
-### Example project
-
-To try it out yourself, check out the [act-test-runner-example](https://github.com/pshevche/act-test-runner-example) repository.
-
-### Assert on the workflow file execution
-
-```JavaScript
-test('custom workflow', async () => {
-  const result = await new ActRunner()
-    .withWorkflow({
-      body: `
-name: Simple passing workflow
-on: [push]
-
-jobs:
-  successful_job:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Successful step
-        run: echo "Hello, World!"
-  `,
-    })
-    .run();
-
-  expect(result.status).toBe(ActExecStatus.SUCCESS);
-  expect(result.output).toContain('Hello, World!');
-  expect(Object.keys(result.jobs).length).toBe(1);
-
-  const successfulJob = result.jobs['successful_job']!;
-  expect(successfulJob.status).toBe(ActExecStatus.SUCCESS);
-  expect(successfulJob.output).toContain('Hello, World!');
-});
-```
-
-### Define event to trigger the workflow
+## Sneak preview
 
 ```JavaScript
 test('custom workflow with event', async () => {
@@ -82,57 +46,11 @@ jobs:
 });
 ```
 
-### Set additional workflow inputs
-
-```JavaScript
-test('custom workflow with inputs', async () => {
-  const result = await new ActRunner()
-    .withWorkflow({
-      body: `
-name: Simple workflow printing a couple of environment variables
-on: [push]
-
-jobs:
-  print_greeting:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Print greeting from env variables
-        run: echo "$GREETING, $NAME!"
-  `,
-    })
-    .withEnv({ values: { GREETING: 'Hello', NAME: 'Bruce' } })
-    .run();
-
-  expect(result.status).toBe(ActExecStatus.SUCCESS);
-  const job = result.jobs['print_greeting']!;
-  expect(job.status).toBe(ActExecStatus.SUCCESS);
-  expect(job.output).toContain('Hello, Bruce!');
-});
-```
-
 ## Useful links
 
-- [Example project](https://github.com/pshevche/act-test-runner-example): a sample project that demonstrates how to use `act-test-runner` with a custom action.
+- [Wiki](https://github.com/pshevche/act-test-runner/wiki): full documentation, including a walkthrough of the public API and more usage examples.
+- [Known limitations](https://github.com/pshevche/act-test-runner/wiki/Known-limitations): constraints to be aware of before adopting the library.
+- [Examples](https://github.com/pshevche/act-test-runner/wiki/Examples): representative test cases showing the API in action, including testing a local action under development.
 - [nektos/act](https://github.com/nektos/act): GitHub actions runner used by the plugin.
 - [act User Guide](https://nektosact.com): describes various configuration options that the runner provides, as well as
   the format for input files.
-
-## Known limitations
-
-### Sequential runner invocations
-
-Currently, tests using `act` can't be reliably invoked in parallel.
-This is caused by `act` generating stable container names based on the workflow's `name` property.
-If your tests run in-parallel and reuse the same workflow file, then the generated container names will collide, resuling in test failures.
-If you still want to run your tests concurrently, ensure that the workflows have unique names.
-See [nektos/act#1287](https://github.com/nektos/act/issues/1287) for mode details.
-
-### Supported `act` options
-
-`act` provides a large number of options to configure workflow execution.
-This library aims to abstract away the configuration effort and enforce best practices.
-Therefore, the initial release of the library has a built-in support for a small set of options deemed essential to design meaningful test scenarios for GitHub workflows.
-
-Additional unsupported arguments can be passed using the `additionalArgs` property of a `ActRunner` object.
-Despite having this option, feel free to submit a feature request for a new option describing how the library and its
-users will benfit from having a native support for this property.
