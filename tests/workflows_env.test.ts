@@ -41,4 +41,16 @@ describe('env', () => {
     expect(job).toHaveStatus(ActExecStatus.SUCCESS);
     expect(job.output).toContain('Hallo, Bruce!');
   });
+
+  test('a later call to withEnv replaces values set by an earlier call', async () => {
+    const result = await envWorkflowRunner()
+      .withEnv({ values: { GREETING: 'Hello', NAME: 'Bruce' } })
+      .withEnv({ values: { GREETING: 'Hallo' } })
+      .run();
+
+    expect(result.status).toBe(ActExecStatus.SUCCESS);
+    const job = result.jobs['print_greeting']!;
+    expect(job).toHaveStatus(ActExecStatus.SUCCESS);
+    expect(job.output).toContain('Hallo, !');
+  });
 });

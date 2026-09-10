@@ -44,4 +44,16 @@ describe('inputs', () => {
     expect(job).toHaveStatus(ActExecStatus.SUCCESS);
     expect(job.output).toContain('Hallo, Bruce!');
   });
+
+  test('a later call to withInputs replaces values set by an earlier call', async () => {
+    const result = await inputWorkflowRunner()
+      .withInputs({ values: { greeting: 'Hello', name: 'Bruce' } })
+      .withInputs({ values: { greeting: 'Hallo', name: 'Falco' } })
+      .run();
+
+    expect(result).toHaveStatus(ActExecStatus.SUCCESS);
+    const job = result.jobs['print_greeting']!;
+    expect(job).toHaveStatus(ActExecStatus.SUCCESS);
+    expect(job.output).toContain('Hallo, Falco!');
+  });
 });

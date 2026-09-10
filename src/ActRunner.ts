@@ -79,18 +79,11 @@ export class ActRunner<
   private workflowSource: ActWorkflowSource | undefined;
   private eventType: TEventType | undefined;
   private eventPayloadFileOrBody: TEventPayload | undefined;
-  private envFile: string | undefined;
-  private envValues: Map<string, string> = new Map<string, string>();
-  private inputsFile: string | undefined;
-  private inputsValues: Map<string, string> = new Map<string, string>();
-  private secretsFile: string | undefined;
-  private secretsValues: Map<string, string> = new Map<string, string>();
-  private variablesFile: string | undefined;
-  private variablesValues: Map<string, string> = new Map<string, string>();
-  private matrix: Map<string, string | number | boolean> = new Map<
-    string,
-    string | number | boolean
-  >();
+  private envSource: ActValueSource | undefined;
+  private inputsSource: ActValueSource | undefined;
+  private secretsSource: ActValueSource | undefined;
+  private variablesSource: ActValueSource | undefined;
+  private matrixValues: ActMatrixValues | undefined;
   private cacheServer: ActResourceServerSpec | undefined;
   private artifactServer: ActResourceServerSpec | undefined;
   private additionalArgs: string[] = [];
@@ -142,62 +135,52 @@ export class ActRunner<
 
   /**
    * Specifies environment variables to use when invoking the given workflow, provided via a file, inline values, or both.
+   * Replaces any environment variables set by a previous call to this method.
    * @param source - environment variables source
    */
   withEnv(source: ActValueSource): this {
-    this.envFile = source.file;
-    this.setValues(this.envValues, source.values);
+    this.envSource = source;
     return this;
   }
 
   /**
    * Specifies inputs values to use when invoking the given workflow, provided via a file, inline values, or both.
+   * Replaces any inputs values set by a previous call to this method.
    * @param source - inputs values source
    */
   withInputs(source: ActValueSource): this {
-    this.inputsFile = source.file;
-    this.setValues(this.inputsValues, source.values);
+    this.inputsSource = source;
     return this;
   }
 
   /**
    * Specifies secrets values to use when invoking the given workflow, provided via a file, inline values, or both.
+   * Replaces any secrets values set by a previous call to this method.
    * @param source - secrets values source
    */
   withSecrets(source: ActValueSource): this {
-    this.secretsFile = source.file;
-    this.setValues(this.secretsValues, source.values);
+    this.secretsSource = source;
     return this;
   }
 
   /**
    * Specifies workflow variables values to use when invoking the given workflow, provided via a file, inline values, or both.
+   * Replaces any variables values set by a previous call to this method.
    * @param source - variables values source
    */
   withVariables(source: ActValueSource): this {
-    this.variablesFile = source.file;
-    this.setValues(this.variablesValues, source.values);
+    this.variablesSource = source;
     return this;
-  }
-
-  private setValues(
-    target: Map<string, string>,
-    values: Record<string, string> | undefined,
-  ): void {
-    if (values !== undefined) {
-      Object.entries(values).forEach(([key, value]) => target.set(key, value));
-    }
   }
 
   /**
    * Set matrix values to run the workflow with.
    * If undefined, all combinations specified in the workflow definition will be invoked.
+   * Replaces any matrix values set by a previous call to this method.
    * @param matrixValues - matrix values to run the workflow with
    */
   withMatrix(matrixValues: ActMatrixValues): this {
-    Object.entries(matrixValues).forEach(([key, value]) =>
-      this.matrix.set(key, value),
-    );
+    this.matrixValues = matrixValues;
     return this;
   }
 
@@ -373,15 +356,11 @@ export class ActRunner<
       workflowsPath: workflowFilePath,
       eventPayloadFilePath,
       eventType: this.eventType,
-      envFile: this.envFile,
-      envValues: this.envValues,
-      inputFile: this.inputsFile,
-      inputValues: this.inputsValues,
-      secretsFile: this.secretsFile,
-      secretsValues: this.secretsValues,
-      variablesFile: this.variablesFile,
-      variablesValues: this.variablesValues,
-      matrix: this.matrix,
+      envSource: this.envSource,
+      inputsSource: this.inputsSource,
+      secretsSource: this.secretsSource,
+      variablesSource: this.variablesSource,
+      matrixValues: this.matrixValues,
       cacheServer: this.cacheServer,
       artifactServer: this.artifactServer,
       additionalArgs: this.additionalArgs,
