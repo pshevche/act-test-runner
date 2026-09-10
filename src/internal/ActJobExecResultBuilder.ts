@@ -29,7 +29,7 @@ export class ActJobExecResultBuilder {
   private hasExecutedSteps: boolean = false;
   private status: ActExecStatus | undefined;
   private readonly outputLines: string[] = [];
-  private readonly stepsByName: Map<string, ActStepExecResultBuilder> = new Map<
+  private readonly stepsById: Map<string, ActStepExecResultBuilder> = new Map<
     string,
     ActStepExecResultBuilder
   >();
@@ -44,11 +44,11 @@ export class ActJobExecResultBuilder {
     return this;
   }
 
-  step(name: string): ActStepExecResultBuilder {
-    if (!this.stepsByName.has(name)) {
-      this.stepsByName.set(name, new ActStepExecResultBuilder(name));
+  step(id: string, name: string): ActStepExecResultBuilder {
+    if (!this.stepsById.has(id)) {
+      this.stepsById.set(id, new ActStepExecResultBuilder(name));
     }
-    return this.stepsByName.get(name)!;
+    return this.stepsById.get(id)!;
   }
 
   stepCompleted(): ActJobExecResultBuilder {
@@ -75,10 +75,10 @@ export class ActJobExecResultBuilder {
       output: this.outputLines.join('\n'),
       matrix: this.matrix,
       steps: Object.fromEntries(
-        Array.from(this.stepsByName).map(([name, stepBuilder]) => [
-          name,
-          stepBuilder.build(),
-        ]),
+        Array.from(this.stepsById.values()).map((stepBuilder) => {
+          const step = stepBuilder.build();
+          return [step.name, step];
+        }),
       ),
     };
   }

@@ -119,7 +119,8 @@ export class ActExecListener {
       }
 
       if (this.isRealStep(output)) {
-        const stepBuilder = jobBuilder.step(output.step!);
+        const stepId = this.currentStepId(output) ?? output.step!;
+        const stepBuilder = jobBuilder.step(stepId, output.step!);
         stepBuilder.output(msg);
 
         if (output.stepResult === 'failure') {
@@ -161,12 +162,11 @@ export class ActExecListener {
     const job = this.hasJobContext(jsonOutput)
       ? { id: jsonOutput.jobID!, name: jsonOutput.job! }
       : undefined;
-    const step = this.hasStepContext(jsonOutput)
-      ? {
-          id: jsonOutput.stepID![jsonOutput.stepID!.length - 1]!,
-          name: jsonOutput.step!,
-        }
-      : undefined;
+    const stepId = this.currentStepId(jsonOutput);
+    const step =
+      stepId !== undefined && jsonOutput.step !== undefined
+        ? { id: stepId, name: jsonOutput.step }
+        : undefined;
     return {
       time: jsonOutput.time,
       level: jsonOutput.level,
@@ -176,12 +176,13 @@ export class ActExecListener {
     };
   }
 
-  private hasStepContext(output: JsonOutput): boolean {
-    return (
-      output.stepID !== undefined &&
-      output.stepID.length > 0 &&
-      output.step !== undefined
-    );
+  // act reports step ids as a path (outermost to innermost, e.g. for
+  // composite action steps); the innermost entry identifies the step
+  // currently reporting output.
+  private currentStepId(output: JsonOutput): string | undefined {
+    return output.stepID !== undefined && output.stepID.length > 0
+      ? output.stepID[output.stepID.length - 1]
+      : undefined;
   }
 
   getOutput(): string {
