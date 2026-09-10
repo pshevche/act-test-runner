@@ -71,10 +71,18 @@ describe('matrix', () => {
     expect(
       matrixJobs.every((job) => job.status === ActExecStatus.SUCCESS),
     ).toBe(true);
-    expect(matrixJobs.map((it) => it.matrix)).toEqual([
-      { greeting: 'Hello', name: 'Bruce' },
-      { greeting: 'Hello', name: 'Falco' },
-    ]);
+
+    // matrix jobs run concurrently, so their completion order (and thus
+    // insertion order into `result.jobs`) isn't guaranteed - compare as a
+    // set rather than asserting a specific order.
+    const matrices = matrixJobs.map((it) => it.matrix);
+    expect(matrices).toHaveLength(2);
+    expect(matrices).toEqual(
+      expect.arrayContaining([
+        { greeting: 'Hello', name: 'Bruce' },
+        { greeting: 'Hello', name: 'Falco' },
+      ]),
+    );
   });
 
   test('captures all supported matrix value types', async () => {

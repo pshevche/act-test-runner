@@ -19,10 +19,26 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-export function formattedMessage(message: string, jobName?: string): string {
-  if (jobName !== undefined) {
-    return `[${jobName}] ${message}`.trim();
-  } else {
-    return message.trim();
+import { ActMatrixValues } from '../ActRunnerResult.js';
+
+export class JobIterationTracker {
+  private readonly matrixIdx: Map<string, number> = new Map<string, number>();
+
+  private matrixKey(matrix: ActMatrixValues): string {
+    return Object.entries(matrix)
+      .map((value) => `${value[0]}\u0000${value[1]}`)
+      .sort((a, b) => (a > b ? 1 : -1))
+      .reduce((prev, curr) => `${prev}\u0000${curr}`);
+  }
+
+  iterationIndex(matrix: ActMatrixValues): number {
+    const key = this.matrixKey(matrix);
+    if (this.matrixIdx.has(key)) {
+      return this.matrixIdx.get(key)!;
+    } else {
+      const newIterationIndex = this.matrixIdx.size + 1;
+      this.matrixIdx.set(key, newIterationIndex);
+      return newIterationIndex;
+    }
   }
 }

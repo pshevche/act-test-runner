@@ -19,7 +19,15 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import { formattedMessage } from './internal/outputFormatter.js';
+import { formattedMessage } from './internal/ActJsonOutput.js';
+
+/**
+ * Identifier of the owner of this message: job or step.
+ */
+export type ActJobOrStepDescriptor = {
+  id: string;
+  name: string;
+};
 
 /**
  * Message's log level.
@@ -41,10 +49,8 @@ export type ActOutputLevel =
  * Single message in the act output stream.
  */
 export type ActOutput = {
-  job?: {
-    id: string;
-    name: string;
-  };
+  job?: ActJobOrStepDescriptor;
+  step?: ActJobOrStepDescriptor;
   message: string;
   level: ActOutputLevel;
   time: Date;

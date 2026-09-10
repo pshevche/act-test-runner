@@ -9,15 +9,20 @@ import { runner } from './fixtures.js';
 
 class CustomOutputListener implements ActOutputListener {
   workflowLogs: string[] = [];
+  stepMessages: string[] = [];
 
   onOutput(output: ActOutput): void {
     if (output.job === undefined) {
       this.workflowLogs.push(output.message);
     }
+    if (output.step?.name === 'Successful step') {
+      this.stepMessages.push(output.message.trim());
+    }
   }
 
   clear() {
     this.workflowLogs = [];
+    this.stepMessages = [];
   }
 }
 
@@ -75,6 +80,16 @@ describe('output listener', () => {
     expect(result.output).toContain('Hello, World!');
     expect(consoleMock).toHaveBeenCalledTimes(0);
     expect(customListener.workflowLogs.length).toBeGreaterThan(0);
+  });
+
+  test('exposes step descriptor on step-scoped output events', async () => {
+    const result = await runner()
+      .withWorkflow({ body: WORKFLOW_BODY })
+      .forwardOutput(customListener)
+      .run();
+
+    expect(result).toHaveStatus(ActExecStatus.SUCCESS);
+    expect(customListener.stepMessages).toContain('Hello, World!');
   });
 
   test('supports combining multiple listeners', async () => {

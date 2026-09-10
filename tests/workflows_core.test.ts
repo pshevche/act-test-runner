@@ -72,6 +72,26 @@ describe('core', () => {
     expect(failingJob.output).not.toContain('I succeed!');
   });
 
+  test('captures steps run by a job', async () => {
+    const result = await run(workflowPath('workflow_with_multiple_steps'));
+
+    expect(result).toHaveStatus(ActExecStatus.FAILED);
+
+    const job = result.jobs['multi_step_job']!;
+    expect(job.steps.length).toBe(2);
+
+    const [firstStep, secondStep] = job.steps;
+    expect(firstStep!.name).toBe('First step');
+    expect(firstStep).toHaveStatus(ActExecStatus.SUCCESS);
+    expect(firstStep!.output).toContain('Step 1 output');
+    expect(firstStep!.output).not.toContain('Step 2 output');
+
+    expect(secondStep!.name).toBe('Second step');
+    expect(secondStep).toHaveStatus(ActExecStatus.FAILED);
+    expect(secondStep!.output).toContain('Step 2 output');
+    expect(secondStep!.output).not.toContain('Step 1 output');
+  });
+
   test('supports defining workflow body instead of file', async () => {
     const result = await runner()
       .withWorkflow({

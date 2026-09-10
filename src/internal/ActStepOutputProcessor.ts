@@ -19,49 +19,38 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+import { ActJobOrStepDescriptor } from '../ActOutputListener.js';
 import { ActExecStatus } from '../ActRunnerResult.js';
-import type { ActJobExecResult, ActMatrixValues } from '../ActRunnerResult.js';
+import type { ActStepExecResult } from '../ActRunnerResult.js';
+import { formattedMessage, JsonOutput } from './ActJsonOutput.js';
 
-export class ActJobExecResultBuilder {
-  private readonly name: string;
-  private readonly matrix: ActMatrixValues;
-  private hasExecutedSteps: boolean = false;
+export class ActStepExecResultBuilder {
+  readonly descriptor: ActJobOrStepDescriptor;
   private status: ActExecStatus | undefined;
   private readonly outputLines: string[] = [];
 
-  constructor(name: string, matrix: ActMatrixValues) {
-    this.name = name;
-    this.matrix = matrix;
+  constructor(descriptor: ActJobOrStepDescriptor) {
+    this.descriptor = descriptor;
   }
 
-  output(line: string): ActJobExecResultBuilder {
-    this.outputLines.push(line);
-    return this;
+  processOutput(output: JsonOutput) {
+    const msg = formattedMessage(output.msg, output.job);
+    this.outputLines.push(msg);
+
+    if (output.stepResult === 'failure') {
+      this.status = ActExecStatus.FAILED;
+    } else if (output.stepResult === 'skipped') {
+      this.status = ActExecStatus.SKIPPED;
+    } else if (output.stepResult !== undefined) {
+      this.status = ActExecStatus.SUCCESS;
+    }
   }
 
-  stepCompleted(): ActJobExecResultBuilder {
-    this.hasExecutedSteps = true;
-    return this;
-  }
-
-  completed(): ActJobExecResultBuilder {
-    this.status = this.hasExecutedSteps
-      ? ActExecStatus.SUCCESS
-      : ActExecStatus.SKIPPED;
-    return this;
-  }
-
-  failed(): ActJobExecResultBuilder {
-    this.status = ActExecStatus.FAILED;
-    return this;
-  }
-
-  build(): ActJobExecResult {
+  buildResult(): ActStepExecResult {
     return {
-      name: this.name,
+      name: this.descriptor.name,
       status: this.status!,
       output: this.outputLines.join('\n'),
-      matrix: this.matrix,
     };
   }
 }
