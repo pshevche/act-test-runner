@@ -21,6 +21,7 @@
 
 import { ActExecStatus } from '../ActRunnerResult.js';
 import type { ActJobExecResult, ActMatrixValues } from '../ActRunnerResult.js';
+import { ActStepExecResultBuilder } from './ActStepExecResultBuilder.js';
 
 export class ActJobExecResultBuilder {
   private readonly name: string;
@@ -28,6 +29,10 @@ export class ActJobExecResultBuilder {
   private hasExecutedSteps: boolean = false;
   private status: ActExecStatus | undefined;
   private readonly outputLines: string[] = [];
+  private readonly stepsByName: Map<string, ActStepExecResultBuilder> = new Map<
+    string,
+    ActStepExecResultBuilder
+  >();
 
   constructor(name: string, matrix: ActMatrixValues) {
     this.name = name;
@@ -37,6 +42,13 @@ export class ActJobExecResultBuilder {
   output(line: string): ActJobExecResultBuilder {
     this.outputLines.push(line);
     return this;
+  }
+
+  step(name: string): ActStepExecResultBuilder {
+    if (!this.stepsByName.has(name)) {
+      this.stepsByName.set(name, new ActStepExecResultBuilder(name));
+    }
+    return this.stepsByName.get(name)!;
   }
 
   stepCompleted(): ActJobExecResultBuilder {
@@ -62,6 +74,12 @@ export class ActJobExecResultBuilder {
       status: this.status!,
       output: this.outputLines.join('\n'),
       matrix: this.matrix,
+      steps: Object.fromEntries(
+        Array.from(this.stepsByName).map(([name, stepBuilder]) => [
+          name,
+          stepBuilder.build(),
+        ]),
+      ),
     };
   }
 }

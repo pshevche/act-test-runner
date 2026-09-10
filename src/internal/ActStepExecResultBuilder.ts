@@ -19,22 +19,43 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-export { ActRunner } from './ActRunner.js';
-export type {
-  ActProcessOptions,
-  ActValueSource,
-  ActWorkflowSource,
-  ActResourceServerSpec,
-} from './ActRunnerOptions.js';
-export type { ActOutputListener, ActOutput } from './ActOutputListener.js';
-export {
-  ActOutputLevel,
-  StdStreamOutputListener,
-} from './ActOutputListener.js';
-export { ActExecStatus, ActRunnerError } from './ActRunnerResult.js';
-export type {
-  ActJobExecResult,
-  ActMatrixValues,
-  ActStepExecResult,
-  ActWorkflowExecResult,
-} from './ActRunnerResult.js';
+import { ActExecStatus } from '../ActRunnerResult.js';
+import type { ActStepExecResult } from '../ActRunnerResult.js';
+
+export class ActStepExecResultBuilder {
+  private readonly name: string;
+  private status: ActExecStatus | undefined;
+  private readonly outputLines: string[] = [];
+
+  constructor(name: string) {
+    this.name = name;
+  }
+
+  output(line: string): ActStepExecResultBuilder {
+    this.outputLines.push(line);
+    return this;
+  }
+
+  completed(): ActStepExecResultBuilder {
+    this.status = ActExecStatus.SUCCESS;
+    return this;
+  }
+
+  failed(): ActStepExecResultBuilder {
+    this.status = ActExecStatus.FAILED;
+    return this;
+  }
+
+  skipped(): ActStepExecResultBuilder {
+    this.status = ActExecStatus.SKIPPED;
+    return this;
+  }
+
+  build(): ActStepExecResult {
+    return {
+      name: this.name,
+      status: this.status!,
+      output: this.outputLines.join('\n'),
+    };
+  }
+}

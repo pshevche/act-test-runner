@@ -45,6 +45,10 @@ export type ActOutput = {
     id: string;
     name: string;
   };
+  step?: {
+    id: string;
+    name: string;
+  };
   message: string;
   level: ActOutputLevel;
   time: Date;

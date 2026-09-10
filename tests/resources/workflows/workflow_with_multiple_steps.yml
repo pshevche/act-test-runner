@@ -1,0 +1,13 @@
+name: Workflow with multiple steps
+on: [push]
+
+jobs:
+  multi_step_job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: First step
+        run: echo "Step 1 output"
+      - name: Second step
+        run: |
+          echo "Step 2 output"
+          exit 1

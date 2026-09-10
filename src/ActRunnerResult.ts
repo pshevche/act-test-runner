@@ -76,6 +76,28 @@ export type ActJobExecResult = {
    * Matrix values the job ran with.
    */
   readonly matrix: ActMatrixValues;
+  /**
+   * Steps executed by the job, keyed by step name.
+   */
+  readonly steps: Record<string, ActStepExecResult>;
+};
+
+/**
+ * Step execution result for inspection.
+ */
+export type ActStepExecResult = {
+  /**
+   * Name of the step run.
+   */
+  readonly name: string;
+  /**
+   * Result of the step execution.
+   */
+  readonly status: ActExecStatus;
+  /**
+   * Step's console output.
+   */
+  readonly output: string;
 };
 
 /**

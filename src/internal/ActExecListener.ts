@@ -38,6 +38,7 @@ type JsonOutput = {
   jobID?: string;
   jobResult?: JobOrStepResult;
   step?: string;
+  stepID?: string[];
   stepResult?: JobOrStepResult;
   matrix: ActMatrixValues;
 };
@@ -117,6 +118,19 @@ export class ActExecListener {
         jobBuilder.stepCompleted();
       }
 
+      if (this.isRealStep(output)) {
+        const stepBuilder = jobBuilder.step(output.step!);
+        stepBuilder.output(msg);
+
+        if (output.stepResult === 'failure') {
+          stepBuilder.failed();
+        } else if (output.stepResult === 'skipped') {
+          stepBuilder.skipped();
+        } else if (output.stepResult !== undefined) {
+          stepBuilder.completed();
+        }
+      }
+
       if (output.jobResult !== undefined) {
         if (output.jobResult === 'failure') {
           jobBuilder.failed();
@@ -131,10 +145,13 @@ export class ActExecListener {
     return output.jobID !== undefined && output.job !== undefined;
   }
 
+  private isRealStep(output: JsonOutput): boolean {
+    return output.step !== undefined && !JOB_LIFECYCLE_STEPS.has(output.step!);
+  }
+
   private isExecutedStep(output: JsonOutput): boolean {
     return (
-      output.step !== undefined &&
-      !JOB_LIFECYCLE_STEPS.has(output.step!) &&
+      this.isRealStep(output) &&
       output.stepResult !== undefined &&
       output.stepResult !== 'skipped'
     );
@@ -144,12 +161,27 @@ export class ActExecListener {
     const job = this.hasJobContext(jsonOutput)
       ? { id: jsonOutput.jobID!, name: jsonOutput.job! }
       : undefined;
+    const step = this.hasStepContext(jsonOutput)
+      ? {
+          id: jsonOutput.stepID![jsonOutput.stepID!.length - 1]!,
+          name: jsonOutput.step!,
+        }
+      : undefined;
     return {
       time: jsonOutput.time,
       level: jsonOutput.level,
       message: jsonOutput.msg,
       job: job,
+      step: step,
     };
+  }
+
+  private hasStepContext(output: JsonOutput): boolean {
+    return (
+      output.stepID !== undefined &&
+      output.stepID.length > 0 &&
+      output.step !== undefined
+    );
   }
 
   getOutput(): string {
