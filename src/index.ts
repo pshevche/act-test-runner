@@ -26,7 +26,11 @@ export type {
   ActWorkflowSource,
   ActResourceServerSpec,
 } from './ActRunnerOptions.js';
-export type { ActOutputListener, ActOutput } from './ActOutputListener.js';
+export type {
+  ActJobOrStepDescriptor as ActOutputOwner,
+  ActOutputListener,
+  ActOutput,
+} from './ActOutputListener.js';
 export {
   ActOutputLevel,
   StdStreamOutputListener,

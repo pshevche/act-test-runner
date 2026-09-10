@@ -19,41 +19,36 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+import { ActJobOrStepDescriptor } from '../ActOutputListener.js';
 import { ActExecStatus } from '../ActRunnerResult.js';
 import type { ActStepExecResult } from '../ActRunnerResult.js';
+import { formattedMessage, JsonOutput } from './ActJsonOutput.js';
 
 export class ActStepExecResultBuilder {
-  private readonly name: string;
+  readonly descriptor: ActJobOrStepDescriptor;
   private status: ActExecStatus | undefined;
   private readonly outputLines: string[] = [];
 
-  constructor(name: string) {
-    this.name = name;
+  constructor(descriptor: ActJobOrStepDescriptor) {
+    this.descriptor = descriptor;
   }
 
-  output(line: string): ActStepExecResultBuilder {
-    this.outputLines.push(line);
-    return this;
+  processOutput(output: JsonOutput) {
+    const msg = formattedMessage(output.msg, output.job);
+    this.outputLines.push(msg);
+
+    if (output.stepResult === 'failure') {
+      this.status = ActExecStatus.FAILED;
+    } else if (output.stepResult === 'skipped') {
+      this.status = ActExecStatus.SKIPPED;
+    } else if (output.stepResult !== undefined) {
+      this.status = ActExecStatus.SUCCESS;
+    }
   }
 
-  completed(): ActStepExecResultBuilder {
-    this.status = ActExecStatus.SUCCESS;
-    return this;
-  }
-
-  failed(): ActStepExecResultBuilder {
-    this.status = ActExecStatus.FAILED;
-    return this;
-  }
-
-  skipped(): ActStepExecResultBuilder {
-    this.status = ActExecStatus.SKIPPED;
-    return this;
-  }
-
-  build(): ActStepExecResult {
+  buildResult(): ActStepExecResult {
     return {
-      name: this.name,
+      name: this.descriptor.name,
       status: this.status!,
       output: this.outputLines.join('\n'),
     };
