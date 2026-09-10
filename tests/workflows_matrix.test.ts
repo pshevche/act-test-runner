@@ -59,6 +59,24 @@ describe('matrix', () => {
     });
   });
 
+  test('a later call to withMatrix replaces values set by an earlier call', async () => {
+    const result = await matrixWorkflowRunner()
+      .withMatrix({ greeting: 'Hallo', name: 'Bruce' })
+      .withMatrix({ greeting: 'Hello' })
+      .run();
+
+    expect(result).toHaveStatus(ActExecStatus.SUCCESS);
+
+    const matrixJobs = Object.values(result.jobs);
+    expect(
+      matrixJobs.every((job) => job.status === ActExecStatus.SUCCESS),
+    ).toBe(true);
+    expect(matrixJobs.map((it) => it.matrix)).toEqual([
+      { greeting: 'Hello', name: 'Bruce' },
+      { greeting: 'Hello', name: 'Falco' },
+    ]);
+  });
+
   test('captures all supported matrix value types', async () => {
     const matrix = {
       number: 22,

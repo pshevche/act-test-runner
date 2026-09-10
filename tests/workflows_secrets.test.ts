@@ -47,4 +47,16 @@ describe('secrets', () => {
     expect(job).toHaveStatus(ActExecStatus.SUCCESS);
     expect(job.output).toContain('Hallo, Bruce!');
   });
+
+  test('a later call to withSecrets replaces values set by an earlier call', async () => {
+    const result = await secretsWorkflowRunner()
+      .withSecrets({ values: { GREETING: 'Hello', NAME: 'Bruce' } })
+      .withSecrets({ values: { GREETING: 'Hallo' } })
+      .run();
+
+    expect(result).toHaveStatus(ActExecStatus.SUCCESS);
+    const job = result.jobs['print_greeting']!;
+    expect(job).toHaveStatus(ActExecStatus.SUCCESS);
+    expect(job.output).toContain('Hallo, !');
+  });
 });

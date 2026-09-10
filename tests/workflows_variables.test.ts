@@ -45,4 +45,16 @@ describe('variables', () => {
     expect(job).toHaveStatus(ActExecStatus.SUCCESS);
     expect(job.output).toContain('Hallo, Bruce!');
   });
+
+  test('a later call to withVariables replaces values set by an earlier call', async () => {
+    const result = await variablesWorkflowRunner()
+      .withVariables({ values: { GREETING: 'Hello', NAME: 'Bruce' } })
+      .withVariables({ values: { GREETING: 'Hallo' } })
+      .run();
+
+    expect(result).toHaveStatus(ActExecStatus.SUCCESS);
+    const job = result.jobs['print_greeting']!;
+    expect(job).toHaveStatus(ActExecStatus.SUCCESS);
+    expect(job.output).toContain('Hallo, !');
+  });
 });

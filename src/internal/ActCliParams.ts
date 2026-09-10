@@ -20,7 +20,11 @@
  */
 
 import { WebhookEventName } from '@octokit/webhooks-types';
-import type { ActResourceServerSpec } from '../ActRunnerOptions.js';
+import type {
+  ActResourceServerSpec,
+  ActValueSource,
+} from '../ActRunnerOptions.js';
+import type { ActMatrixValues } from '../ActRunnerResult.js';
 import { checkExists } from '../utils/checks.js';
 import { firstDefined } from '../utils/objects.js';
 
@@ -56,15 +60,11 @@ export type ActCliParamsInput<
   workflowsPath: string;
   eventPayloadFilePath: string | undefined;
   eventType: EventType | undefined;
-  envFile: string | undefined;
-  envValues: Map<string, string>;
-  inputFile: string | undefined;
-  inputValues: Map<string, string>;
-  secretsFile: string | undefined;
-  secretsValues: Map<string, string>;
-  variablesFile: string | undefined;
-  variablesValues: Map<string, string>;
-  matrix: Map<string, string | number | boolean>;
+  envSource: ActValueSource | undefined;
+  inputsSource: ActValueSource | undefined;
+  secretsSource: ActValueSource | undefined;
+  variablesSource: ActValueSource | undefined;
+  matrixValues: ActMatrixValues | undefined;
   cacheServer: ActResourceServerSpec | undefined;
   artifactServer: ActResourceServerSpec | undefined;
   additionalArgs: string[];
@@ -76,15 +76,11 @@ export class ActCliParams<
   private readonly workflowsPath: string;
   private readonly eventPayloadFilePath: string | undefined;
   private readonly eventType: EventType | undefined;
-  private readonly envFile: string | undefined;
-  private readonly envValues: Map<string, string>;
-  private readonly inputFile: string | undefined;
-  private readonly inputValues: Map<string, string>;
-  private readonly secretsFile: string | undefined;
-  private readonly secretsValues: Map<string, string>;
-  private readonly variablesFile: string | undefined;
-  private readonly variablesValues: Map<string, string>;
-  private readonly matrix: Map<string, string | number | boolean>;
+  private readonly envSource: ActValueSource | undefined;
+  private readonly inputsSource: ActValueSource | undefined;
+  private readonly secretsSource: ActValueSource | undefined;
+  private readonly variablesSource: ActValueSource | undefined;
+  private readonly matrixValues: ActMatrixValues | undefined;
   private readonly cacheServer: ActResourceServerSpec | undefined;
   private readonly artifactServer: ActResourceServerSpec | undefined;
   private readonly additionalArgs: string[];
@@ -93,15 +89,11 @@ export class ActCliParams<
     this.workflowsPath = params.workflowsPath;
     this.eventType = params.eventType;
     this.eventPayloadFilePath = params.eventPayloadFilePath;
-    this.envFile = params.envFile;
-    this.envValues = params.envValues;
-    this.inputFile = params.inputFile;
-    this.inputValues = params.inputValues;
-    this.secretsFile = params.secretsFile;
-    this.secretsValues = params.secretsValues;
-    this.variablesFile = params.variablesFile;
-    this.variablesValues = params.variablesValues;
-    this.matrix = params.matrix;
+    this.envSource = params.envSource;
+    this.inputsSource = params.inputsSource;
+    this.secretsSource = params.secretsSource;
+    this.variablesSource = params.variablesSource;
+    this.matrixValues = params.matrixValues;
     this.cacheServer = params.cacheServer;
     this.artifactServer = params.artifactServer;
     this.additionalArgs = params.additionalArgs;
@@ -115,40 +107,36 @@ export class ActCliParams<
     this.addInputs(
       args,
       '--env-file',
-      this.envFile,
       'env values file',
       '--env',
-      this.envValues,
+      this.envSource,
     );
 
     this.addInputs(
       args,
       '--input-file',
-      this.inputFile,
       'input values file',
       '--input',
-      this.inputValues,
+      this.inputsSource,
     );
 
     this.addInputs(
       args,
       '--secret-file',
-      this.secretsFile,
       'secrets values file',
       '--secret',
-      this.secretsValues,
+      this.secretsSource,
     );
 
     this.addInputs(
       args,
       '--var-file',
-      this.variablesFile,
       'variables values file',
       '--var',
-      this.variablesValues,
+      this.variablesSource,
     );
 
-    this.matrix.forEach((value, key) => {
+    Object.entries(this.matrixValues ?? {}).forEach(([key, value]) => {
       args.push('--matrix');
       args.push(`${key}:${value}`);
     });
@@ -194,21 +182,18 @@ export class ActCliParams<
   private addInputs(
     args: string[],
     fileArg: string,
-    file: string | undefined,
     fileLabel: string,
     valuesArg: string,
-    values: Map<string, string>,
+    source: ActValueSource | undefined,
   ) {
-    if (file !== undefined) {
-      checkExists(fileLabel, file);
-      args.push(fileArg, file);
+    if (source?.file !== undefined) {
+      checkExists(fileLabel, source.file);
+      args.push(fileArg, source.file);
     }
 
-    if (values.size > 0) {
-      values.forEach((value, key) => {
-        args.push(valuesArg, `${key}=${value}`);
-      });
-    }
+    Object.entries(source?.values ?? {}).forEach(([key, value]) => {
+      args.push(valuesArg, `${key}=${value}`);
+    });
   }
 
   private addResource(
