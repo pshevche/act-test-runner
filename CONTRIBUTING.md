@@ -39,7 +39,7 @@ To auto-fix issues:
 
 ```bash
 pnpm run lint:fix
-pnpm run prettier:fix
+pnpm run format:fix
 pnpm run license:fix
 ```
 

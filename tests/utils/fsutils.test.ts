@@ -1,11 +1,12 @@
+import { existsSync, writeFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { describe, test, expect } from 'vitest';
+
 import {
   cleanupDir,
   createTempDir,
   createTempWorkflowFile,
 } from '../../src/utils/fsutils.js';
-import { existsSync, writeFileSync } from 'node:fs';
-import { join } from 'node:path';
 
 describe('fsutils', () => {
   test('removes directory with all temp files', () => {
