@@ -1,6 +1,7 @@
 import { describe, test, expect } from 'vitest';
-import { inputPath, runner, workflowPath } from './fixtures.js';
+
 import { ActExecStatus, ActRunner } from '../src/index.js';
+import { inputPath, runner, workflowPath } from './fixtures.js';
 
 function inputWorkflowRunner(): ActRunner {
   return runner().withWorkflow({ file: workflowPath('print_inputs') });

@@ -1,6 +1,7 @@
 import { describe, test, expect } from 'vitest';
-import { eventPayloadPath, runner, workflowPath } from './fixtures.js';
+
 import { ActExecStatus, ActRunner } from '../src/index.js';
+import { eventPayloadPath, runner, workflowPath } from './fixtures.js';
 
 function eventWorkflowRunner(): ActRunner {
   return runner().withWorkflow({
