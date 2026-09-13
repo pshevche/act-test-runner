@@ -1,14 +1,14 @@
-import { version } from 'typescript';
 import { EOL } from 'node:os';
+import { version } from 'typescript';
 
-/**
+/*
  * Prints an informational banner at the beginning of each test run,
  * indicating the TypeScript version being used.
  *
  * Example:
- * -----------------------------------------------
- *     Running tests against TypeScript v5.9.3
- * -----------------------------------------------
+ * ----------------------------------------------------------------------------
+ *                    Running tests against TypeScript v5.9.3
+ * ----------------------------------------------------------------------------
  */
 export function setup() {
   const indent = '\x20'.repeat(4);

@@ -9,8 +9,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Commands
 
 ```bash
-pnpm run check:all          # Run static checks (lint, prettier, types)
-pnpm run build              # Compile TypeScript (outputs to dist/)
+pnpm run check:all           # Run static checks (lint, formatting, types)
+pnpm run build               # Compile TypeScript (outputs to dist/)
 pnpm run clean               # Remove dist/
 pnpm run test                # Run tests with Vitest (default TS version)
 pnpm run test:ts5            # Run tests with TypeScript 5.x
@@ -19,11 +19,11 @@ pnpm run test:all            # Run tests against all supported TS versions
 pnpm run test -- <pattern>   # Run a specific test file (Vitest filter)
 pnpm run types:check         # TypeScript type check only (no emit)
 pnpm run lint:check          # ESLint (zero warnings allowed, flat config)
-pnpm run prettier:check      # Check formatting
+pnpm run format:check        # Check formatting
 pnpm run license:check       # Verify MIT headers on src/ files
 ```
 
-Fix variants: `pnpm run lint:fix`, `pnpm run prettier:fix`, `pnpm run license:fix`
+Fix variants: `pnpm run lint:fix`, `pnpm run format:fix`, `pnpm run license:fix`
 
 Vitest test filter options: use `pnpm run test -- <pattern>` for file name
 matching, or `pnpm run test -- -t "<test name>"` for test name matching.

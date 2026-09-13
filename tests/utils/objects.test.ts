@@ -1,4 +1,5 @@
 import { describe, test, expect } from 'vitest';
+
 import { firstDefined } from '../../src/utils/objects.js';
 
 describe('firstDefined', () => {
