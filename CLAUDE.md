@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-`@pshevche/act-test-runner` is a TypeScript library providing a fluent/builder-style API around [nektos/act](https://github.com/nektos/act) for end-to-end testing of GitHub Actions workflows locally. The main entry point is the `ActRunner` class.
+`act-test-runner` is a TypeScript library providing a fluent/builder-style API around [nektos/act](https://github.com/nektos/act) for end-to-end testing of GitHub Actions workflows locally. The main entry point is the `ActRunner` class.
 
 ## Commands
 

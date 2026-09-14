@@ -1,5 +1,5 @@
 {
-  "name": "@pshevche/act-test-runner",
+  "name": "act-test-runner",
   "version": "2.0.0",
   "description": "Convention wrapper around https://github.com/nektos/act for e2e testing GitHub actions",
   "keywords": [
