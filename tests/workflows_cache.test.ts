@@ -3,8 +3,8 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { describe, test, expect, beforeEach, afterEach } from 'vitest';
 
-import { ActExecStatus, ActRunner } from '../src/index.js';
-import { runner, workflowPath } from './fixtures.js';
+import { ActExecStatus, ActRunner } from '#src/index';
+import { runner, workflowPath } from '#tests/fixtures';
 
 function cacheWorkflowRunner(): ActRunner {
   return runner().withWorkflow({ file: workflowPath('save_file_in_cache') });
@@ -26,8 +26,11 @@ describe('cache', () => {
   });
 
   test('persists cache entries in configured directory', async () => {
+    console.log(customCacheDir);
     const result = await cacheWorkflowRunner()
-      .withCacheServer({ path: customCacheDir })
+      .withCacheServer({
+        path: customCacheDir,
+      })
       .run();
 
     expect(result).toHaveStatus(ActExecStatus.SUCCESS);

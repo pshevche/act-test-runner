@@ -3,8 +3,8 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { describe, test, expect, beforeEach, afterEach } from 'vitest';
 
-import { ActExecStatus, ActRunner } from '../src/index.js';
-import { runner, workflowPath } from './fixtures.js';
+import { ActExecStatus, ActRunner } from '#src/index';
+import { runner, workflowPath } from '#tests/fixtures';
 
 function artifactServerWorkflowRunner(): ActRunner {
   return runner().withWorkflow({
@@ -35,7 +35,7 @@ describe('artifact server', () => {
     const result = await artifactServerWorkflowRunner()
       .withArtifactServer({ path: artifactServerDir })
       // required to execute upload-artifact action
-      .withEnv({ values: { ACTIONS_RUNTIME_TOKEN: 'irrelevant' } })
+      .withEnvs({ values: { ACTIONS_RUNTIME_TOKEN: 'irrelevant' } })
       .run();
 
     expect(result).toHaveStatus(ActExecStatus.SUCCESS);

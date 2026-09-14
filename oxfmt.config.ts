@@ -2,6 +2,12 @@ import { defineConfig } from 'oxfmt';
 
 export default defineConfig({
   $schema: './node_modules/oxfmt/configuration_schema.json',
+  // As of now Oxfmt doesn't support range ignore comments
+  // https://github.com/oxc-project/oxc/issues/18148
+  // So, to prevent oxfmt to format code blocks in comments,
+  // temporarily adding zod.ts file to the ignore list as
+  // a workaround.
+  ignorePatterns: ['src/utils/zod.ts'],
   arrowParens: 'always',
   jsdoc: true,
   printWidth: 80,

@@ -3,8 +3,8 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { describe, test, expect, beforeEach, afterEach } from 'vitest';
 
-import { ActExecStatus, ActWorkflowExecResult } from '../src/index.js';
-import { runner, workflowPath } from './fixtures.js';
+import { ActExecStatus, ActWorkflowExecResult } from '#src/index';
+import { runner, workflowPath } from '#tests/fixtures';
 
 export async function run(
   workflowFile: string,

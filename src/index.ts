@@ -20,26 +20,25 @@
  * SOFTWARE.
  */
 
-export { ActRunner } from './ActRunner.js';
+export { ActRunner } from '#src/ActRunner';
 export type {
   ActProcessOptions,
   ActValueSource,
   ActWorkflowSource,
-  ActResourceServerSpec,
-} from './ActRunnerOptions.js';
+} from '#src/ActRunnerOptions';
 export type {
   ActJobOrStepDescriptor as ActOutputOwner,
   ActOutputListener,
   ActOutput,
-} from './ActOutputListener.js';
+} from '#src/ActOutputListener';
 export {
   ActOutputLevel,
   StdStreamOutputListener,
-} from './ActOutputListener.js';
-export { ActExecStatus, ActRunnerError } from './ActRunnerResult.js';
+} from '#src/ActOutputListener';
+export { ActExecStatus, ActRunnerError } from '#src/ActRunnerResult';
 export type {
   ActJobExecResult,
   ActMatrixValues,
   ActStepExecResult,
   ActWorkflowExecResult,
-} from './ActRunnerResult.js';
+} from '#src/ActRunnerResult';

@@ -26,35 +26,36 @@ import { spawn } from 'node:child_process';
 import type {
   ActValueSource,
   ActWorkflowSource,
-  ActResourceServerSpec,
   ActProcessOptions,
-} from './ActRunnerOptions.js';
+} from '#src/ActRunnerOptions';
 import type {
   ActMatrixValues,
   ActWorkflowExecResult,
-} from './ActRunnerResult.js';
+} from '#src/ActRunnerResult';
 
+import { ActCliParams } from '#internal/ActCliParams';
+import { ActExecListener } from '#internal/ActExecListener';
 import {
   ActOutputListener,
   CompositeActOutputListener,
   StdStreamOutputListener,
-} from './ActOutputListener.js';
-import { ActExecStatus, ActRunnerError } from './ActRunnerResult.js';
-import {
-  ActCliParams,
-  INTERNAL_ACT_PARAMS,
-  MANAGED_ACT_PARAMS,
-} from './internal/ActCliParams.js';
-import { ActExecListener } from './internal/ActExecListener.js';
-import { checkExists, checkOneDefined } from './utils/checks.js';
+} from '#src/ActOutputListener';
+import { ActExecStatus, ActRunnerError } from '#src/ActRunnerResult';
+import { checkExists, checkOneDefined } from '#utils/checks';
 import {
   cleanupDir,
   createTempDir,
   createTempEventPayloadFile,
   createTempWorkflowFile,
-} from './utils/fsutils.js';
-import { firstDefined } from './utils/objects.js';
-import { PartialDeep } from './utils/types.js';
+} from '#utils/fsutils';
+import { firstDefined } from '#utils/objects';
+import {
+  ArtifactServerOptions,
+  CacheServerOptions,
+  ALL_MANAGED_PARAMS,
+  INTERNAL_PARAMS,
+} from '#utils/schemas';
+import { PartialDeep } from '#utils/types';
 
 type EventPayload<
   TEventType extends WebhookEventName | undefined = undefined,
@@ -65,7 +66,7 @@ type EventPayload<
   | undefined;
 
 /**
- * Invokes `act`, allowing end-to-end testing of custom GitHub actions and
+ * Invokes `act`, allowing end-to-end testing of custom GitHub Actions and
  * workflows.
  *
  * Typically, the test code will provide a workflow file or workflow body to
@@ -91,13 +92,13 @@ export class ActRunner<
   private workflowSource: ActWorkflowSource | undefined;
   private eventType: TEventType | undefined;
   private eventPayloadFileOrBody: TEventPayload | undefined;
-  private envSource: ActValueSource | undefined;
+  private envsSource: ActValueSource | undefined;
   private inputsSource: ActValueSource | undefined;
   private secretsSource: ActValueSource | undefined;
-  private variablesSource: ActValueSource | undefined;
+  private varsSource: ActValueSource | undefined;
   private matrixValues: ActMatrixValues | undefined;
-  private cacheServer: ActResourceServerSpec | undefined;
-  private artifactServer: ActResourceServerSpec | undefined;
+  private cacheServer: CacheServerOptions | undefined;
+  private artifactServer: ArtifactServerOptions | undefined;
   private additionalArgs: string[] = [];
   private outputListener: ActOutputListener | undefined;
   private hasRun: boolean = false;
@@ -161,8 +162,8 @@ export class ActRunner<
    *
    * @param source - Environment variables source
    */
-  withEnv(source: ActValueSource): this {
-    this.envSource = source;
+  withEnvs(source: ActValueSource): this {
+    this.envsSource = source;
     return this;
   }
 
@@ -197,8 +198,8 @@ export class ActRunner<
    *
    * @param source - Variables values source
    */
-  withVariables(source: ActValueSource): this {
-    this.variablesSource = source;
+  withVars(source: ActValueSource): this {
+    this.varsSource = source;
     return this;
   }
 
@@ -219,7 +220,7 @@ export class ActRunner<
    *
    * @param spec - Cache server configuration
    */
-  withCacheServer(spec: ActResourceServerSpec): this {
+  withCacheServer(spec: CacheServerOptions): this {
     this.cacheServer = spec;
     return this;
   }
@@ -229,7 +230,7 @@ export class ActRunner<
    *
    * @param spec - Artifact server configuration
    */
-  withArtifactServer(spec: ActResourceServerSpec): this {
+  withArtifactServer(spec: ArtifactServerOptions): this {
     this.artifactServer = spec;
     return this;
   }
@@ -284,7 +285,7 @@ export class ActRunner<
         const executionListener = new ActExecListener(this.outputListener);
 
         // apply user arguments + additional internal arguments specific to test execution
-        const args = [...params.asCliArgs(), '--rm', '--json'];
+        const args = params.asCliArgs();
         const child = spawn(this.actExecutable ?? 'act', args);
 
         const onAbort = () => {
@@ -353,13 +354,9 @@ export class ActRunner<
         : undefined;
 
     checkOneDefined(workflowFile, workflowBody);
-    const workflowFilePath = checkExists(
-      'workflow path',
-      workflowFile ||
-        (workflowBody !== undefined
-          ? createTempWorkflowFile(workingDir, workflowBody)
-          : undefined),
-    );
+    const workflowFilePath = workflowBody
+      ? createTempWorkflowFile(workingDir, workflowBody)
+      : workflowFile;
 
     const eventPayloadFileOrBody = this.eventPayloadFileOrBody;
     const eventPayloadFilePath =
@@ -370,7 +367,7 @@ export class ActRunner<
           : undefined;
 
     const overwrittenManagedParams = this.additionalArgs.filter((it) =>
-      MANAGED_ACT_PARAMS.has(it),
+      ALL_MANAGED_PARAMS.has(it),
     );
     if (overwrittenManagedParams.length > 0) {
       throw new ActRunnerError(
@@ -379,7 +376,7 @@ export class ActRunner<
     }
 
     const overwrittenInternalParams = this.additionalArgs.filter((it) =>
-      INTERNAL_ACT_PARAMS.has(it),
+      INTERNAL_PARAMS.has(it),
     );
     if (overwrittenInternalParams.length > 0) {
       throw new ActRunnerError(
@@ -391,10 +388,10 @@ export class ActRunner<
       workflowsPath: workflowFilePath,
       eventPayloadFilePath,
       eventType: this.eventType,
-      envSource: this.envSource,
+      envsSource: this.envsSource,
       inputsSource: this.inputsSource,
       secretsSource: this.secretsSource,
-      variablesSource: this.variablesSource,
+      varsSource: this.varsSource,
       matrixValues: this.matrixValues,
       cacheServer: this.cacheServer,
       artifactServer: this.artifactServer,

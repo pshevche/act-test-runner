@@ -20,11 +20,11 @@
  * SOFTWARE.
  */
 
-import type { ActStepExecResult } from '../ActRunnerResult.js';
+import type { ActStepExecResult } from '#src/ActRunnerResult';
 
-import { ActJobOrStepDescriptor } from '../ActOutputListener.js';
-import { ActExecStatus } from '../ActRunnerResult.js';
-import { formattedMessage, JsonOutput } from './ActJsonOutput.js';
+import { formattedMessage, JsonOutput } from '#internal/ActJsonOutput';
+import { ActJobOrStepDescriptor } from '#src/ActOutputListener';
+import { ActExecStatus } from '#src/ActRunnerResult';
 
 export class ActStepExecResultBuilder {
   readonly descriptor: ActJobOrStepDescriptor;

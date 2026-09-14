@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-import { formattedMessage } from './internal/ActJsonOutput.js';
+import { formattedMessage } from '#internal/ActJsonOutput';
 
 /** Identifier of the owner of this message: job or step. */
 export type ActJobOrStepDescriptor = {

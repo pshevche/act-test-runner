@@ -1,6 +1,6 @@
 import { describe, test, expect } from 'vitest';
 
-import { firstDefined } from '../../src/utils/objects.js';
+import { firstDefined } from '#utils/objects';
 
 describe('firstDefined', () => {
   test('returns first value if provided supplier returns a value', () => {

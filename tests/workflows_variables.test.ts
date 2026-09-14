@@ -1,7 +1,7 @@
 import { describe, test, expect } from 'vitest';
 
-import { ActExecStatus, ActRunner } from '../src/index.js';
-import { inputPath, runner, workflowPath } from './fixtures.js';
+import { ActExecStatus, ActRunner } from '#src/index';
+import { inputPath, runner, workflowPath } from '#tests/fixtures';
 
 function variablesWorkflowRunner(): ActRunner {
   return runner().withWorkflow({ file: workflowPath('print_variables') });
@@ -10,7 +10,7 @@ function variablesWorkflowRunner(): ActRunner {
 describe('variables', () => {
   test('supports setting values directly', async () => {
     const result = await variablesWorkflowRunner()
-      .withVariables({ values: { GREETING: 'Hello', NAME: 'Bruce' } })
+      .withVars({ values: { GREETING: 'Hello', NAME: 'Bruce' } })
       .run();
 
     expect(result).toHaveStatus(ActExecStatus.SUCCESS);
@@ -21,7 +21,7 @@ describe('variables', () => {
 
   test('supports setting values from file', async () => {
     const result = await variablesWorkflowRunner()
-      .withVariables({ file: inputPath('greeting.variables') })
+      .withVars({ file: inputPath('greeting.variables') })
       .run();
 
     expect(result).toHaveStatus(ActExecStatus.SUCCESS);
@@ -35,7 +35,7 @@ describe('variables', () => {
     // inline while GREETING is left to come from the file, proving both
     // sources apply
     const result = await variablesWorkflowRunner()
-      .withVariables({
+      .withVars({
         file: inputPath('greeting.variables'),
         values: { NAME: 'Bruce' },
       })
@@ -49,8 +49,8 @@ describe('variables', () => {
 
   test('a later call to withVariables replaces values set by an earlier call', async () => {
     const result = await variablesWorkflowRunner()
-      .withVariables({ values: { GREETING: 'Hello', NAME: 'Bruce' } })
-      .withVariables({ values: { GREETING: 'Hallo' } })
+      .withVars({ values: { GREETING: 'Hello', NAME: 'Bruce' } })
+      .withVars({ values: { GREETING: 'Hallo' } })
       .run();
 
     expect(result).toHaveStatus(ActExecStatus.SUCCESS);

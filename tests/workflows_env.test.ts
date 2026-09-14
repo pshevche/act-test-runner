@@ -1,7 +1,7 @@
 import { describe, test, expect } from 'vitest';
 
-import { ActExecStatus, ActRunner } from '../src/index.js';
-import { inputPath, runner, workflowPath } from './fixtures.js';
+import { ActExecStatus, ActRunner } from '#src/index';
+import { inputPath, runner, workflowPath } from '#tests/fixtures';
 
 function envWorkflowRunner(): ActRunner {
   return runner().withWorkflow({ file: workflowPath('print_env_variables') });
@@ -10,7 +10,7 @@ function envWorkflowRunner(): ActRunner {
 describe('env', () => {
   test('supports setting values directly', async () => {
     const result = await envWorkflowRunner()
-      .withEnv({ values: { GREETING: 'Hello', NAME: 'Bruce' } })
+      .withEnvs({ values: { GREETING: 'Hello', NAME: 'Bruce' } })
       .run();
 
     expect(result.status).toBe(ActExecStatus.SUCCESS);
@@ -21,7 +21,7 @@ describe('env', () => {
 
   test('supports setting values from file', async () => {
     const result = await envWorkflowRunner()
-      .withEnv({ file: inputPath('greeting.env') })
+      .withEnvs({ file: inputPath('greeting.env') })
       .run();
 
     expect(result.status).toBe(ActExecStatus.SUCCESS);
@@ -34,7 +34,7 @@ describe('env', () => {
     // greeting.env sets GREETING=Hallo, NAME=Falco; NAME is overridden inline
     // while GREETING is left to come from the file, proving both sources apply
     const result = await envWorkflowRunner()
-      .withEnv({ file: inputPath('greeting.env'), values: { NAME: 'Bruce' } })
+      .withEnvs({ file: inputPath('greeting.env'), values: { NAME: 'Bruce' } })
       .run();
 
     expect(result.status).toBe(ActExecStatus.SUCCESS);
@@ -45,8 +45,8 @@ describe('env', () => {
 
   test('a later call to withEnv replaces values set by an earlier call', async () => {
     const result = await envWorkflowRunner()
-      .withEnv({ values: { GREETING: 'Hello', NAME: 'Bruce' } })
-      .withEnv({ values: { GREETING: 'Hallo' } })
+      .withEnvs({ values: { GREETING: 'Hello', NAME: 'Bruce' } })
+      .withEnvs({ values: { GREETING: 'Hallo' } })
       .run();
 
     expect(result.status).toBe(ActExecStatus.SUCCESS);

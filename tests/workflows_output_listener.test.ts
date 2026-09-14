@@ -5,8 +5,8 @@ import {
   ActOutput,
   ActOutputListener,
   StdStreamOutputListener,
-} from '../src/index.js';
-import { runner } from './fixtures.js';
+} from '#src/index';
+import { runner } from '#tests/fixtures';
 
 class CustomOutputListener implements ActOutputListener {
   workflowLogs: string[] = [];

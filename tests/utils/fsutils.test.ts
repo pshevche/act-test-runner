@@ -6,7 +6,7 @@ import {
   cleanupDir,
   createTempDir,
   createTempWorkflowFile,
-} from '../../src/utils/fsutils.js';
+} from '#utils/fsutils';
 
 describe('fsutils', () => {
   test('removes directory with all temp files', () => {

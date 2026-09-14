@@ -55,7 +55,7 @@ describe('GitHub API mock', () => {
   test('workflow consumes responses served by the mock server', async () => {
     const result = await runner()
       .withWorkflow({ file: workflowPath('print_github_user_id') })
-      .withEnv({ values: { GITHUB_API_URL: MOCK_API_URL } })
+      .withEnvs({ values: { GITHUB_API_URL: MOCK_API_URL } })
       // makes the host reachable as `host.docker.internal` from the job container
       .withAdditionalArgs(
         '--container-options',

@@ -20,28 +20,19 @@
  * SOFTWARE.
  */
 
-/** Options controlling a single `run()` invocation. */
-export type ActProcessOptions = {
-  /**
-   * Signal used to abort a running act invocation. On abort, the underlying act
-   * process is killed and the returned promise rejects with an ActRunnerError.
-   */
-  signal?: AbortSignal;
-};
-
-/**
- * Source of key/value pairs (environment variables, inputs, secrets, or
- * variables), provided via a file, inline values, or both.
- */
-export type ActValueSource = {
-  /** Path to a file containing the values. */
-  file?: string;
-  /** Inline values. */
-  values?: Record<string, string>;
-};
-
-/**
- * Source of the GitHub workflow to run, provided either as a file path or
- * inline body.
- */
-export type ActWorkflowSource = { file: string } | { body: string };
+export function keysTupleToFilterObject<
+  T extends readonly string[],
+  TPrefix extends string | undefined = undefined,
+>({
+  keys,
+  prefix,
+}: {
+  keys: T;
+  prefix?: TPrefix;
+}): {
+  [K in T[number] as TPrefix extends undefined ? K : `${TPrefix}-${K}`]: true;
+} {
+  return Object.fromEntries(
+    keys.map((key) => [prefix === undefined ? key : `${prefix}-${key}`, true]),
+  ) as any;
+}

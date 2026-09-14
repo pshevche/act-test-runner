@@ -4,7 +4,7 @@ import {
   ActExecStatus,
   ActJobExecResult,
   ActWorkflowExecResult,
-} from '../src/ActRunnerResult.js';
+} from '#src/ActRunnerResult';
 
 interface CustomMatchers<R = unknown> {
   toHaveStatus(expected: ActExecStatus): R;
