@@ -13,7 +13,7 @@ interface CustomMatchers<R = unknown> {
 declare module 'vitest' {
   interface Matchers<
     R extends void | Promise<void> = void | Promise<void>,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars -- required to match vitest's Matchers type parameter list
+    // `T` is unused, but required to match vitest's Matchers type parameter list
     T = unknown,
   > extends CustomMatchers<R> {}
 }
