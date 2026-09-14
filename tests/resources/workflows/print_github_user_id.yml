@@ -1,0 +1,14 @@
+name: Simple workflow calling the GitHub API
+on: [push]
+
+jobs:
+  print_github_user_id:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print the ID of the requested user
+        run: |
+          node -e "
+            fetch(process.env.GITHUB_API_URL + '/users/octocat')
+              .then((response) => response.json())
+              .then((user) => console.log('User ID: ' + user.id));
+          "

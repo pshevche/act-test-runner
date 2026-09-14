@@ -51,6 +51,7 @@
     "eslint-plugin-yet-another-license-header": "^1.0.0",
     "globals": "^17.7.0",
     "lint-staged": "^17.5.1",
+    "msw": "^2.15.0",
     "oxfmt": "^0.67.0",
     "simple-git-hooks": "^2.14.0",
     "typescript": "^6.0.3",
