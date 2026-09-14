@@ -28,7 +28,7 @@ export class JobIterationTracker {
   private matrixKey(matrix: ActMatrixValues): string {
     return Object.entries(matrix)
       .map((value) => `${value[0]}\u0000${value[1]}`)
-      .sort((a, b) => (a > b ? 1 : -1))
+      .toSorted((a, b) => (a > b ? 1 : -1))
       .reduce((prev, curr) => `${prev}\u0000${curr}`);
   }
 

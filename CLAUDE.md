@@ -18,12 +18,11 @@ pnpm run test:ts7            # Run tests with TypeScript 7.x
 pnpm run test:all            # Run tests against all supported TS versions
 pnpm run test -- <pattern>   # Run a specific test file (Vitest filter)
 pnpm run types:check         # TypeScript type check only (no emit)
-pnpm run lint:check          # ESLint (zero warnings allowed, flat config)
-pnpm run format:check        # Check formatting
-pnpm run license:check       # Verify MIT headers on src/ files
+pnpm run lint:check          # oxlint (zero warnings allowed)
+pnpm run format:check        # Check formatting (oxfmt)
 ```
 
-Fix variants: `pnpm run lint:fix`, `pnpm run format:fix`, `pnpm run license:fix`
+Fix variants: `pnpm run lint:fix`, `pnpm run format:fix`
 
 Vitest test filter options: use `pnpm run test -- <pattern>` for file name
 matching, or `pnpm run test -- -t "<test name>"` for test name matching.
@@ -43,7 +42,7 @@ matching, or `pnpm run test -- -t "<test name>"` for test name matching.
 - **ESM-only** — `"type": "module"` in package.json. Use `.js` extensions in TypeScript imports.
 - **Tests run sequentially** — `fileParallelism: false` in Vitest config because `act` runner invocations cannot be parallelized.
 - **Test timeout is 50s** — workflow execution tests need time for `act` to run.
-- **All source files require MIT license headers** — enforced by `addlicense` tool.
+- **All source files require MIT license headers** — enforced by the `license/header` oxlint rule on `src/**` (see `oxlint.config.ts`); `pnpm run lint:fix` inserts them.
 - **TypeScript strict mode** — `noImplicitAny`, `noUnusedLocals`, `noUnusedParameters` enabled.
 - **Multi-TS-version testing** — tests run against TypeScript 5.x, 6.x, and 7.x via `TS_VERSION` env var.
 - **Node.js engine** — `^22.23.1 || ^24.0.0 || >=26.0.0` with pnpm `11.17.0` (engine-strict enabled).

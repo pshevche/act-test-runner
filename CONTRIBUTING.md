@@ -38,9 +38,8 @@ pnpm run test -- -t "<name>"  # filter by test name
 To auto-fix issues:
 
 ```bash
-pnpm run lint:fix
-pnpm run format:fix
-pnpm run license:fix
+pnpm run lint:fix    # oxlint, including missing MIT license headers
+pnpm run format:fix  # oxfmt
 ```
 
 ## Claude Code setup

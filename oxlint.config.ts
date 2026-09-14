@@ -1,8 +1,4 @@
-// @ts-expect-error - plugin ships no types
-import headerPlugin from 'eslint-plugin-yet-another-license-header';
-import { defineConfig } from 'eslint/config';
-import globals from 'globals';
-import tseslint from 'typescript-eslint';
+import { defineConfig } from 'oxlint';
 
 const licenseHeader = `
 /**
@@ -28,37 +24,35 @@ const licenseHeader = `
  */
 `;
 
-export default defineConfig([
-  {
-    ignores: ['dist/**', 'node_modules/**'],
+export default defineConfig({
+  $schema: './node_modules/oxlint/configuration_schema.json',
+  ignorePatterns: ['dist/**'],
+  categories: {
+    correctness: 'warn',
+    suspicious: 'warn',
   },
-  {
-    files: ['**/*.ts', '**/*.tsx'],
-    languageOptions: {
-      parser: tseslint.parser,
-      parserOptions: {
-        projectService: true,
-        ecmaVersion: 'latest',
-        sourceType: 'module',
+  env: {
+    node: true,
+    es2024: true,
+  },
+  // `yet-another-license-header` is an ESLint plugin consumed through oxlint's
+  // JS plugin support: oxlint ships no native license header rule.
+  jsPlugins: [
+    {
+      name: 'license',
+      specifier: 'eslint-plugin-yet-another-license-header',
+    },
+  ],
+  rules: {
+    'no-debugger': 'warn',
+    'no-unused-vars': 'warn',
+  },
+  overrides: [
+    {
+      files: ['src/**/*.ts', 'src/**/*.tsx'],
+      rules: {
+        'license/header': ['error', { header: licenseHeader }],
       },
-      globals: {
-        ...globals.node,
-      },
     },
-    plugins: {
-      '@typescript-eslint': tseslint.plugin,
-      'yet-another-license-header': headerPlugin,
-    },
-    rules: {
-      'no-unused-vars': 'off',
-      'no-debugger': 'warn',
-      '@typescript-eslint/no-unused-vars': 'warn',
-    },
-  },
-  {
-    files: ['src/**/*.ts', 'src/**/*.tsx'],
-    rules: {
-      'yet-another-license-header/header': ['error', { header: licenseHeader }],
-    },
-  },
-]);
+  ],
+});

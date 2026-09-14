@@ -31,8 +31,8 @@
   "scripts": {
     "clean": "rm -r dist",
     "build": "tsc --project tsconfig.package.json",
-    "lint:check": "eslint . --max-warnings 0 --flag unstable_native_nodejs_ts_config",
-    "lint:fix": "eslint . --fix --flag unstable_native_nodejs_ts_config",
+    "lint:check": "oxlint --max-warnings 0",
+    "lint:fix": "oxlint --fix",
     "format:fix": "oxfmt",
     "format:check": "oxfmt --check",
     "types:check": "tsc --project tsconfig.check.json",
@@ -44,20 +44,17 @@
     "test:all": "pnpm run test && pnpm run test:ts5 && pnpm run test:ts7"
   },
   "devDependencies": {
-    "@eslint/core": "^1.2.1",
     "@octokit/webhooks-types": "^7.6.1",
     "@types/node": "^22.20.1",
-    "eslint": "10.10.0",
     "eslint-plugin-yet-another-license-header": "^1.0.0",
-    "globals": "^17.7.0",
     "lint-staged": "^17.5.1",
     "msw": "^2.15.0",
     "oxfmt": "^0.67.0",
+    "oxlint": "^1.82.0",
     "simple-git-hooks": "^2.14.0",
     "typescript": "^6.0.3",
     "typescript-5": "npm:typescript@^5.9.3",
     "typescript-7": "npm:typescript@^7.0.2",
-    "typescript-eslint": "^8.65.0",
     "vitest": "^5.0.0"
   },
   "peerDependencies": {
