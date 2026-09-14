@@ -27,6 +27,10 @@ const licenseHeader = `
 export default defineConfig({
   $schema: './node_modules/oxlint/configuration_schema.json',
   ignorePatterns: ['dist/**'],
+  categories: {
+    correctness: 'warn',
+    suspicious: 'warn',
+  },
   env: {
     node: true,
     es2024: true,

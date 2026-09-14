@@ -9,11 +9,11 @@ export function currentDir(): string {
 }
 
 export function runner(forwardOutput: boolean = false): ActRunner {
-  const runner = new ActRunner();
+  const actRunner = new ActRunner();
   if (forwardOutput) {
-    runner.forwardOutput();
+    actRunner.forwardOutput();
   }
-  return runner;
+  return actRunner;
 }
 
 export function workflowPath(workflowName: string): string {
