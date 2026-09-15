@@ -24,17 +24,17 @@ import type {
   ActJobExecResult,
   ActMatrixValues,
   ActStepExecResult,
-} from '#src/ActRunnerResult';
+} from '../ActRunnerResult.js';
 
+import { ActJobOrStepDescriptor } from '../ActOutputListener.js';
+import { ActExecStatus } from '../ActRunnerResult.js';
 import {
   formattedMessage,
   JobOrStepResult,
   JsonOutput,
   stepDescriptor,
-} from '#internal/ActJsonOutput';
-import { ActStepExecResultBuilder as ActStepOutputProcessor } from '#internal/ActStepOutputProcessor';
-import { ActJobOrStepDescriptor } from '#src/ActOutputListener';
-import { ActExecStatus } from '#src/ActRunnerResult';
+} from './ActJsonOutput.js';
+import { ActStepExecResultBuilder as ActStepOutputProcessor } from './ActStepOutputProcessor.js';
 
 const JOB_LIFECYCLE_STEPS = new Set<string>(['Set up job', 'Complete job']);
 

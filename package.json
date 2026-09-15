@@ -65,5 +65,8 @@
     "node": "^22.23.1 || ^24.0.0 || >=26.0.0",
     "pnpm": "12.4.2"
   },
-  "packageManager": "pnpm@12.4.2"
+  "packageManager": "pnpm@12.4.2",
+  "dependencies": {
+    "zod": "^4.6.5"
+  }
 }

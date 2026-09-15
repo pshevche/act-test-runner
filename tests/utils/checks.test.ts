@@ -1,7 +1,7 @@
 import { describe, test, expect } from 'vitest';
 
-import { currentDir } from '#tests/fixtures';
-import { checkExists, checkOneDefined } from '#utils/checks';
+import { checkExists, checkOneDefined } from '../../src/utils/checks.js';
+import { currentDir } from '../fixtures.js';
 
 describe('checks', () => {
   describe('checkOneDefined', () => {

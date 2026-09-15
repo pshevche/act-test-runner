@@ -20,8 +20,11 @@
  * SOFTWARE.
  */
 
-import { ActOutputLevel, ActJobOrStepDescriptor } from '#src/ActOutputListener';
-import { ActMatrixValues } from '#src/ActRunnerResult';
+import {
+  ActOutputLevel,
+  ActJobOrStepDescriptor,
+} from '../ActOutputListener.js';
+import { ActMatrixValues } from '../ActRunnerResult.js';
 
 export type JobOrStepResult = 'success' | 'failure' | 'skipped';
 

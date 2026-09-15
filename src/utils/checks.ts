@@ -22,7 +22,7 @@
 
 import { existsSync } from 'node:fs';
 
-import { ActRunnerError } from '#src/ActRunnerResult';
+import { ActRunnerError } from '../ActRunnerResult.js';
 
 export function checkOneDefined<T>(
   first: T | undefined,

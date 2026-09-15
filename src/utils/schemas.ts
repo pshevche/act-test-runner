@@ -23,11 +23,11 @@
 import * as fs from 'node:fs';
 import { z } from 'zod';
 
-import { keysTupleToFilterObject } from '#utils/arrays';
+import { keysTupleToFilterObject } from './arrays.js';
 import {
   actCliParamsToZodSchema,
   prefixedSchemaToUnprefixedSchema,
-} from '#utils/zod';
+} from './zod.js';
 
 /**
  * List of all act CLI params, produced by `act --list-options` command.

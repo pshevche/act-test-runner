@@ -20,21 +20,21 @@
  * SOFTWARE.
  */
 
-import type { ActJobExecResult, ActMatrixValues } from '#src/ActRunnerResult';
+import type { ActJobExecResult, ActMatrixValues } from '../ActRunnerResult.js';
 
-import { ActJobOutputProcessor } from '#internal/ActJobOutputProcessor';
+import {
+  ActOutput,
+  ActOutputListener,
+  ActJobOrStepDescriptor,
+} from '../ActOutputListener.js';
+import { ActJobOutputProcessor } from './ActJobOutputProcessor.js';
 import {
   jobDescriptor,
   JsonOutput,
   formattedMessage,
   stepDescriptor,
-} from '#internal/ActJsonOutput';
-import { JobIterationTracker } from '#internal/JobIterationTracker';
-import {
-  ActOutput,
-  ActOutputListener,
-  ActJobOrStepDescriptor,
-} from '#src/ActOutputListener';
+} from './ActJsonOutput.js';
+import { JobIterationTracker } from './JobIterationTracker.js';
 
 export class ActExecListener {
   private readonly execOutput: string[] = [];

@@ -1,7 +1,7 @@
 import { describe, test, expect } from 'vitest';
 
-import { ActExecStatus, ActRunner } from '#src/index';
-import { runner, workflowPath } from '#tests/fixtures';
+import { ActExecStatus, ActRunner } from '../src/index.js';
+import { runner, workflowPath } from './fixtures.js';
 
 function matrixWorkflowRunner(): ActRunner {
   return runner().withWorkflow({ file: workflowPath('print_matrix_values') });

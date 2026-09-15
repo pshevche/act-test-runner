@@ -27,35 +27,35 @@ import type {
   ActValueSource,
   ActWorkflowSource,
   ActProcessOptions,
-} from '#src/ActRunnerOptions';
+} from './ActRunnerOptions.js';
 import type {
   ActMatrixValues,
   ActWorkflowExecResult,
-} from '#src/ActRunnerResult';
+} from './ActRunnerResult.js';
 
-import { ActCliParams } from '#internal/ActCliParams';
-import { ActExecListener } from '#internal/ActExecListener';
 import {
   ActOutputListener,
   CompositeActOutputListener,
   StdStreamOutputListener,
-} from '#src/ActOutputListener';
-import { ActExecStatus, ActRunnerError } from '#src/ActRunnerResult';
-import { checkExists, checkOneDefined } from '#utils/checks';
+} from './ActOutputListener.js';
+import { ActExecStatus, ActRunnerError } from './ActRunnerResult.js';
+import { ActCliParams } from './internal/ActCliParams.js';
+import { ActExecListener } from './internal/ActExecListener.js';
+import { checkExists, checkOneDefined } from './utils/checks.js';
 import {
   cleanupDir,
   createTempDir,
   createTempEventPayloadFile,
   createTempWorkflowFile,
-} from '#utils/fsutils';
-import { firstDefined } from '#utils/objects';
+} from './utils/fsutils.js';
+import { firstDefined } from './utils/objects.js';
 import {
   ArtifactServerOptions,
   CacheServerOptions,
   ALL_MANAGED_PARAMS,
   INTERNAL_PARAMS,
-} from '#utils/schemas';
-import { PartialDeep } from '#utils/types';
+} from './utils/schemas.js';
+import { PartialDeep } from './utils/types.js';
 
 type EventPayload<
   TEventType extends WebhookEventName | undefined = undefined,

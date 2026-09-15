@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-import { ActMatrixValues } from '#src/ActRunnerResult';
+import { ActMatrixValues } from '../ActRunnerResult.js';
 
 export class JobIterationTracker {
   private readonly matrixIdx: Map<string, number> = new Map<string, number>();

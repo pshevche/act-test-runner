@@ -1,7 +1,7 @@
 import { describe, test, expect } from 'vitest';
 
-import { ActWorkflowSource } from '#src/index';
-import { runner, workflowPath } from '#tests/fixtures';
+import { ActWorkflowSource } from '../src/index.js';
+import { runner, workflowPath } from './fixtures.js';
 
 describe('config validation', () => {
   test('fails if the specified workflows location does not exist', async () => {

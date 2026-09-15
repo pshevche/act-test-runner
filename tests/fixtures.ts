@@ -2,7 +2,7 @@ import path from 'node:path';
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
 
-import { ActRunner } from '#src/index';
+import { ActRunner } from '../src/index.js';
 
 export function currentDir(): string {
   return dirname(fileURLToPath(import.meta.url));

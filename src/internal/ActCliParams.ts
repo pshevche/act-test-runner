@@ -22,8 +22,8 @@
 
 import { WebhookEventName } from '@octokit/webhooks-types';
 
-import type { ActValueSource } from '#src/ActRunnerOptions';
-import type { ActMatrixValues } from '#src/ActRunnerResult';
+import type { ActValueSource } from '../ActRunnerOptions.js';
+import type { ActMatrixValues } from '../ActRunnerResult.js';
 
 import {
   AllManagedParams,
@@ -35,8 +35,8 @@ import {
   CacheServerParamsSchema,
   FileParamsSchema,
   INTERNAL_PARAMS,
-} from '#utils/schemas';
-import { parsePrefixedParamsSchema } from '#utils/zod';
+} from '../utils/schemas.js';
+import { parsePrefixedParamsSchema } from '../utils/zod.js';
 
 export type ActCliParamsInput<
   EventType extends WebhookEventName | undefined = undefined,

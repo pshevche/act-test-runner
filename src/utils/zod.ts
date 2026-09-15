@@ -22,8 +22,6 @@
 
 import { z } from "zod";
 
-// oxfmt-ignore
-
 // Convert a union type to an intersection type
 // (copied from https://github.com/sindresorhus/type-fest/blob/main/source/union-to-intersection.d.ts)
 export type UnionToIntersection<Union> = (

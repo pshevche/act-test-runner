@@ -25,7 +25,7 @@ import { existsSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
-import { PartialDeep } from '#utils/types';
+import { PartialDeep } from './types.js';
 
 export function createTempWorkflowFile(
   workingDir: string,

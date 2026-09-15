@@ -2,7 +2,7 @@ import child_process from 'node:child_process';
 import os from 'node:os';
 import { describe, expect, it } from 'vitest';
 
-import { actCliParams } from '#utils/schemas';
+import { actCliParams } from '../../src/utils/schemas.js';
 
 function getActOptions() {
   let jsonString: string = '[]';
