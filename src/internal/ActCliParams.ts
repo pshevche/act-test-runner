@@ -33,6 +33,8 @@ import {
   INTERNAL_PARAMS,
   parseArtifactServerOptions,
   parseCacheServerOptions,
+  FileExistenceCheckRefinement,
+  StripUndefinedValuesTransform,
 } from '../utils/schemas.js';
 
 export type ActCliParamsInput<
@@ -132,14 +134,16 @@ export class ActCliParams<
 
     Object.assign(
       params,
-      FileParamsSchema.parse({
-        workflows: this.workflowsPath,
-        'env-file': this.envsSource?.file,
-        'input-file': this.inputsSource?.file,
-        'secret-file': this.secretsSource?.file,
-        'var-file': this.varsSource?.file,
-        eventpath: this.eventPayloadFilePath,
-      }),
+      FileParamsSchema.check(FileExistenceCheckRefinement)
+        .pipe(StripUndefinedValuesTransform)
+        .parse({
+          workflows: this.workflowsPath,
+          'env-file': this.envsSource?.file,
+          'input-file': this.inputsSource?.file,
+          'secret-file': this.secretsSource?.file,
+          'var-file': this.varsSource?.file,
+          eventpath: this.eventPayloadFilePath,
+        }),
     );
 
     params.additionalArgs.push(...this.additionalArgs);

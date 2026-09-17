@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-import { z } from "zod";
+import { z } from 'zod';
 
 // Convert a union type to an intersection type
 // (copied from https://github.com/sindresorhus/type-fest/blob/main/source/union-to-intersection.d.ts)
@@ -30,13 +30,13 @@ export type UnionToIntersection<Union> = (
   ? Intersection & Union
   : never;
 
-type MapType<TType> = TType extends "bool"
+type MapType<TType> = TType extends 'bool'
   ? z.ZodBoolean
-  : TType extends "int" | "uint16"
+  : TType extends 'int' | 'uint16'
     ? z.ZodNumber
-    : TType extends "string"
+    : TType extends 'string'
       ? z.ZodString
-      : TType extends "stringArray"
+      : TType extends 'stringArray'
         ? z.ZodArray<z.ZodString>
         : never;
 
@@ -88,8 +88,23 @@ export function actCliParamsToZodSchema<
   const properties: Record<string, z.ZodType> = {};
 
   for (const item of options) {
-    properties[item.name] = actTypeToZodTypeMap[item.type];
+    if (item.name === 'artifact-server-port') {
+      /**
+       * For some reason cache server and artifact server `port` properties have
+       * different types. Cache server port is typed as `number` and artifact
+       * server port - as `string`. To keep things consistent we change artifact
+       * server port type to also be a `number`.
+       */
+      properties[item.name] = z.number();
+    } else {
+      properties[item.name] = actTypeToZodTypeMap[item.type];
+    }
   }
 
-  return z.object(properties as UnionToIntersection<ElementToObj<T[number]>>);
+  return z.object(
+    properties as Omit<
+      UnionToIntersection<ElementToObj<T[number]>>,
+      'artifact-server-port'
+    > & { 'artifact-server-port': z.ZodNumber },
+  );
 }

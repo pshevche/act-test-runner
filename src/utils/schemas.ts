@@ -494,18 +494,22 @@ const FileParamsSchemaShape = ActCliParamsSchema.pick(
   z.record(z.enum(FILE_PARAMS), z.literal(true).default(true)).parse({}),
 ).shape;
 
-export const FileParamsSchema = z
-  .object(FileParamsSchemaShape)
-  .transform((obj) => {
+export const FileParamsSchema = z.object(FileParamsSchemaShape).strict();
+
+export const StripUndefinedValuesTransform = z.transform(
+  (data: z.infer<typeof FileParamsSchema>) => {
     /**
      * We should strip out `undefined` values here, otherwise we'll get URLs
      * like /Users/John/some-folder/undefined
      */
     return Object.fromEntries(
-      Object.entries(obj).filter(([, v]) => v !== undefined),
+      Object.entries(data).filter(([, v]) => v !== undefined),
     );
-  })
-  .superRefine((data, ctx) => {
+  },
+);
+
+export const FileExistenceCheckRefinement = z.superRefine(
+  (data: z.infer<typeof FileParamsSchema>, ctx) => {
     for (const [key, value] of Object.entries(data)) {
       if (key === 'workflows' && !value) {
         ctx.addIssue({
@@ -533,7 +537,8 @@ export const FileParamsSchema = z
         });
       }
     }
-  });
+  },
+);
 //endregion
 
 // -------------------------------------------------------------------------- //
@@ -575,6 +580,7 @@ const AllManagedParamsSchema = z
     ...RestManagedParamsSchema.shape,
     ...FileParamsSchemaShape,
   })
+  .strict()
   .extend({
     additionalArgs: z.array(z.string()),
   });
