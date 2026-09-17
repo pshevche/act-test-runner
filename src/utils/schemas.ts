@@ -23,11 +23,7 @@
 import * as fs from 'node:fs';
 import { z } from 'zod';
 
-import { keysTupleToFilterObject } from './arrays.js';
-import {
-  actCliParamsToZodSchema,
-  prefixedSchemaToUnprefixedSchema,
-} from './zod.js';
+import { actCliParamsToZodSchema } from './zod.js';
 
 /**
  * List of all act CLI params, produced by `act --list-options` command.
@@ -405,43 +401,81 @@ export const ActCliParamsSchema = actCliParamsToZodSchema(actCliParams)
 
 //region "Cache server CLI params"
 export const CACHE_SERVER_PARAMS_PREFIX = 'cache-server' as const;
+
 const CACHE_SERVER_PARAMS = [
   `${CACHE_SERVER_PARAMS_PREFIX}-addr`,
   `${CACHE_SERVER_PARAMS_PREFIX}-external-url`,
   `${CACHE_SERVER_PARAMS_PREFIX}-path`,
   `${CACHE_SERVER_PARAMS_PREFIX}-port`,
 ] as const;
+
 export const CacheServerParamsSchema = ActCliParamsSchema.pick(
-  keysTupleToFilterObject({
-    keys: CACHE_SERVER_PARAMS,
-  }),
+  z
+    .record(z.enum(CACHE_SERVER_PARAMS), z.literal(true).default(true))
+    .parse({}),
 );
-const CacheServerOptionsSchema = prefixedSchemaToUnprefixedSchema(
-  CacheServerParamsSchema,
-  CACHE_SERVER_PARAMS_PREFIX,
-);
-export type CacheServerOptions = z.infer<typeof CacheServerOptionsSchema>;
+
+export type CacheServerParams = z.infer<typeof CacheServerParamsSchema>;
+export type CacheServerOptions = {
+  [
+    Key in keyof CacheServerParams as Key extends `${typeof CACHE_SERVER_PARAMS_PREFIX}-${infer Option}`
+      ? Option
+      : never
+  ]: CacheServerParams[Key];
+};
+
+export function parseCacheServerOptions(options?: CacheServerOptions) {
+  return z
+    .preprocess((data?: CacheServerOptions) => {
+      return Object.fromEntries(
+        Object.entries(data || {}).map(([key, value]) => [
+          `${CACHE_SERVER_PARAMS_PREFIX}-${key}`,
+          value,
+        ]),
+      );
+    }, CacheServerParamsSchema)
+    .parse(options);
+}
 //endregion
 
 // -------------------------------------------------------------------------- //
 
 //region "Artifact server CLI params"
 export const ARTIFACT_SERVER_PARAMS_PREFIX = 'artifact-server' as const;
+
 const ARTIFACT_SERVER_PARAMS = [
   `${ARTIFACT_SERVER_PARAMS_PREFIX}-addr`,
   `${ARTIFACT_SERVER_PARAMS_PREFIX}-path`,
   `${ARTIFACT_SERVER_PARAMS_PREFIX}-port`,
 ] as const;
+
 export const ArtifactServerParamsSchema = ActCliParamsSchema.pick(
-  keysTupleToFilterObject({
-    keys: ARTIFACT_SERVER_PARAMS,
-  }),
+  z
+    .record(z.enum(ARTIFACT_SERVER_PARAMS), z.literal(true).default(true))
+    .parse({}),
 );
-const ArtifactServerOptionsSchema = prefixedSchemaToUnprefixedSchema(
-  ArtifactServerParamsSchema,
-  ARTIFACT_SERVER_PARAMS_PREFIX,
-);
-export type ArtifactServerOptions = z.infer<typeof ArtifactServerOptionsSchema>;
+
+export type ArtifactServerParams = z.infer<typeof ArtifactServerParamsSchema>;
+export type ArtifactServerOptions = {
+  [
+    Key in keyof ArtifactServerParams as Key extends `${typeof ARTIFACT_SERVER_PARAMS_PREFIX}-${infer Option}`
+      ? Option
+      : never
+  ]: ArtifactServerParams[Key];
+};
+
+export function parseArtifactServerOptions(options?: ArtifactServerOptions) {
+  return z
+    .preprocess((data?: ArtifactServerOptions) => {
+      return Object.fromEntries(
+        Object.entries(data || {}).map(([key, value]) => [
+          `${ARTIFACT_SERVER_PARAMS_PREFIX}-${key}`,
+          value,
+        ]),
+      );
+    }, ArtifactServerParamsSchema)
+    .parse(options);
+}
 //endregion
 
 // -------------------------------------------------------------------------- //
@@ -456,36 +490,50 @@ const FILE_PARAMS = [
   'eventpath',
 ] as const;
 
-export const FileParamsSchema = ActCliParamsSchema.pick(
-  keysTupleToFilterObject({ keys: FILE_PARAMS }),
-).superRefine((data, ctx) => {
-  for (const [key, value] of Object.entries(data)) {
-    if (key === 'workflows' && !value) {
-      ctx.addIssue({
-        code: 'custom',
-        message: `Neither workflow file, nor workflow body haven't been specified. Use 'withWorkflow' method to specify either of those.`,
-        path: [key],
-        continue: true,
-      });
+const FileParamsSchemaShape = ActCliParamsSchema.pick(
+  z.record(z.enum(FILE_PARAMS), z.literal(true).default(true)).parse({}),
+).shape;
+
+export const FileParamsSchema = z
+  .object(FileParamsSchemaShape)
+  .transform((obj) => {
+    /**
+     * We should strip out `undefined` values here, otherwise we'll get URLs
+     * like /Users/John/some-folder/undefined
+     */
+    return Object.fromEntries(
+      Object.entries(obj).filter(([, v]) => v !== undefined),
+    );
+  })
+  .superRefine((data, ctx) => {
+    for (const [key, value] of Object.entries(data)) {
+      if (key === 'workflows' && !value) {
+        ctx.addIssue({
+          code: 'custom',
+          message: `Neither workflow file, nor workflow body haven't been specified. Use 'withWorkflow' method to specify either of those.`,
+          path: [key],
+          continue: true,
+        });
+      }
+      if (value && !fs.existsSync(value)) {
+        const fileDescriptionMap: Record<(typeof FILE_PARAMS)[number], string> =
+          {
+            workflows: 'workflow',
+            'env-file': 'env values',
+            'input-file': 'input values',
+            'secret-file': 'secret values',
+            'var-file': 'var values',
+            eventpath: 'event payload',
+          };
+        ctx.addIssue({
+          code: 'custom',
+          message: `The specified ${fileDescriptionMap[key as (typeof FILE_PARAMS)[number]]} file does not exist on path: '${value}'`,
+          path: [key],
+          continue: true,
+        });
+      }
     }
-    if (value && !fs.existsSync(value)) {
-      const fileDescriptionMap: Record<(typeof FILE_PARAMS)[number], string> = {
-        workflows: 'workflow',
-        'env-file': 'env values',
-        'input-file': 'input values',
-        'secret-file': 'secret values',
-        'var-file': 'var values',
-        eventpath: 'event payload',
-      };
-      ctx.addIssue({
-        code: 'custom',
-        message: `The specified ${fileDescriptionMap[key as (typeof FILE_PARAMS)[number]]} file does not exist on path: '${value}'`,
-        path: [key],
-        continue: true,
-      });
-    }
-  }
-});
+  });
 //endregion
 
 // -------------------------------------------------------------------------- //
@@ -501,7 +549,7 @@ const REST_PARAMS = [
 ] as const;
 
 export const RestManagedParamsSchema = ActCliParamsSchema.pick(
-  keysTupleToFilterObject({ keys: REST_PARAMS }),
+  z.record(z.enum(REST_PARAMS), z.literal(true).default(true)).parse({}),
 );
 //endregion
 
@@ -525,7 +573,7 @@ const AllManagedParamsSchema = z
     ...CacheServerParamsSchema.shape,
     ...ArtifactServerParamsSchema.shape,
     ...RestManagedParamsSchema.shape,
-    ...FileParamsSchema.shape,
+    ...FileParamsSchemaShape,
   })
   .extend({
     additionalArgs: z.array(z.string()),

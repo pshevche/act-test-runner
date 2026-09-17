@@ -27,16 +27,13 @@ import type { ActMatrixValues } from '../ActRunnerResult.js';
 
 import {
   AllManagedParams,
-  ARTIFACT_SERVER_PARAMS_PREFIX,
   ArtifactServerOptions,
-  ArtifactServerParamsSchema,
-  CACHE_SERVER_PARAMS_PREFIX,
   CacheServerOptions,
-  CacheServerParamsSchema,
   FileParamsSchema,
   INTERNAL_PARAMS,
+  parseArtifactServerOptions,
+  parseCacheServerOptions,
 } from '../utils/schemas.js';
-import { parsePrefixedParamsSchema } from '../utils/zod.js';
 
 export type ActCliParamsInput<
   EventType extends WebhookEventName | undefined = undefined,
@@ -93,14 +90,7 @@ export class ActCliParams<
       additionalArgs: [],
     };
 
-    Object.assign(
-      params,
-      parsePrefixedParamsSchema({
-        schema: CacheServerParamsSchema,
-        input: this.cacheServer ?? {},
-        prefix: CACHE_SERVER_PARAMS_PREFIX,
-      }),
-    );
+    Object.assign(params, parseCacheServerOptions(this.cacheServer));
 
     if (this.artifactServer && !this.artifactServer.path) {
       console.warn(
@@ -108,14 +98,7 @@ export class ActCliParams<
       );
     }
 
-    Object.assign(
-      params,
-      parsePrefixedParamsSchema({
-        schema: ArtifactServerParamsSchema,
-        input: this.artifactServer ?? {},
-        prefix: ARTIFACT_SERVER_PARAMS_PREFIX,
-      }),
-    );
+    Object.assign(params, parseArtifactServerOptions(this.artifactServer));
 
     params.env?.push(
       ...Object.entries(this.envsSource?.values ?? {}).map(
@@ -149,15 +132,7 @@ export class ActCliParams<
 
     Object.assign(
       params,
-      FileParamsSchema.transform((obj) => {
-        /**
-         * We should strip out `undefined` values here, otherwise we'll get URLs
-         * like /Users/John/some-folder/undefined
-         */
-        return Object.fromEntries(
-          Object.entries(obj).filter(([, v]) => v !== undefined),
-        );
-      }).parse({
+      FileParamsSchema.parse({
         workflows: this.workflowsPath,
         'env-file': this.envsSource?.file,
         'input-file': this.inputsSource?.file,

@@ -26,7 +26,6 @@ describe('cache', () => {
   });
 
   test('persists cache entries in configured directory', async () => {
-    console.log(customCacheDir);
     const result = await cacheWorkflowRunner()
       .withCacheServer({
         path: customCacheDir,

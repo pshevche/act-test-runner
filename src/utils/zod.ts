@@ -57,21 +57,26 @@ const actTypeToZodTypeMap = {
 } as const;
 
 /**
- *
  * Converts a list of act CLI params to zod schema.
  *
  * Example:
+ *
+ * ```ts
  * const actCliParams = [
  *   { name: 'action-cache-path', type: 'string' },
  *   { name: 'action-offline-mode', type: 'bool' },
  * ];
  * const schema = actCliParamsToZodSchema(actCliParams);
+ * ```
  *
  * Resulting schema:
+ *
+ * ```ts
  * z.object({
  *   'action-cache-path': z.string(),
  *   'action-offline-mode': z.boolean,
  * })
+ * ```
  */
 export function actCliParamsToZodSchema<
   T extends ReadonlyArray<{
@@ -87,67 +92,4 @@ export function actCliParamsToZodSchema<
   }
 
   return z.object(properties as UnionToIntersection<ElementToObj<T[number]>>);
-}
-
-/**
- * Allows to parse a schema, where each property has a similar prefix, by
- * providing an unprefixed input object.
- *
- * Example:
- *
- * Const PrefixedSchema = z.object({
- *  'some-prefix-name': z.string(),
- *  'some-prefix-age': z.number(),
- * });
- * const unprefixedInput = { name: "John", age: 32 };
- * parsePrefixedParamsSchema({
- *   schema: PrefixedSchema,
- *   input: unprefixedInput,
- *   prefix: 'some-prefix'
- * })
- */
-export function parsePrefixedParamsSchema<
-  TSchema extends z.ZodObject,
-  TInput extends object,
-  TPrefix extends string,
->({ schema, input, prefix }: { schema: TSchema; input: TInput; prefix?: TPrefix }) {
-  return z
-    .preprocess(
-      (data) =>
-        prefix === undefined
-          ? data
-          : data && typeof data === "object" && !Array.isArray(data)
-            ? Object.fromEntries(
-                Object.entries(input).map(([key, val]) => [
-                  key.startsWith(`${prefix}-`) ? key : `${prefix}-${key}`,
-                  val,
-                ]),
-              )
-            : data,
-      schema,
-    )
-    .parse(input);
-}
-
-/**
- * Transforms a schema, where each property has a similar prefix, the unprefixed
- * one.
- *
- * Example:
- */
-export function prefixedSchemaToUnprefixedSchema<
-  Shape extends z.ZodRawShape,
-  Prefix extends string,
->(
-  schema: z.ZodObject<Shape>,
-  prefix: Prefix,
-): z.ZodObject<{
-  [K in keyof Shape as K extends `${Prefix}-${infer Rest}` ? Rest : K]: Shape[K];
-}> {
-  const newShape = {} as any;
-  for (const key in schema.shape) {
-    const newKey = key.startsWith(prefix) ? key.slice(prefix.length + 1) : key;
-    newShape[newKey] = schema.shape[key];
-  }
-  return z.object(newShape) as any;
 }
