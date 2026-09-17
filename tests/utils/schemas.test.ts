@@ -56,19 +56,31 @@ function getActOptions() {
     }
   }
 
-  return jsonString;
-}
-
-describe('Act options', () => {
-  it('should keep act options in sync', () => {
-    const actOptionsWithoutDefaultValues = (
-      JSON.parse(getActOptions()) as Array<{
+  try {
+    const optionsList = JSON.parse(jsonString) as Array<
+      Partial<{
         name: string;
         type: string;
         description: string;
         default: string;
       }>
-    ).map(({ name, type, description }) => ({ name, type, description }));
+    >;
+    const options: Record<string, (typeof optionsList)[number]> = {};
+    optionsList.forEach((option) => {
+      const { name } = option;
+      delete option.name;
+      delete option.default;
+      if (name) options[name] = option;
+    });
+    return options;
+  } catch {
+    throw new Error('Act options JSON is invalid');
+  }
+}
+
+describe('Act options', () => {
+  it('should keep act options in sync', () => {
+    const actOptionsWithoutDefaultValues = getActOptions();
     expect(actOptionsWithoutDefaultValues).toEqual(actCliParams);
   });
 
@@ -77,13 +89,13 @@ describe('Act options', () => {
       parseCacheServerOptions({
         port: 123,
         path: '/tmp',
-        addr: '127.0.0.1',
+        host: '127.0.0.1',
         'external-url': 'http://some-external-server:3333',
       }),
     ).toStrictEqual({
       [`${CACHE_SERVER_PARAMS_PREFIX}-port`]: 123,
       [`${CACHE_SERVER_PARAMS_PREFIX}-path`]: '/tmp',
-      [`${CACHE_SERVER_PARAMS_PREFIX}-addr`]: '127.0.0.1',
+      [`${CACHE_SERVER_PARAMS_PREFIX}-host`]: '127.0.0.1',
       [`${CACHE_SERVER_PARAMS_PREFIX}-external-url`]:
         'http://some-external-server:3333',
     });
@@ -94,12 +106,12 @@ describe('Act options', () => {
       parseArtifactServerOptions({
         port: 123,
         path: '/tmp',
-        addr: '127.0.0.1',
+        host: '127.0.0.1',
       }),
     ).toStrictEqual({
       [`${ARTIFACT_SERVER_PARAMS_PREFIX}-port`]: 123,
       [`${ARTIFACT_SERVER_PARAMS_PREFIX}-path`]: '/tmp',
-      [`${ARTIFACT_SERVER_PARAMS_PREFIX}-addr`]: '127.0.0.1',
+      [`${ARTIFACT_SERVER_PARAMS_PREFIX}-host`]: '127.0.0.1',
     });
   });
 
@@ -108,12 +120,12 @@ describe('Act options', () => {
       parseArtifactServerOptions({
         port: 123,
         path: '/tmp',
-        addr: '127.0.0.1',
+        host: '127.0.0.1',
       }),
     ).toStrictEqual({
       [`${ARTIFACT_SERVER_PARAMS_PREFIX}-port`]: 123,
       [`${ARTIFACT_SERVER_PARAMS_PREFIX}-path`]: '/tmp',
-      [`${ARTIFACT_SERVER_PARAMS_PREFIX}-addr`]: '127.0.0.1',
+      [`${ARTIFACT_SERVER_PARAMS_PREFIX}-host`]: '127.0.0.1',
     });
   });
 

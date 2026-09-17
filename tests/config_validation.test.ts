@@ -40,7 +40,7 @@ describe('config validation', () => {
     await expect(
       runner()
         .withWorkflow({ file: workflowPath('always_passing_workflow') })
-        .withEnvs({ file: 'non-existing' })
+        .withEnv({ file: 'non-existing' })
         .run(),
     ).rejects.toThrow(
       "The specified env values file does not exist on path: 'non-existing'",
@@ -84,7 +84,7 @@ describe('config validation', () => {
     await expect(
       runner()
         .withWorkflow({ file: workflowPath('always_passing_workflow') })
-        .withVars({ file: 'non-existing' })
+        .withVariables({ file: 'non-existing' })
         .run(),
     ).rejects.toThrow(
       "The specified var values file does not exist on path: 'non-existing'",

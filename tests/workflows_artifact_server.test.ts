@@ -35,7 +35,7 @@ describe('artifact server', () => {
     const result = await artifactServerWorkflowRunner()
       .withArtifactServer({ path: artifactServerDir })
       // required to execute upload-artifact action
-      .withEnvs({ values: { ACTIONS_RUNTIME_TOKEN: 'irrelevant' } })
+      .withEnv({ values: { ACTIONS_RUNTIME_TOKEN: 'irrelevant' } })
       .run();
 
     expect(result).toHaveStatus(ActExecStatus.SUCCESS);

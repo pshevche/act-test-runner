@@ -22,14 +22,6 @@
 
 import { z } from 'zod';
 
-// Convert a union type to an intersection type
-// (copied from https://github.com/sindresorhus/type-fest/blob/main/source/union-to-intersection.d.ts)
-export type UnionToIntersection<Union> = (
-  Union extends unknown ? (distributedUnion: Union) => void : never
-) extends (mergedIntersection: infer Intersection) => void
-  ? Intersection & Union
-  : never;
-
 type MapType<TType> = TType extends 'bool'
   ? z.ZodBoolean
   : TType extends 'int' | 'uint16'
@@ -40,14 +32,6 @@ type MapType<TType> = TType extends 'bool'
         ? z.ZodArray<z.ZodString>
         : never;
 
-type ElementToObj<E> = E extends {
-  name: infer TName;
-  type: infer TType;
-  description?: string;
-}
-  ? { [name in Extract<TName, string>]: MapType<TType> }
-  : never;
-
 const actTypeToZodTypeMap = {
   string: z.string(),
   bool: z.boolean(),
@@ -57,16 +41,22 @@ const actTypeToZodTypeMap = {
 } as const;
 
 /**
- * Converts a list of act CLI params to zod schema.
+ * Converts an object of act CLI params to zod schema.
  *
  * Example:
  *
  * ```ts
- * const actCliParams = [
- *   { name: 'action-cache-path', type: 'string' },
- *   { name: 'action-offline-mode', type: 'bool' },
- * ];
- * const schema = actCliParamsToZodSchema(actCliParams);
+ * const actCliParams = {
+ *   'action-cache-path': { type: 'string' },
+ *   'artifact-server-port': { type: 'string' },
+ *   'artifact-server-addr': { type: 'string' },
+ *   'action-offline-mode': { type: 'bool' },
+ * };
+ * const extensions = {
+ *   'artifact-server-port': { type: 'uint16' },
+ *   'artifact-server-addr': { alias: 'artifact-server-host' },
+ * }
+ * const schema = actCliParamsToZodSchema(actCliParams, extensions);
  * ```
  *
  * Resulting schema:
@@ -74,37 +64,44 @@ const actTypeToZodTypeMap = {
  * ```ts
  * z.object({
  *   'action-cache-path': z.string(),
- *   'action-offline-mode': z.boolean,
- * })
+ *   'artifact-server-port': z.number().int().min(0).max(65535),
+ *   'artifact-server-host': z.string(),
+ *   'action-offline-mode': z.boolean(),
+ * });
  * ```
  */
 export function actCliParamsToZodSchema<
-  T extends ReadonlyArray<{
-    name: string;
+  TDescriptor extends {
     type: keyof typeof actTypeToZodTypeMap;
     description?: string;
-  }>,
->(options: T) {
-  const properties: Record<string, z.ZodType> = {};
+    alias?: string;
+  },
+  const TOptions extends Record<string, TDescriptor>,
+  const TExtensions extends Partial<
+    Record<keyof TOptions, Partial<TDescriptor>>
+  > = {},
+>(options: TOptions, extensions?: TExtensions) {
+  const properties = {} as Record<string, z.ZodType>;
 
-  for (const item of options) {
-    if (item.name === 'artifact-server-port') {
-      /**
-       * For some reason cache server and artifact server `port` properties have
-       * different types. Cache server port is typed as `number` and artifact
-       * server port - as `string`. To keep things consistent we change artifact
-       * server port type to also be a `number`.
-       */
-      properties[item.name] = z.number();
-    } else {
-      properties[item.name] = actTypeToZodTypeMap[item.type];
-    }
+  for (const [name, params] of Object.entries(options)) {
+    const alias = extensions?.[name]?.alias;
+    const type = extensions?.[name]?.type ?? params.type;
+    properties[alias ?? name] = actTypeToZodTypeMap[type];
   }
 
   return z.object(
-    properties as Omit<
-      UnionToIntersection<ElementToObj<T[number]>>,
-      'artifact-server-port'
-    > & { 'artifact-server-port': z.ZodNumber },
+    properties as {
+      [
+        Key in keyof TOptions as Key extends keyof TExtensions
+          ? TExtensions[Key] extends { alias: infer TAlias extends string }
+            ? TAlias
+            : Key
+          : Key
+      ]: MapType<
+        TExtensions[Key] extends { type: infer TType extends string }
+          ? TType
+          : TOptions[Key]['type']
+      >;
+    },
   );
 }

@@ -162,7 +162,7 @@ export class ActRunner<
    *
    * @param source - Environment variables source
    */
-  withEnvs(source: ActValueSource): this {
+  withEnv(source: ActValueSource): this {
     this.envsSource = source;
     return this;
   }
@@ -198,7 +198,7 @@ export class ActRunner<
    *
    * @param source - Variables values source
    */
-  withVars(source: ActValueSource): this {
+  withVariables(source: ActValueSource): this {
     this.varsSource = source;
     return this;
   }
