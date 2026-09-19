@@ -1,0 +1,15 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.dev.tsbuildinfo",
+    "rootDir": ".",
+    "noEmit": true
+  },
+  "include": [
+    "tests",
+    "vitest.global.setup.ts",
+    "vitest.config.ts",
+    "oxfmt.config.ts",
+    "oxlint.config.ts"
+  ]
+}

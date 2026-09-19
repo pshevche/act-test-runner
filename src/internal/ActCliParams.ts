@@ -22,80 +22,60 @@
 
 import { WebhookEventName } from '@octokit/webhooks-types';
 
-import type {
-  ActResourceServerSpec,
-  ActValueSource,
-} from '../ActRunnerOptions.js';
+import type { ActValueSource } from '../ActRunnerOptions.js';
 import type { ActMatrixValues } from '../ActRunnerResult.js';
 
-import { checkExists } from '../utils/checks.js';
-import { firstDefined } from '../utils/objects.js';
-
-export const MANAGED_ACT_PARAMS: Set<string> = new Set([
-  '--workflows',
-  '-W',
-  '--env-file',
-  '--env',
-  '--input-file',
-  '--input',
-  '--secret-file',
-  '--secret',
-  '-s',
-  '--var-file',
-  '--var',
-  '--matrix',
-  '--cache-server-path',
-  '--cache-server-addr',
-  '--cache-server-port',
-  '--artifact-server-path',
-  '--artifact-server-addr',
-  '--artifact-server-port',
-  '--detect-event',
-  '--eventpath',
-  '-e',
-]);
-
-export const INTERNAL_ACT_PARAMS: Set<string> = new Set(['--rm', '--json']);
+import {
+  AllManagedParams,
+  ArtifactServerOptions,
+  CacheServerOptions,
+  FileParamsSchema,
+  INTERNAL_PARAMS,
+  parseArtifactServerOptions,
+  parseCacheServerOptions,
+  FileExistenceCheckRefinement,
+  StripUndefinedValuesTransform,
+} from '../utils/schemas.js';
 
 export type ActCliParamsInput<
   EventType extends WebhookEventName | undefined = undefined,
 > = {
-  workflowsPath: string;
+  workflowsPath: string | undefined;
   eventPayloadFilePath: string | undefined;
   eventType: EventType | undefined;
-  envSource: ActValueSource | undefined;
+  envsSource: ActValueSource | undefined;
   inputsSource: ActValueSource | undefined;
   secretsSource: ActValueSource | undefined;
-  variablesSource: ActValueSource | undefined;
+  varsSource: ActValueSource | undefined;
   matrixValues: ActMatrixValues | undefined;
-  cacheServer: ActResourceServerSpec | undefined;
-  artifactServer: ActResourceServerSpec | undefined;
+  cacheServer: CacheServerOptions | undefined;
+  artifactServer: ArtifactServerOptions | undefined;
   additionalArgs: string[];
 };
 
 export class ActCliParams<
   EventType extends WebhookEventName | undefined = undefined,
 > {
-  private readonly workflowsPath: string;
+  private readonly workflowsPath: string | undefined;
   private readonly eventPayloadFilePath: string | undefined;
   private readonly eventType: EventType | undefined;
-  private readonly envSource: ActValueSource | undefined;
+  private readonly envsSource: ActValueSource | undefined;
   private readonly inputsSource: ActValueSource | undefined;
   private readonly secretsSource: ActValueSource | undefined;
-  private readonly variablesSource: ActValueSource | undefined;
+  private readonly varsSource: ActValueSource | undefined;
   private readonly matrixValues: ActMatrixValues | undefined;
-  private readonly cacheServer: ActResourceServerSpec | undefined;
-  private readonly artifactServer: ActResourceServerSpec | undefined;
+  private readonly cacheServer: CacheServerOptions | undefined;
+  private readonly artifactServer: ArtifactServerOptions | undefined;
   private readonly additionalArgs: string[];
 
   constructor(params: ActCliParamsInput<EventType>) {
     this.workflowsPath = params.workflowsPath;
     this.eventType = params.eventType;
     this.eventPayloadFilePath = params.eventPayloadFilePath;
-    this.envSource = params.envSource;
+    this.envsSource = params.envsSource;
     this.inputsSource = params.inputsSource;
     this.secretsSource = params.secretsSource;
-    this.variablesSource = params.variablesSource;
+    this.varsSource = params.varsSource;
     this.matrixValues = params.matrixValues;
     this.cacheServer = params.cacheServer;
     this.artifactServer = params.artifactServer;
@@ -103,122 +83,92 @@ export class ActCliParams<
   }
 
   asCliArgs(): string[] {
-    const args = ['--workflows', this.workflowsPath];
+    const params: AllManagedParams = {
+      env: [],
+      input: [],
+      var: [],
+      secret: [],
+      matrix: [],
+      additionalArgs: [],
+    };
 
-    this.addEvent(args, this.eventType, this.eventPayloadFilePath);
+    Object.assign(params, parseCacheServerOptions(this.cacheServer));
 
-    this.addInputs(
-      args,
-      '--env-file',
-      'env values file',
-      '--env',
-      this.envSource,
-    );
+    if (this.artifactServer && !this.artifactServer.path) {
+      console.warn(
+        'Artifact server path is not specified. The artifact server will not start without it.',
+      );
+    }
 
-    this.addInputs(
-      args,
-      '--input-file',
-      'input values file',
-      '--input',
-      this.inputsSource,
-    );
+    Object.assign(params, parseArtifactServerOptions(this.artifactServer));
 
-    this.addInputs(
-      args,
-      '--secret-file',
-      'secrets values file',
-      '--secret',
-      this.secretsSource,
-    );
-
-    this.addInputs(
-      args,
-      '--var-file',
-      'variables values file',
-      '--var',
-      this.variablesSource,
-    );
-
-    Object.entries(this.matrixValues ?? {}).forEach(([key, value]) => {
-      args.push('--matrix');
-      args.push(`${key}:${value}`);
-    });
-
-    this.addResource(
-      args,
-      this.cacheServer,
-      '--cache-server-path',
-      '--cache-server-addr',
-      '--cache-server-port',
-    );
-
-    this.addResource(
-      args,
-      this.artifactServer,
-      '--artifact-server-path',
-      '--artifact-server-addr',
-      '--artifact-server-port',
-    );
-
-    this.additionalArgs.forEach((arg) => args.push(arg));
-
-    return args;
-  }
-
-  private addEvent(
-    args: string[],
-    eventType: string | undefined,
-    eventPayloadFilePath: string | undefined,
-  ) {
-    args.push(
-      firstDefined(
-        () => eventType,
-        () => '--detect-event',
+    params.env?.push(
+      ...Object.entries(this.envsSource?.values ?? {}).map(
+        ([key, value]) => `${key}=${value}`,
       ),
     );
-    if (eventPayloadFilePath !== undefined) {
-      checkExists('event payload file', eventPayloadFilePath);
-      args.push('--eventpath', eventPayloadFilePath);
-    }
-  }
 
-  private addInputs(
-    args: string[],
-    fileArg: string,
-    fileLabel: string,
-    valuesArg: string,
-    source: ActValueSource | undefined,
-  ) {
-    if (source?.file !== undefined) {
-      checkExists(fileLabel, source.file);
-      args.push(fileArg, source.file);
-    }
+    params.input?.push(
+      ...Object.entries(this.inputsSource?.values ?? {}).map(
+        ([key, value]) => `${key}=${value}`,
+      ),
+    );
 
-    Object.entries(source?.values ?? {}).forEach(([key, value]) => {
-      args.push(valuesArg, `${key}=${value}`);
-    });
-  }
+    params.secret?.push(
+      ...Object.entries(this.secretsSource?.values ?? {}).map(
+        ([key, value]) => `${key}=${value}`,
+      ),
+    );
 
-  private addResource(
-    args: string[],
-    resource: ActResourceServerSpec | undefined,
-    storageParam: string,
-    addressParam: string,
-    portParam: string,
-  ) {
-    if (resource !== undefined) {
-      args.push(storageParam);
-      args.push(resource.path);
+    params.var?.push(
+      ...Object.entries(this.varsSource?.values ?? {}).map(
+        ([key, value]) => `${key}=${value}`,
+      ),
+    );
 
-      if (resource.host !== undefined) {
-        args.push(addressParam);
-        args.push(resource.host);
+    params.matrix?.push(
+      ...Object.entries(this.matrixValues ?? {}).map(
+        ([key, value]) => `${key}:${value}`,
+      ),
+    );
+
+    Object.assign(
+      params,
+      FileParamsSchema.check(FileExistenceCheckRefinement)
+        .pipe(StripUndefinedValuesTransform)
+        .parse({
+          workflows: this.workflowsPath,
+          'env-file': this.envsSource?.file,
+          'input-file': this.inputsSource?.file,
+          'secret-file': this.secretsSource?.file,
+          'var-file': this.varsSource?.file,
+          eventpath: this.eventPayloadFilePath,
+        }),
+    );
+
+    params.additionalArgs.push(...this.additionalArgs);
+
+    const args: string[] = [
+      this.eventType ?? '--detect-event',
+      ...INTERNAL_PARAMS,
+    ];
+
+    for (const [key, value] of Object.entries(params)) {
+      if (key === 'additionalArgs') {
+        for (const flag of value as string[]) {
+          args.push(flag);
+        }
+      } else if (Array.isArray(value)) {
+        if (value.length > 0) {
+          for (const item of value) {
+            args.push(`--${key}`, item);
+          }
+        }
+      } else {
+        args.push(`--${key}`, value as string);
       }
-
-      if (resource.port !== undefined) {
-        args.push(portParam);
-        args.push(resource.port.toString());
-      }
     }
+
+    return args;
   }
 }

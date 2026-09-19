@@ -30,12 +30,12 @@
   },
   "scripts": {
     "clean": "rm -r dist",
-    "build": "tsc --project tsconfig.package.json",
+    "build": "tsc -b",
     "lint:check": "oxlint --max-warnings 0",
     "lint:fix": "oxlint --fix",
     "format:fix": "oxfmt",
     "format:check": "oxfmt --check",
-    "types:check": "tsc --project tsconfig.check.json",
+    "types:check": "tsc -b --noEmit",
     "check:all": "pnpm run lint:check && pnpm run format:check && pnpm run types:check",
     "prepare": "simple-git-hooks",
     "test": "TS_VERSION=typescript vitest run",
@@ -65,5 +65,8 @@
     "node": "^22.23.1 || ^24.0.0 || >=26.0.0",
     "pnpm": "12.4.2"
   },
-  "packageManager": "pnpm@12.4.2"
+  "packageManager": "pnpm@12.4.2",
+  "dependencies": {
+    "zod": "^4.6.5"
+  }
 }

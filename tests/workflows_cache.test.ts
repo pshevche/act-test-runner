@@ -27,7 +27,9 @@ describe('cache', () => {
 
   test('persists cache entries in configured directory', async () => {
     const result = await cacheWorkflowRunner()
-      .withCacheServer({ path: customCacheDir })
+      .withCacheServer({
+        path: customCacheDir,
+      })
       .run();
 
     expect(result).toHaveStatus(ActExecStatus.SUCCESS);

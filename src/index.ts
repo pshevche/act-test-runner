@@ -25,7 +25,6 @@ export type {
   ActProcessOptions,
   ActValueSource,
   ActWorkflowSource,
-  ActResourceServerSpec,
 } from './ActRunnerOptions.js';
 export type {
   ActJobOrStepDescriptor as ActOutputOwner,

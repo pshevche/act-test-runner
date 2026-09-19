@@ -8,7 +8,7 @@ describe('config validation', () => {
     await expect(
       runner().withWorkflow({ file: 'non-existing' }).run(),
     ).rejects.toThrow(
-      "The specified workflow path 'non-existing' does not exist",
+      "The specified workflow file does not exist on path: 'non-existing'",
     );
   });
 
@@ -43,7 +43,7 @@ describe('config validation', () => {
         .withEnv({ file: 'non-existing' })
         .run(),
     ).rejects.toThrow(
-      "The specified env values file 'non-existing' does not exist",
+      "The specified env values file does not exist on path: 'non-existing'",
     );
   });
 
@@ -54,7 +54,7 @@ describe('config validation', () => {
         .withInputs({ file: 'non-existing' })
         .run(),
     ).rejects.toThrow(
-      "The specified input values file 'non-existing' does not exist",
+      "The specified input values file does not exist on path: 'non-existing'",
     );
   });
 
@@ -65,7 +65,7 @@ describe('config validation', () => {
         .withEvent('push', 'non-existing')
         .run(),
     ).rejects.toThrow(
-      "The specified event payload file 'non-existing' does not exist",
+      "The specified event payload file does not exist on path: 'non-existing'",
     );
   });
 
@@ -76,7 +76,7 @@ describe('config validation', () => {
         .withSecrets({ file: 'non-existing' })
         .run(),
     ).rejects.toThrow(
-      "The specified secrets values file 'non-existing' does not exist",
+      "The specified secret values file does not exist on path: 'non-existing'",
     );
   });
 
@@ -87,7 +87,7 @@ describe('config validation', () => {
         .withVariables({ file: 'non-existing' })
         .run(),
     ).rejects.toThrow(
-      "The specified variables values file 'non-existing' does not exist",
+      "The specified var values file does not exist on path: 'non-existing'",
     );
   });
 

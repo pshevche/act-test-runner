@@ -45,13 +45,3 @@ export type ActValueSource = {
  * inline body.
  */
 export type ActWorkflowSource = { file: string } | { body: string };
-
-/** Configuration for the cache or artifact server used by a workflow run. */
-export type ActResourceServerSpec = {
-  /** The path where the server's data will be stored. */
-  path: string;
-  /** The address to which the server binds. */
-  host?: string;
-  /** The port on which the server listens. */
-  port?: number;
-};
