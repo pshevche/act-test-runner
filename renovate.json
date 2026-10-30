@@ -16,6 +16,17 @@
       "description": "Lock typescript-7 to TypeScript 7.x",
       "matchDepNames": ["typescript-7"],
       "allowedVersions": "^7.0.0"
+    },
+    {
+      "description": "Keep the Node tool constraint at the minimum supported Node version",
+      "matchDepTypes": ["tool-constraint"],
+      "matchDepNames": ["node"],
+      "allowedVersions": "^22.0.0"
+    },
+    {
+      "description": "Keep @types/node at the minimum supported Node version",
+      "matchDepNames": ["@types/node"],
+      "allowedVersions": "^22.0.0"
     }
   ]
 }
